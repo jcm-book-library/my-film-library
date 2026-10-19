@@ -1,0 +1,12 @@
+{
+  "name": "Film Tracker",
+  "repo": "my-film-library",
+  "purpose": "Plans a movie tracker for films watched and to watch, backed by the Entertainment Tracker Google Sheet; nothing is built yet.",
+  "family": "Entertainment",
+  "stage": "Planning",
+  "live": null,
+  "tags": [
+    "media-tracker"
+  ],
+  "updated": "2026-10-19"
+}
