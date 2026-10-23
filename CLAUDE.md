@@ -1,30 +1,14 @@
 # my-film-library: working notes for Claude
 
+**Read the house rules first:** [HOUSE-RULES.md](https://github.com/jcm-book-library/control-room/blob/main/HOUSE-RULES.md) in `control-room` (plain text: https://raw.githubusercontent.com/jcm-book-library/control-room/main/HOUSE-RULES.md). They cover Google Sheet safety, branches and pull requests into `main`, using cheaper models to save usage credits, and the build template. The notes below are this repo's own; where they are more specific, they win. The project charter is `project.json`.
+
 Movie tracker, sister app to the book tracker "Jackets & Manuscripts"
 (jcm-book-library/my-book-library). See `PLAN.md` for the data model, sheet
 findings and stages.
 
-## Use usage credits well: orchestrate across models
-
-The owner asked for this. Keep the main session for judgement and hand
-routine work to cheaper models with the Agent tool's `model` option:
-
-- **Main session (most capable model):** planning, data-model and sheet-safety
-  decisions, anything that writes to the Google Sheet, reviewing subagent
-  output before it is committed or published, talking to the owner.
-- **`sonnet` subagents:** building a feature or tab from a clear spec,
-  porting patterns from the book app, writing and running Playwright tests,
-  fixing test failures.
-- **`haiku` subagents:** mechanical work: profiling sheet exports with a
-  script, read-back comparisons after a bulk change, grepping the reference
-  app for a pattern, checking screenshots for sideways scrolling.
-
-Rules of thumb:
-- Give each subagent a self-contained brief (files, spec, what "done" means)
-  so it doesn't re-derive context.
+Model use: see "Using models" in the house rules.
 - Subagents never write to the Google Sheet; only the main session does,
   after showing the owner the plan.
-- Prefer one well-scoped subagent over several overlapping ones.
 
 ## Non-negotiables (from the owner's brief)
 
