@@ -1,14 +1,14 @@
 # Plan
 
-Status: **Stages 0, 1 and 2 (writes) done 2026-10-23.** Next: Stage 3 (Plan).
+Status: **Stages 0, 1 and 2 (writes) done 2026-10-23, merged to `main` for GitHub Pages.** Next: Stage 3 (Plan).
 
 ## Reference
 
 - Book app: jcm-book-library/my-book-library, branch `claude/keen-sagan-yf9rqf`,
   `v3/reading-log.html` (patterns, styles, helpers), `v3/README.md`,
   `v3/brand/BRAND.md`. GitHub Pages build: `tools/build-pages.py` on that repo.
-- Sheet: "Entertainment Tracker", `1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc`,
-  tab `🎥` (sheetId 1389438311), headers on row 2.
+- Sheet: "Entertainment Tracker" (its link is kept in the owner's browser settings and
+  in the claude.ai copy of the app, not in this public repo), tab `🎥`, headers on row 2.
 
 ## What's in the 🎥 tab (read 2026-10-18)
 
@@ -16,30 +16,24 @@ Columns A–M: Title, Rating (/10), Status, Date, Starring, Director,
 Cinematography, Purchase, Genre, Platform, Release, Year, Notes. Row 1 has
 only "RATINGS" in C1.
 
-2,291 data rows in hand-sorted blocks:
+Rows were in hand-sorted blocks: a dated diary for 2026 (the only dated rows), plan
+blocks (Next Up, Watchlist, Rewatch, Coming Soon, In Development, Unavailable), then
+an undated all-time archive of Watched films sorted by rating.
 
-| Rows | Block |
-|---|---|
-| 3–97 | 2026 diary: 95 dated watches, in date order (the only dated rows) |
-| 98–103 | Six titles with no status (sci-fi). Purpose unknown, asked |
-| 104–211 | Plan: Next Up 13, Watchlist 33, Rewatch 10, Coming Soon 25, In Development 6, Unavailable 21 |
-| 212–2293 | All-time archive, 2,082 Watched, sorted by rating, no dates |
-
-- Rewatches appear as a second row (2026 diary row plus archive row, often
-  with a different rating). The other ~50 duplicate titles are remakes, so a
-  film is identified by title + year.
-- No formulas anywhere. No conditional formats or protected ranges. One basic
-  filter on A2:M2293.
-- Types: Rating, Year and Date are numbers (Date shown as `d-mmm-yyyy`); Year
-  has 7 "TBA"; Release mixes date serials and text; 9 titles are stored as
+- Rewatches appear as a second row (a diary row plus an archive row, often with a
+  different rating). Many other duplicate titles are remakes, so a film is
+  identified by title + year.
+- No formulas anywhere. No conditional formats or protected ranges. One basic filter.
+- Types: Rating, Year and Date are numbers (Date shown as `d-mmm-yyyy`); a few Year
+  values are "TBA"; Release mixes date serials and text; a few titles are stored as
   numbers.
 - Dropdowns with chips: Status (Coming Soon, Rewatch, Watched, Watching,
   Watchlist, Next Up, 2026 Watched, In Development, DNF, Unavailable),
   Purchase (Owned, To Purchase), Genre (16), Platform (11).
-- Mostly empty: Starring 135, Cinematography 94, Genre 169, Platform 140,
-  Purchase 51, Notes 0.
-- Oddities: row 880 has only "Watched"; 62 cells have broken accents
-  (e.g. `CuarÃ³n`).
+- Starring, Cinematography, Genre, Platform and Purchase are only partly filled
+  (mostly on recent rows); Notes was empty.
+- Oddities found: one row with only a Status, and about 60 cells with broken accents
+  (e.g. `CuarÃ³n`); both were fixed in Stage 0.
 
 ## Proposed data model (option A, recommended)
 
@@ -173,3 +167,15 @@ positions don't matter.
   renumber); the duplicate warning in the Add dialog uses the loaded copy too.
 - Not yet tried on the real sheet: the first real write should be one low-stakes entry
   (for example logging a film) with the sheet open to watch it.
+
+## Going live (2026-10-23)
+
+- Reached `main` by pull request, following the house rules in `control-room`.
+- The spreadsheet id is no longer in the code. `app.html` has a `__SHEET_ID__`
+  placeholder that is filled in only when the private claude.ai artifact is published.
+  On GitHub Pages the Connect dialog asks for the sheet link once, together with the
+  OAuth Client ID, and keeps both in this browser (`mbl_config`, keys `clientId` and
+  `sheetId`).
+- Dates are shown as `19 Oct 26` (house style); the sheet keeps real dates.
+- The id and some film details are still in earlier commits of this public repo. Removing
+  them from history needs the owner's go-ahead.

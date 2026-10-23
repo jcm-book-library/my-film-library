@@ -1,12 +1,12 @@
 {
   "name": "Film Tracker",
   "repo": "my-film-library",
-  "purpose": "Plans a movie tracker for films watched and to watch, backed by the Entertainment Tracker Google Sheet; nothing is built yet.",
+  "purpose": "Film diary, library and dashboard (log, edit and add films) backed by the Entertainment Tracker Google Sheet; Plan, Tools and Discover come next.",
   "family": "Entertainment",
-  "stage": "Planning",
-  "live": null,
+  "stage": "Building",
+  "live": "https://jcm-book-library.github.io/my-film-library/",
   "tags": [
     "media-tracker"
   ],
-  "updated": "2026-10-19"
+  "updated": "2026-10-23"
 }

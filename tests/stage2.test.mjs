@@ -15,7 +15,7 @@ const CHART = SCRATCH + '/real/chart.umd.js';
 fs.mkdirSync(SHOTS, { recursive: true });
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mvl2-'));
 const PAGE = path.join(tmp, 'index.html');
-fs.writeFileSync(PAGE, '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + fs.readFileSync(APP, 'utf8') + '</body></html>');
+fs.writeFileSync(PAGE, '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + fs.readFileSync(APP, 'utf8').replace('__SHEET_ID__', 'TESTSHEETID000000000000000000000000') + '</body></html>');
 const CHART_JS = fs.existsSync(CHART) ? fs.readFileSync(CHART) : '';
 
 const SIZES = { laptop: { width: 1280, height: 800 }, phone: { width: 390, height: 844 } };
@@ -257,7 +257,7 @@ await scenario('B2 older date from the picker', LAPTOP, async E => {
   const before = fake.snapshot();
   await page.click('#lfSave'); await settle(page);
   expectDiff(E, 'B2', before, [[row, 'Status', 'Watched'], [row, 'Date', D('2026-08-15')], [row, 'Plan', ''], [row, 'Order', '']]);
-  check(S + 'B2 status text names the date', /15 Aug 2026/.test(await statusText(page)), await statusText(page));
+  check(S + 'B2 status text names the date', /15 Aug 26/.test(await statusText(page)), await statusText(page));
 });
 await scenario('B3 future date rejected', LAPTOP, async E => {
   const { page, fake, S } = E;

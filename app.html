@@ -402,7 +402,6 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 .wordmark{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,38px);letter-spacing:-.02em;line-height:1;margin:6px 0 0;color:#eef0fa}
 table.lib{min-width:0}
 .lib td.c-date{white-space:nowrap}
-.d-short{display:none}
 .lib .y{color:var(--muted);font-weight:500;font-size:13px;margin-left:6px}
 .rt{font-variant-numeric:tabular-nums;font-weight:700}
 .rt small{color:var(--muted);font-weight:500;font-size:11px}
@@ -417,7 +416,7 @@ table.lib{min-width:0}
 .empty-state{padding:18px;color:var(--muted);font-size:14px}
 .hbars .val b{color:var(--fg);font-weight:600}
 .mini-list .sub{display:block;font-size:12px;color:var(--muted)}
-@media (max-width:700px){.d-full{display:none}.d-short{display:inline}.lib .c-dir,.lib .c-gen,.lib .c-plat{display:none}.lib th,.lib td{padding:9px 7px}}
+@media (max-width:700px){.lib .c-dir,.lib .c-gen,.lib .c-plat{display:none}.lib th,.lib td{padding:9px 7px}}
 </style>
 <div class="wrap">
   <header>
@@ -549,12 +548,18 @@ table.lib{min-width:0}
     <div style="padding:16px 20px;display:grid;gap:12px">
       <p class="muted" style="margin:0;font-size:14px">Paste the OAuth Client ID from your Google Cloud project (the same one the book app uses). It's saved in this browser only.</p>
       <div class="field"><label for="gClient">OAuth Client ID</label><input id="gClient" autocomplete="off" spellcheck="false" placeholder="1234…apps.googleusercontent.com"></div>
+      <div class="field"><label for="gSheet">Your Entertainment Tracker link</label><input id="gSheet" autocomplete="off" spellcheck="false" placeholder="https://docs.google.com/spreadsheets/d/…"></div>
+      <p class="muted" style="margin:0;font-size:13px">Open the sheet in Google Sheets and copy the link from the address bar. Both are kept in this browser only, not in the page's code.</p>
     </div>
     <div class="dlg-foot"><span class="muted" id="gMsg" style="font-size:13px;align-self:center"></span><button class="btn btn-primary" type="submit">Connect</button></div>
   </form>
 </dialog>
 <script>
-const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
+// The spreadsheet id is not kept in this public repo. The claude.ai copy has it filled in when it is published;
+// on GitHub Pages the page asks for it once and keeps it in this browser, next to the Client ID.
+const SHEET_ID_BUILT = '__SHEET_ID__';
+const sheetId = () => SHEET_ID_BUILT.startsWith('__') ? String(google_.cfg().sheetId || '') : SHEET_ID_BUILT;
+const needSheet = () => { const id = sheetId(); if (!id) throw { code: 'no_sheet' }; return id; };
 const SERVER = 'Google Sheets';
 const FILMS_TAB = "'🎥'";
 const SETTINGS_TAB = "'🎥 Settings'";
@@ -581,8 +586,7 @@ const toDate = v => {
   if (m && MON_IDX[m[2].toLowerCase()] != null) return `${m[3]}-${pad(MON_IDX[m[2].toLowerCase()] + 1)}-${pad(+m[1])}`;
   return null;
 };
-const showDate = s => { if (!s) return ''; const d = fromIso(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
-const shortYearDate = s => { if (!s) return ''; const d = fromIso(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`; };
+const showDate = s => { if (!s) return ''; const d = fromIso(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`; };
 const shortDate = s => { const d = fromIso(s); return `${d.getDate()} ${MONTHS[d.getMonth()]}`; };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -792,7 +796,7 @@ function renderLibrary() {
     tr.innerHTML = '<td><span class="t"></span><span class="y"></span></td>' +
       `<td class="num tnum">${f.rating != null ? `<span class="rt">${f.rating}<small>/10</small></span>` : ''}</td>` +
       `<td><span class="pill" data-s="${esc(f.status)}">${esc(f.status) || '–'}</span></td>` +
-      `<td class="c-date"><span class="d-full">${esc(showDate(f.date))}</span><span class="d-short">${esc(shortYearDate(f.date))}</span></td><td class="c-dir"></td><td class="c-gen"></td><td class="c-plat"></td>`;
+      `<td class="c-date">${esc(showDate(f.date))}</td><td class="c-dir"></td><td class="c-gen"></td><td class="c-plat"></td>`;
     tr.querySelector('.t').textContent = f.title;
     tr.querySelector('.y').textContent = f.year ?? f.yearText;
     tr.querySelector('.c-dir').textContent = directors(f).join(', ');
@@ -932,6 +936,7 @@ function notice(text, kind) { const n = $('notice'); if (!text) { n.hidden = tru
 function explain(err) {
   switch (err && err.code) {
     case 'server_not_connected': return 'Google Sheets isn\'t connected for your account. Add it in claude.ai Settings → Connectors, then press Refresh.';
+    case 'no_sheet': return 'This page doesn\'t have your spreadsheet link yet. Press Connect and paste it in.';
     case 'google_signin': return 'Your Google sign-in has expired. Press Connect to sign in again.';
     case 'needs_reauth': return 'Your Google Sheets connection has expired. Reconnect it in claude.ai Settings → Connectors, then press Refresh.';
     case 'selection_required': return 'You have more than one Google Sheets connector. Choose one when Claude asks, then press Refresh.';
@@ -945,7 +950,7 @@ function explain(err) {
 }
 
 async function readRange(range) {
-  const res = await state.mcp.callTool(SERVER, 'get_values', { spreadsheetId: SHEET_ID, range }, { cache: false });
+  const res = await state.mcp.callTool(SERVER, 'get_values', { spreadsheetId: needSheet(), range }, { cache: false });
   const p = res.payload;
   return (p && Array.isArray(p.values)) ? p.values : [];
 }
@@ -1051,7 +1056,7 @@ async function locateRow(id) {
   return { H, row: hits[0] };
 }
 const readFilmRow = async (H, row) => filmFromRow(H, (await readRange(`${FILMS_TAB}!A${row}:Z${row}`))[0] || [], row);
-const putCell = (range, value) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range, values: [[value]] }, { cache: false });
+const putCell = (range, value) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: needSheet(), range, values: [[value]] }, { cache: false });
 
 // Change some cells of one film. `changes` maps field -> new value; only cells that differ are written.
 async function updateFilm(film, changes) {
@@ -1097,7 +1102,7 @@ async function appendFilm(fields) {
     if (cv !== '') vals[c] = cv;
   }
   const row = Array.from({ length: vals.length }, (_, i) => vals[i] ?? '');
-  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${FILMS_TAB}!A${state.headerRow}:Z${last}`, values: [row] }, { cache: false });
+  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: needSheet(), range: `${FILMS_TAB}!A${state.headerRow}:Z${last}`, values: [row] }, { cache: false });
   const p = (res && res.payload) || {};
   const landed = String((p.updates && p.updates.updatedRange) || p.updatedRange || '');
   const m = landed.match(/!([A-Z]+)(\d+)/);
@@ -1465,15 +1470,15 @@ function loadGis() {
     if (window.google && google.accounts && google.accounts.oauth2) return ok();
     const s = document.createElement('script');
     s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
-    s.onload = () => ok(); s.onerror = () => fail(new Error('Google sign-in didn\'t load'));
+    s.onload = () => (window.google && google.accounts && google.accounts.oauth2) ? ok() : fail(new Error('Google sign-in didn\'t load. A content blocker may be stopping it.')); s.onerror = () => fail(new Error('Google sign-in didn\'t load'));
     document.head.appendChild(s);
   });
 }
 
 // Runs from a click, and stays synchronous once Google's script has loaded, so the sign-in popup isn't blocked
 function googleConnect() {
-  const id = google_.cfg().clientId;
-  if (!id) { $('gClient').value = ''; $('gMsg').textContent = ''; $('gDlg').showModal(); return; }
+  const cfg = google_.cfg(), id = cfg.clientId;
+  if (!id || !cfg.sheetId) { $('gClient').value = id || ''; $('gSheet').value = cfg.sheetId || ''; $('gMsg').textContent = ''; $('gDlg').showModal(); return; }
   if (!(window.google && google.accounts && google.accounts.oauth2)) { loadGis().then(googleConnect, err => notice(err.message, 'error')); return; }
   try {
     if (!google_.client) google_.client = google.accounts.oauth2.initTokenClient({
@@ -1496,14 +1501,17 @@ function googleBoot() {
   if (google_.valid()) { refresh(); return; }
   googleSignedOut();
   renderAll();
-  notice(google_.cfg().clientId ? 'Press Connect to sign in to Google and load your sheet.' : 'Press Connect to link your Google Sheet. You\'ll need the OAuth Client ID from your Google Cloud project.');
+  const c = google_.cfg();
+  notice(c.clientId && c.sheetId ? 'Press Connect to sign in to Google and load your sheet.' : 'Press Connect to link your Google Sheet. You\'ll need the OAuth Client ID from your Google Cloud project and the link to your sheet.');
 }
 
 $('gClose').addEventListener('click', () => $('gDlg').close());
 $('gForm').addEventListener('submit', e => {
   const v = $('gClient').value.trim();
   if (!/\.apps\.googleusercontent\.com$/.test(v)) { e.preventDefault(); $('gMsg').textContent = 'That doesn\'t look like a Client ID.'; return; }
-  google_.saveCfg({ clientId: v }); google_.client = null;
+  const sv = $('gSheet').value.trim(), sm = sv.match(/\/d\/([A-Za-z0-9_-]{20,})/), sid = sm ? sm[1] : (/^[A-Za-z0-9_-]{20,}$/.test(sv) ? sv : '');
+  if (!sid) { e.preventDefault(); $('gMsg').textContent = 'Paste the link to your Entertainment Tracker sheet.'; return; }
+  google_.saveCfg({ clientId: v, sheetId: sid }); google_.client = null;
   googleConnect();
 });
 

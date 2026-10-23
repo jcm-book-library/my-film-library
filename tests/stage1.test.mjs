@@ -12,7 +12,7 @@ const SHOTS = process.env.SHOTS_DIR || '/tmp/claude-0/-home-user/4248a9f9-d264-5
 fs.mkdirSync(SHOTS, { recursive: true });
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mvl-'));
 const PAGE = path.join(tmp, 'index.html');
-fs.writeFileSync(PAGE, '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + fs.readFileSync(APP, 'utf8') + '</body></html>');
+fs.writeFileSync(PAGE, '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + fs.readFileSync(APP, 'utf8').replace('__SHEET_ID__', 'TESTSHEETID000000000000000000000000') + '</body></html>');
 
 const SIZES = { laptop: { width: 1280, height: 800 }, phone: { width: 390, height: 844 } };
 const OK_RANGES = new Set(["'🎥'!A1:R6000", "'🎥 Settings'!A1:C50"]);
@@ -387,8 +387,19 @@ for (const size of ['laptop', 'phone']) {
     check(S + '7 Connect opens the Client ID dialog (#gDlg)', await page.$eval('#gDlg', d => d.open));
     await page.fill('#gClient', 'not-a-client-id'); await page.click('#gForm button[type=submit]');
     check(S + '7 invalid client id is rejected with a message', (await page.textContent('#gMsg')).includes("doesn't look like a Client ID") && await page.$eval('#gDlg', d => d.open), await page.textContent('#gMsg'));
+    // the sheet link is asked for here too, and is kept in the browser (not in the page's code)
+    await page.fill('#gClient', '123456-abc.apps.googleusercontent.com'); await page.fill('#gSheet', ''); await page.click('#gForm button[type=submit]');
+    check(S + '7 a sheet link is required', (await page.textContent('#gMsg')).includes('link to your Entertainment Tracker') && await page.$eval('#gDlg', d => d.open), await page.textContent('#gMsg'));
+    await page.fill('#gSheet', 'https://example.com/not-a-sheet'); await page.click('#gForm button[type=submit]');
+    check(S + '7 a link that is not a sheet is refused', (await page.textContent('#gMsg')).includes('link to your Entertainment Tracker') && await page.$eval('#gDlg', d => d.open));
     await page.screenshot({ path: `${SHOTS}/${size}-connect-dialog.png` });
-    await page.click('#gClose');
+    await page.evaluate(() => { window.google = { accounts: { oauth2: { initTokenClient: () => ({ requestAccessToken: () => { window.__asked = true; } }) } } }; });
+    await page.fill('#gSheet', 'https://docs.google.com/spreadsheets/d/AbCdEfGhIjKlMnOpQrStUvWxYz0123456789-_/edit?gid=0#gid=0');
+    await page.click('#gForm button[type=submit]'); await page.waitForTimeout(150);
+    const cfg = await page.evaluate(() => JSON.parse(localStorage.getItem('mbl_config') || '{}'));
+    check(S + '7 client id and the sheet id (taken out of the link) are saved in the browser', cfg.clientId === '123456-abc.apps.googleusercontent.com' && cfg.sheetId === 'AbCdEfGhIjKlMnOpQrStUvWxYz0123456789-_', cfg);
+    check(S + '7 sign-in is requested once both are saved', await page.evaluate(() => window.__asked === true));
+    check(S + '7 the page code holds no spreadsheet-id-like string (the id is filled in only when the private artifact is published)', !/['"`][A-Za-z0-9_-]{40,}['"`]/.test(fs.readFileSync(APP, 'utf8')));
     check(S + '7 dialog closes', !(await page.$eval('#gDlg', d => d.open)));
     check(S + '7 nothing threw', errors.length === 0, errors);
     await ctx.close();

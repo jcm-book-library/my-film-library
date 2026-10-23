@@ -3,7 +3,7 @@
 //   number -> JS number, text -> JS string, date -> { date: 'yyyy-mm-dd' }, empty -> ''.
 // Every call is recorded in `calls`. Fault injection: dropWrites, mutateAfterLoad, failNext, failAll, appendLandsAt, beforeAppend.
 
-export const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
+export const SHEET_ID = 'TESTSHEETID000000000000000000000000'; // a made-up id: the real one is not kept in this repo
 export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted'];
 export const WIDTH = HEADERS.length;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
