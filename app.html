@@ -628,11 +628,12 @@ const SEEN_STATUSES = ['Watched', '2026 Watched'];
 
 /* ---------- reading the 🎥 tab (columns found by header name, so moves in the sheet don't break this) ---------- */
 const normTitle = t => String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
+let uidCounter = 0;
 function filmFromRow(H, r, rowNum) {
   const cell = k => { const i = H.indexOf(k); return i < 0 ? '' : String(r[i] ?? '').trim(); };
   const year = num(cell('Year')), status = cell('Status'), title = cell('Title');
   return {
-    _row: rowNum, id: cell('id'), title, year, yearText: cell('Year'),
+    _row: rowNum, _uid: ++uidCounter, id: cell('id'), title, year, yearText: cell('Year'),
     rating: num(cell('Rating')), status, date: toDate(cell('Date')),
     starring: cell('Starring'), director: cell('Director'), cinematography: cell('Cinematography'),
     purchase: cell('Purchase'), genre: cell('Genre'), platform: cell('Platform'), release: cell('Release'),
@@ -699,7 +700,7 @@ function renderLog() {
   ups.slice(0, max).forEach((f, i) => {
     const li = document.createElement('li');
     li.innerHTML = '<span class="n"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"><button type="button" data-log="">Watched</button></span><span class="why"></span>';
-    li.querySelector('[data-log]').dataset.log = f._row;
+    li.querySelector('[data-log]').dataset.log = f._uid;
     li.querySelector('.n').textContent = i + 1;
     li.querySelector('.t').textContent = f.title;
     li.querySelector('.m').textContent = [f.year, f.genre, f.platform, directors(f)[0]].filter(Boolean).join(' · ');
@@ -718,7 +719,7 @@ function renderLog() {
     li.querySelector('.t').textContent = f.title;
     li.querySelector('.sub').textContent = [shortDate(f.date), f.platform].filter(Boolean).join(' · ');
     li.querySelector('.r').textContent = f.rating != null ? f.rating + '/10' : '';
-    const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'linkbtn'; eb.textContent = 'Edit'; eb.dataset.edit = f._row; eb.style.marginLeft = '10px';
+    const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'linkbtn'; eb.textContent = 'Edit'; eb.dataset.edit = f._uid; eb.style.marginLeft = '10px';
     li.querySelector('.r').appendChild(eb);
     rl.appendChild(li);
   }
@@ -786,8 +787,8 @@ function renderLibrary() {
   void first;
   for (const f of rows.slice(0, L.limit)) {
     const tr = document.createElement('tr');
-    tr.className = 'row' + (L.open === f._row ? ' open' : '');
-    tr.dataset.row = f._row;
+    tr.className = 'row' + (L.open === f._uid ? ' open' : '');
+    tr.dataset.uid = f._uid; tr.dataset.row = f._row;
     tr.innerHTML = '<td><span class="t"></span><span class="y"></span></td>' +
       `<td class="num tnum">${f.rating != null ? `<span class="rt">${f.rating}<small>/10</small></span>` : ''}</td>` +
       `<td><span class="pill" data-s="${esc(f.status)}">${esc(f.status) || '–'}</span></td>` +
@@ -798,7 +799,7 @@ function renderLibrary() {
     tr.querySelector('.c-gen').textContent = f.genre;
     tr.querySelector('.c-plat').textContent = f.platform;
     body.appendChild(tr);
-    if (L.open === f._row) body.appendChild(detailRow(f));
+    if (L.open === f._uid) body.appendChild(detailRow(f));
   }
   if (!rows.length) body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="empty-state">No films match.</td></tr>`;
   $('libCount').textContent = `Showing ${fmt(Math.min(L.limit, rows.length))} of ${fmt(rows.length)} films` + (L.sort === 'sheet' ? ' · in sheet order' : '');
@@ -812,10 +813,10 @@ function detailRow(f) {
   td.colSpan = LIB_COLS.length;
   const kv = [['Director', directors(f).join(', ')], ['Starring', f.starring], ['Cinematography', f.cinematography], ['Genre', f.genre], ['Platform', f.platform],
     ['Purchase', f.purchase], ['Release', f.release], ['Plan', f.plan ? f.plan + (f.plan === 'Up next' && f.order ? ' #' + f.order : '') : ''], ['Why', f.why], ['Notes', f.notes],
-    ['Row · id', `${f._row} · ${f.id || 'none yet'}`]].filter(([, v]) => v);
+    ['Row when loaded · id', `${f._row} · ${f.id || 'none yet'}`]].filter(([, v]) => v);
   const others = (state.byKey.get(f.key) || []).filter(o => o !== f);
   td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><div><dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="">Edit film</button></div></div></div>';
-  td.querySelector('[data-edit]').dataset.edit = f._row;
+  td.querySelector('[data-edit]').dataset.edit = f._uid;
   const ul = td.querySelector('.others');
   if (!others.length) ul.innerHTML = '<li>No other entries for this film.</li>';
   for (const o of others) {
@@ -1073,9 +1074,9 @@ async function updateFilm(film, changes) {
     throw { code: 'tool_error', partial: true, message: `${wrote} of ${keys.length} changes to “${film.title}” were saved before a problem (${(err && err.message) || explain(err)}). The sheet is being re-read so you can see where the row stands.` };
   }
   const after = await readFilmRow(H, row);
-  for (const k of keys) if (!sameVal(ALL[k], after[k], changes[k])) throw { code: 'tool_error', message: `${ALL[k].col} didn't save as expected (the sheet shows “${after[k] ?? ''}”). Press Refresh to check.` };
-  for (const k of Object.keys(ALL)) if (!keys.includes(k) && !sameVal(ALL[k], after[k], cur[k])) throw { code: 'tool_error', message: `${ALL[k].col} changed unexpectedly. Press Refresh to check the row.` };
-  Object.assign(film, after);
+  for (const k of keys) if (!sameVal(ALL[k], after[k], changes[k])) throw { code: 'tool_error', message: `${ALL[k].col} didn't save as expected (the sheet shows “${after[k] ?? ''}”).`, reread: true };
+  for (const k of Object.keys(ALL)) if (!keys.includes(k) && !sameVal(ALL[k], after[k], cur[k])) throw { code: 'tool_error', message: `${ALL[k].col} changed unexpectedly while saving.`, reread: true };
+  Object.assign(film, after, { _uid: film._uid });
   derive();
   return keys.length;
 }
@@ -1085,6 +1086,9 @@ async function appendFilm(fields) {
   const H = await sheetHeader();
   const ids = (await idColumn(H)).map(r => num(r[0])).filter(n => n != null);
   const id = Math.max(0, ...ids) + 1;
+  const tl = colLetter(H.indexOf('Title'));
+  const last = (await readRange(`${FILMS_TAB}!${tl}1:${tl}6000`)).length;
+  if (!last) throw { code: 'tool_error', message: 'Couldn\'t find where the film list ends. Press Refresh and try again.' };
   const vals = [];
   for (const [k, v] of Object.entries({ ...fields, id })) {
     const f = ALL[k], c = f ? H.indexOf(f.col) : -1;
@@ -1093,10 +1097,13 @@ async function appendFilm(fields) {
     if (cv !== '') vals[c] = cv;
   }
   const row = Array.from({ length: vals.length }, (_, i) => vals[i] ?? '');
-  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${FILMS_TAB}!A1`, values: [row] }, { cache: false });
+  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${FILMS_TAB}!A${state.headerRow}:Z${last}`, values: [row] }, { cache: false });
   const p = (res && res.payload) || {};
-  const rowNum = Number((String((p.updates && p.updates.updatedRange) || p.updatedRange || '').match(/!?[A-Z]+(\d+)/) || [])[1]);
-  if (!rowNum) throw { code: 'tool_error', message: 'The row was sent but the sheet didn\'t say where it landed. Press Refresh to check.' };
+  const landed = String((p.updates && p.updates.updatedRange) || p.updatedRange || '');
+  const m = landed.match(/!([A-Z]+)(\d+)/);
+  if (!m) throw { code: 'tool_error', message: 'The row was sent but the sheet didn\'t say where it landed.', reread: true };
+  const rowNum = Number(m[2]);
+  if (m[1] !== 'A' || rowNum !== last + 1) throw { code: 'tool_error', message: `The new row landed at ${landed.replace(/^.*!/, '')} instead of row ${last + 1}.`, reread: true };
   const after = await readFilmRow(H, rowNum);
   if (String(after.id) !== String(id) || normTitle(after.title) !== normTitle(fields.title)) throw { code: 'tool_error', message: `The new row (${rowNum}) doesn't read back as expected. Press Refresh to check the sheet.` };
   const again = (await idColumn(H)).filter(r => String(r[0] ?? '').trim() === String(id)).length;
@@ -1106,10 +1113,11 @@ async function appendFilm(fields) {
   return after;
 }
 
+const UNSURE = ['server_unavailable', 'upstream_error', 'cancelled'];
 const saveFailed = async err => {
   if (err && err.partial) { await refresh(); notice('Only partly saved: ' + err.message, 'error'); return; }
-  const unsure = err && (err.code === 'server_unavailable' || err.code === 'upstream_error' || err.code === 'cancelled');
-  if (unsure) { notice('The save may or may not have gone through. Checking your sheet now so nothing is saved twice.', 'error'); await refresh(); return; }
+  if (err && err.reread) { await refresh(); notice('Check this row in your sheet: ' + err.message, 'error'); return; }
+  if (err && UNSURE.includes(err.code)) { await refresh(); notice('The save may or may not have gone through. Your sheet has just been re-read, so check it before saving again.', 'error'); return; }
   notice((err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + ((err && err.message) || 'unknown problem'), 'error');
 };
 const unseenFirst = rows => rows.find(r => !r.seen) || [...rows].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b._row - a._row)[0];
@@ -1193,7 +1201,7 @@ function pickTarget(candidates, year) {
 async function lfSubmit(e) {
   e.preventDefault();
   if (lf.busy) return;
-  if (!isLive()) { notice('Logging needs the live connection. ' + connectHint(), 'error'); return; }
+  if (!state.loaded || !isLive()) { notice('Logging needs the live connection. ' + connectHint(), 'error'); return; }
   const raw = $('lfTitle').value.trim();
   if (!raw) { $('lfTitle').focus(); return; }
   const date = logDay();
@@ -1242,6 +1250,7 @@ async function lfSubmit(e) {
 // Same title as something already in the sheet, different (or no) year: ask before adding a new film
 function lfAskSame(same) {
   const box = $('lfPlan');
+  lf.list = []; lf.active = -1; $('lfSugg').hidden = true; $('lfTitle').setAttribute('aria-expanded', 'false');
   box.hidden = false; box.dataset.kind = 'ask';
   box.textContent = '';
   const p = document.createElement('div');
@@ -1249,7 +1258,7 @@ function lfAskSame(same) {
   box.appendChild(p);
   const row = document.createElement('div'); row.className = 'lf-ask';
   for (const f of same.slice(0, 4)) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.dataset.use = f._row;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.dataset.use = f._uid;
     b.textContent = `Yes, the ${f.year ?? '–'} entry`;
     row.appendChild(b);
   }
@@ -1257,6 +1266,7 @@ function lfAskSame(same) {
   nb.textContent = 'No, it\'s a different film';
   row.appendChild(nb);
   box.appendChild(row);
+  box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 /* ---------- Edit / add dialog ---------- */
@@ -1337,15 +1347,17 @@ async function saveFilmDialog(e) {
       for (const f of FORM) if (f.k && data[f.k]) fields[f.k] = data[f.k];
       if (fields.plan) { fields.sorted = today(); if (fields.plan === 'Up next') { fields.order = maxOrder + 1; if (unseen) fields.status = 'Next Up'; } }
       const added = await appendFilm(fields);
-      state.lib.open = added._row;
+      state.lib.open = added._uid;
       setStatus('live', `Added “${added.title}” with id ${added.id}`);
     }
     notice('');
     $('filmDlg').close();
     renderAll();
   } catch (err) {
-    msg.textContent = (err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + ((err && err.message) || 'unknown problem');
-    if (err && (err.partial || err.code === 'server_unavailable' || err.code === 'upstream_error')) refresh();
+    msg.textContent = err && (err.partial || err.reread) ? 'Only partly saved or unconfirmed: ' + err.message
+      : err && UNSURE.includes(err.code) ? 'This may or may not have saved. Your sheet is being re-read; check it before saving again.'
+      : (err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + ((err && err.message) || 'unknown problem');
+    if (err && (err.partial || err.reread || UNSURE.includes(err.code))) refresh();
   } finally { btn.disabled = false; btn.textContent = film ? 'Save' : 'Add'; }
 }
 
@@ -1377,10 +1389,10 @@ $('libHead').addEventListener('click', e => {
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
 $('libBody').addEventListener('click', e => {
   const ed = e.target.closest('[data-edit]');
-  if (ed) { openFilmDialog(state.films.find(f => f._row === Number(ed.dataset.edit))); return; }
+  if (ed) { openFilmDialog(state.films.find(f => f._uid === Number(ed.dataset.edit))); return; }
   const tr = e.target.closest('tr.row'); if (!tr) return;
-  const row = Number(tr.dataset.row);
-  state.lib.open = state.lib.open === row ? null : row; renderLibrary();
+  const uid = Number(tr.dataset.uid);
+  state.lib.open = state.lib.open === uid ? null : uid; renderLibrary();
 });
 $('libMore').addEventListener('click', () => { state.lib.limit += 100; renderLibrary(); });
 $('dashPeriods').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state.dashYear = c.dataset.p; renderDashboard(); });
@@ -1402,15 +1414,15 @@ $('logForm').addEventListener('focusout', e => { if (!e.relatedTarget || !$('log
 for (const id of ['lfRating', 'lfPlatform', 'lfYear']) $(id).addEventListener('input', () => { lf.newFilm = false; lfDescribe(); });
 $('lfPlan').addEventListener('click', e => {
   const use = e.target.closest('[data-use]'), nf = e.target.closest('[data-newfilm]');
-  if (use) { lfSelect(state.films.find(f => f._row === Number(use.dataset.use))); $('logForm').requestSubmit(); }
+  if (use) { lfSelect(state.films.find(f => f._uid === Number(use.dataset.use))); $('logForm').requestSubmit(); }
   else if (nf) { lf.newFilm = true; $('logForm').requestSubmit(); }
 });
 $('upList').addEventListener('click', e => {
   const b = e.target.closest('[data-log]'); if (!b) return;
-  const f = state.films.find(x => x._row === Number(b.dataset.log)); if (!f) return;
+  const f = state.films.find(x => x._uid === Number(b.dataset.log)); if (!f) return;
   lfSelect(f); $('logForm').scrollIntoView({ block: 'center', behavior: 'smooth' }); $('lfRating').focus({ preventScroll: true });
 });
-$('recList').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openFilmDialog(state.films.find(f => f._row === Number(b.dataset.edit))); });
+$('recList').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openFilmDialog(state.films.find(f => f._uid === Number(b.dataset.edit))); });
 // Add / edit dialog
 $('addFilmBtn').addEventListener('click', () => { if (!state.loaded) { notice('Adding a film needs the live connection. ' + connectHint(), 'error'); return; } openFilmDialog(null); });
 $('filmForm').addEventListener('submit', saveFilmDialog);

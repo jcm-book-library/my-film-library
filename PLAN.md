@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stage 0 (sheet setup) and Stage 1 (theme, Log, Library, Dashboard tiles) done 2026-10-23.** Next: Stage 2 (writes).
+Status: **Stages 0, 1 and 2 (writes) done 2026-10-23.** Next: Stage 3 (Plan).
 
 ## Reference
 
@@ -144,3 +144,32 @@ positions don't matter.
   by title + year (data has a few year mismatches such as Life of Pi 2012/2013).
 - Archive rows 212+ have no Purchase or Platform dropdowns; consider adding them in
   Stage 2 when the edit dialog needs them.
+
+## Stage 2 (done 2026-10-23)
+
+- Log a film (Log tab): Today / Yesterday / pick a date, a search box over the sheet,
+  rating 1–10 and platform. A planned film (not yet seen) is updated in place
+  (Status, Date, Rating, Platform, and Plan/Order cleared if it was in Up next). A film
+  already seen is added as a new rewatch row (metadata copied). A new film is added
+  as a new row. A title that matches an existing film with a different year asks first.
+  Up next rows have a "Watched" button that preselects the film.
+- Edit / add dialog (Library detail row, Recent diary "Edit", "Add film"): writes only
+  changed cells. Changing Plan stamps Sorted, Up next takes the next Order and sets
+  Status to Next Up, clearing it sets Status back to Watchlist.
+- Write rules in the code: find the row by id right before writing (header row, id
+  column, row), check the row still holds the values the page loaded (stale check),
+  write one cell per call, read the row back and confirm, never delete or rewrite
+  rows. Text is written with a leading `'`, dates as yyyy-mm-dd, numbers as numbers,
+  dropdown values plain.
+- New rows: id = highest id + 1, appended with `append_values` anchored to the data
+  block (`A2:Z<last row>`), and the landing row is checked (must be column A, the next
+  row) before it is trusted. Rows without an id can't be edited from the app yet.
+- If several cells are being saved and a later one fails, the app says how many were
+  saved and re-reads the sheet. There is no rollback.
+- Tests: `node tests/stage1.test.mjs` (246 checks) and `node tests/stage2.test.mjs`
+  (545 checks against a fake sheet that records every call and diffs every cell).
+- Known limits: Order values for new Up next films come from the page's loaded copy of
+  the sheet, so two devices saving at once could give the same Order (Stage 3 will
+  renumber); the duplicate warning in the Add dialog uses the loaded copy too.
+- Not yet tried on the real sheet: the first real write should be one low-stakes entry
+  (for example logging a film) with the sheet open to watch it.

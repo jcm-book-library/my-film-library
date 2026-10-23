@@ -120,6 +120,9 @@ export class FakeSheet {
     if (tool === 'update_values') {
       const vals = input.values || [];
       let n = 0;
+      // remember which row (id/title) each write lands on at the moment of the call, so tests can prove the right row was hit
+      call.targets = [];
+      vals.forEach((vr, i) => { const rw = grid[R.r1 + i - 1] || []; call.targets.push({ row: R.r1 + i, id: rw[colOf('id')], title: rw[0] }); });
       vals.forEach((vr, i) => vr.forEach((v, j) => {
         const row = R.r1 + i, col = R.c1 + j;
         const info = { tool, range: input.range, values: vals, row, col: colLetter(col), colName: HEADERS[col], raw: v };
