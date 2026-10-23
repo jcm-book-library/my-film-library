@@ -397,6 +397,20 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---- Movie Library additions ---- */
+.lf{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.lf .lf-find{flex:1 1 280px;position:relative}
+.lf .lf-num{width:96px}.lf .lf-plat{width:150px}
+.lf .field input,.lf .field select{width:100%}
+.lf .btn-primary{padding:9px 18px}
+.lf-sugg{position:absolute;left:0;right:0;top:100%;z-index:5;list-style:none;margin:4px 0 0;padding:4px;background:var(--raise);border:1px solid var(--line);border-radius:10px;max-height:320px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.lf-sugg button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:8px 10px;border-radius:8px}
+.lf-sugg button:hover,.lf-sugg button.on,.lf-sugg button:focus-visible{background:color-mix(in srgb,var(--accent) 16%,var(--raise))}
+.lf-sugg .t{font-weight:600}.lf-sugg .y{color:var(--muted);font-size:13px;text-align:right}
+.lf-sugg .m{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.lf-plan{margin-top:12px;font-size:13px;color:var(--muted)}
+.lf-plan[data-kind="ask"]{color:var(--fg);padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
+.lf-ask{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@media (max-width:560px){.lf .lf-plat{flex:1 1 140px;width:auto}.lf .btn-primary{width:100%}}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wordmark{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,38px);letter-spacing:-.02em;line-height:1;margin:6px 0 0;color:#eef0fa}
 table.lib{min-width:0}
@@ -463,6 +477,30 @@ table.lib{min-width:0}
       </div>
     </section>
 
+    <section class="panel" aria-labelledby="logH" style="margin-bottom:20px">
+      <div class="panel-head">
+        <h2 id="logH">Log a film</h2>
+        <div class="logday" role="group" aria-label="Day you watched it">
+          <button type="button" data-day="0" aria-pressed="true">Today</button>
+          <button type="button" data-day="-1" aria-pressed="false">Yesterday</button>
+          <input type="date" id="logDate" aria-label="Pick a day">
+        </div>
+      </div>
+      <div class="logday-banner" id="logDayBanner" hidden></div>
+      <form class="lf" id="logForm" autocomplete="off">
+        <div class="field lf-find">
+          <label for="lfTitle">Film</label>
+          <input id="lfTitle" type="text" role="combobox" aria-expanded="false" aria-controls="lfSugg" aria-autocomplete="list" placeholder="Search your sheet, or type a new title">
+          <ul class="lf-sugg" id="lfSugg" role="listbox" hidden></ul>
+        </div>
+        <div class="field lf-num" id="lfYearWrap" hidden><label for="lfYear">Year</label><input id="lfYear" type="number" inputmode="numeric" min="1880" max="2100" placeholder="1994"></div>
+        <div class="field lf-num"><label for="lfRating">Rating</label><input id="lfRating" type="number" inputmode="numeric" min="1" max="10" step="1" placeholder="1–10"></div>
+        <div class="field lf-plat"><label for="lfPlatform">Platform</label><select id="lfPlatform"><option value="">–</option></select></div>
+        <button class="btn btn-primary" type="submit" id="lfSave">Log film</button>
+      </form>
+      <div class="lf-plan" id="lfPlan" hidden></div>
+    </section>
+
     <section class="panel" aria-labelledby="upH" style="margin-bottom:20px">
       <div class="panel-head"><h2 id="upH">Up next</h2><span class="muted small tnum" id="upNote"></span></div>
       <ol class="plan-list up-detail" id="upList"></ol>
@@ -480,6 +518,7 @@ table.lib{min-width:0}
       <select id="libGenre" aria-label="Genre"><option value="">All genres</option></select>
       <select id="libPlatform" aria-label="Platform"><option value="">All platforms</option></select>
       <select id="libOwned" aria-label="Owned"><option value="">Owned or not</option><option value="Owned">Owned</option><option value="To Purchase">To purchase</option><option value="None">No purchase noted</option></select>
+      <button class="btn btn-primary" id="addFilmBtn" type="button">Add film</button>
     </div>
     <div class="chips" id="libChips" role="group" aria-label="Status"></div>
     <div class="table-wrap">
@@ -508,6 +547,14 @@ table.lib{min-width:0}
     <section class="panel" aria-labelledby="dirH"><div class="panel-head"><h2 id="dirH">Top directors</h2><span class="muted" style="font-size:13px">Most films seen</span></div><ul class="mini-list" id="dirList"></ul></section>
   </div>
 </div></div>
+
+<dialog id="filmDlg" aria-labelledby="fdTitle">
+  <form id="filmForm" method="dialog">
+    <div class="dlg-head"><h2 id="fdTitle">Edit film</h2><button class="btn" type="button" id="fdClose">Close</button></div>
+    <div class="dlg-body" id="fdBody"></div>
+    <div class="dlg-foot"><span class="muted" id="fdMsg" style="font-size:13px;align-self:center"></span><span class="dlg-actions"><button class="btn btn-primary" type="submit" id="fdSave">Save</button></span></div>
+  </form>
+</dialog>
 
 <dialog id="gDlg" aria-labelledby="gTitle" style="width:min(520px,calc(100vw - 32px))">
   <form id="gForm" method="dialog">
@@ -594,27 +641,25 @@ const SEEN_STATUSES = ['Watched', '2026 Watched'];
 
 /* ---------- reading the 🎥 tab (columns found by header name, so moves in the sheet don't break this) ---------- */
 const normTitle = t => String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
+function filmFromRow(H, r, rowNum) {
+  const cell = k => { const i = H.indexOf(k); return i < 0 ? '' : String(r[i] ?? '').trim(); };
+  const year = num(cell('Year')), status = cell('Status'), title = cell('Title');
+  return {
+    _row: rowNum, id: cell('id'), title, year, yearText: cell('Year'),
+    rating: num(cell('Rating')), status, date: toDate(cell('Date')),
+    starring: cell('Starring'), director: cell('Director'), cinematography: cell('Cinematography'),
+    purchase: cell('Purchase'), genre: cell('Genre'), platform: cell('Platform'), release: cell('Release'),
+    notes: cell('Notes'), plan: cell('Plan'), order: num(cell('Order')), why: cell('Why'), sorted: toDate(cell('Sorted')),
+    key: normTitle(title) + '|' + (year ?? ''), seen: SEEN_STATUSES.includes(status)
+  };
+}
 function parseFilms(values) {
   const hi = values.findIndex(r => r.some(c => String(c).trim() === 'Title') && r.some(c => String(c).trim() === 'Status'));
   if (hi < 0) throw { code: 'tool_error', message: 'The 🎥 tab has no Title / Status header row' };
   const H = values[hi].map(h => String(h).trim());
-  const col = k => H.indexOf(k);
-  const cell = (r, k) => { const i = col(k); return i < 0 ? '' : String(r[i] ?? '').trim(); };
+  state.header = H; state.headerRow = hi + 1;
   const films = [];
-  values.slice(hi + 1).forEach((r, i) => {
-    const title = cell(r, 'Title');
-    if (!title) return;
-    const year = num(cell(r, 'Year'));
-    const status = cell(r, 'Status');
-    films.push({
-      _row: hi + 2 + i, id: cell(r, 'id'), title, year, yearText: cell(r, 'Year'),
-      rating: num(cell(r, 'Rating')), status, date: toDate(cell(r, 'Date')),
-      starring: cell(r, 'Starring'), director: cell(r, 'Director'), cinematography: cell(r, 'Cinematography'),
-      purchase: cell(r, 'Purchase'), genre: cell(r, 'Genre'), platform: cell(r, 'Platform'), release: cell(r, 'Release'),
-      notes: cell(r, 'Notes'), plan: cell(r, 'Plan'), order: num(cell(r, 'Order')), why: cell(r, 'Why'), sorted: toDate(cell(r, 'Sorted')),
-      key: normTitle(title) + '|' + (year ?? ''), seen: SEEN_STATUSES.includes(status)
-    });
-  });
+  values.slice(hi + 1).forEach((r, i) => { const f = filmFromRow(H, r, hi + 2 + i); if (f.title) films.push(f); });
   return films;
 }
 
@@ -666,7 +711,8 @@ function renderLog() {
   else if (!ups.length) list.innerHTML = '<li class="empty-state" style="display:block">Nothing in Up next yet.</li>';
   ups.slice(0, max).forEach((f, i) => {
     const li = document.createElement('li');
-    li.innerHTML = '<span class="n"></span><span><span class="t"></span> <span class="m"></span></span><span></span><span class="why"></span>';
+    li.innerHTML = '<span class="n"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"><button type="button" data-log="">Watched</button></span><span class="why"></span>';
+    li.querySelector('[data-log]').dataset.log = f._row;
     li.querySelector('.n').textContent = i + 1;
     li.querySelector('.t').textContent = f.title;
     li.querySelector('.m').textContent = [f.year, f.genre, f.platform, directors(f)[0]].filter(Boolean).join(' · ');
@@ -685,6 +731,8 @@ function renderLog() {
     li.querySelector('.t').textContent = f.title;
     li.querySelector('.sub').textContent = [shortDate(f.date), f.platform].filter(Boolean).join(' · ');
     li.querySelector('.r').textContent = f.rating != null ? f.rating + '/10' : '';
+    const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'linkbtn'; eb.textContent = 'Edit'; eb.dataset.edit = f._row; eb.style.marginLeft = '10px';
+    li.querySelector('.r').appendChild(eb);
     rl.appendChild(li);
   }
   $('recNote').textContent = state.loaded ? `${fmt(d.length)} dated in total` : '';
@@ -779,7 +827,8 @@ function detailRow(f) {
     ['Purchase', f.purchase], ['Release', f.release], ['Plan', f.plan ? f.plan + (f.plan === 'Up next' && f.order ? ' #' + f.order : '') : ''], ['Why', f.why], ['Notes', f.notes],
     ['Row · id', `${f._row} · ${f.id || 'none yet'}`]].filter(([, v]) => v);
   const others = (state.byKey.get(f.key) || []).filter(o => o !== f);
-  td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><dl class="kv"></dl></div>';
+  td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><div><dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="">Edit film</button></div></div></div>';
+  td.querySelector('[data-edit]').dataset.edit = f._row;
   const ul = td.querySelector('.others');
   if (!others.length) ul.innerHTML = '<li>No other entries for this film.</li>';
   for (const o of others) {
@@ -953,9 +1002,364 @@ function renderAll() {
   document.title = state.settings.appName;
   $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' });
   fillFilters();
+  fillLogPlatforms();
   renderLog();
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-dashboard').hidden) renderDashboard();
+}
+
+/* ---------- Stage 2: writing to the 🎥 tab ----------
+   Rules: the row is found by id right before every write, only changed cells are written (one cell per call),
+   text goes in with a leading ' so Sheets keeps it as text, dates go in as yyyy-mm-dd, numbers as numbers.
+   The row must still hold the values this page loaded, and is read back afterwards to confirm. Rows are never deleted or rewritten. */
+const STATUS_OPTS = ['Watched', 'Watchlist', 'Next Up', 'Rewatch', 'Watching', 'Coming Soon', 'In Development', 'Unavailable', 'DNF', '2026 Watched'];
+const GENRES = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Historical', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci Fi', 'Thriller', 'War'];
+const PLATFORMS = ['Airplane', 'Apple TV', 'Cinema', 'Disney+', 'FTA', 'Netflix', 'Paramount', 'Physical', 'Plex', 'Prime', 'Stan'];
+const ALL = {
+  id: { col: 'id', t: 'num' }, title: { col: 'Title', t: 'text' }, year: { col: 'Year', t: 'num' }, rating: { col: 'Rating', t: 'num' },
+  status: { col: 'Status', t: 'sel' }, date: { col: 'Date', t: 'date' }, starring: { col: 'Starring', t: 'text' }, director: { col: 'Director', t: 'text' },
+  cinematography: { col: 'Cinematography', t: 'text' }, purchase: { col: 'Purchase', t: 'sel' }, genre: { col: 'Genre', t: 'sel' }, platform: { col: 'Platform', t: 'sel' },
+  release: { col: 'Release', t: 'text' }, notes: { col: 'Notes', t: 'text' }, plan: { col: 'Plan', t: 'sel' }, order: { col: 'Order', t: 'num' },
+  why: { col: 'Why', t: 'text' }, sorted: { col: 'Sorted', t: 'date' }
+};
+const colLetter = i => { let s = ''; i++; while (i) { const r = (i - 1) % 26; s = String.fromCharCode(65 + r) + s; i = Math.floor((i - 1) / 26); } return s; };
+// What goes into the cell
+function cellValue(f, v) {
+  if (v == null || String(v).trim() === '') return '';
+  v = String(v).trim();
+  if (f.t === 'num') { const n = num(v); return n == null ? '' : n; }
+  if (f.t === 'date') return toDate(v) || '';
+  if (f.t === 'sel') return v;
+  return "'" + v;
+}
+// What the value looks like once it has been through the sheet (the same shape filmFromRow gives)
+function norm(f, v) {
+  if (v == null || String(v).trim() === '') return f.t === 'num' || f.t === 'date' ? null : '';
+  v = String(v).trim();
+  if (f.t === 'num') return num(v);
+  if (f.t === 'date') return toDate(v);
+  return v;
+}
+const sameVal = (f, a, b) => { a = norm(f, a); b = norm(f, b); return a === b || (a == null && b === '') || (a === '' && b == null); };
+const stale = msg => ({ code: 'tool_error', message: msg + ' Press Refresh and try again.' });
+const rekey = f => { f.key = normTitle(f.title) + '|' + (f.year ?? ''); f.yearText = f.year == null ? f.yearText : String(f.year); f.seen = SEEN_STATUSES.includes(f.status); };
+
+async function sheetHeader() {
+  const hr = state.headerRow;
+  const H = ((await readRange(`${FILMS_TAB}!A${hr}:Z${hr}`))[0] || []).map(h => String(h).trim());
+  for (const k of ['Title', 'Status', 'id']) if (H.indexOf(k) !== state.header.indexOf(k)) throw stale('The sheet\'s columns have moved since this page loaded.');
+  return H;
+}
+async function idColumn(H) {
+  const L = colLetter(H.indexOf('id'));
+  return readRange(`${FILMS_TAB}!${L}1:${L}6000`);
+}
+async function locateRow(id) {
+  if (!id) throw { code: 'tool_error', message: 'This row has no id yet, so it can\'t be changed from here. Give it one in the sheet (column N), then press Refresh.' };
+  const H = await sheetHeader();
+  const ids = await idColumn(H);
+  const hits = ids.map((r, i) => String(r[0] ?? '').trim() === String(id) ? i + 1 : 0).filter(Boolean);
+  if (hits.length !== 1) throw { code: 'tool_error', message: hits.length ? `Id ${id} appears ${hits.length} times in the sheet.` : `Id ${id} isn't in the sheet any more. Press Refresh.` };
+  return { H, row: hits[0] };
+}
+const readFilmRow = async (H, row) => filmFromRow(H, (await readRange(`${FILMS_TAB}!A${row}:Z${row}`))[0] || [], row);
+const putCell = (range, value) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range, values: [[value]] }, { cache: false });
+
+// Change some cells of one film. `changes` maps field -> new value; only cells that differ are written.
+async function updateFilm(film, changes) {
+  const keys = Object.keys(changes).filter(k => ALL[k] && !sameVal(ALL[k], film[k], changes[k]));
+  if (!keys.length) return 0;
+  const { H, row } = await locateRow(film.id);
+  const cur = await readFilmRow(H, row);
+  if (normTitle(cur.title) !== normTitle(film.title)) throw stale(`“${film.title}” was changed or moved in the sheet.`);
+  for (const k of keys) if (!sameVal(ALL[k], cur[k], film[k])) throw stale(`${ALL[k].col} for “${film.title}” was changed in the sheet since this page loaded.`);
+  let wrote = 0;
+  try {
+    for (const k of keys) {
+      const c = H.indexOf(ALL[k].col);
+      if (c < 0) throw { code: 'tool_error', message: `The sheet has no ${ALL[k].col} column.` };
+      await putCell(`${FILMS_TAB}!${colLetter(c)}${row}`, cellValue(ALL[k], changes[k]));
+      wrote++;
+    }
+  } catch (err) {
+    if (!wrote) throw err;
+    throw { code: 'tool_error', partial: true, message: `${wrote} of ${keys.length} changes to “${film.title}” were saved before a problem (${(err && err.message) || explain(err)}). The sheet is being re-read so you can see where the row stands.` };
+  }
+  const after = await readFilmRow(H, row);
+  for (const k of keys) if (!sameVal(ALL[k], after[k], changes[k])) throw { code: 'tool_error', message: `${ALL[k].col} didn't save as expected (the sheet shows “${after[k] ?? ''}”). Press Refresh to check.` };
+  for (const k of Object.keys(ALL)) if (!keys.includes(k) && !sameVal(ALL[k], after[k], cur[k])) throw { code: 'tool_error', message: `${ALL[k].col} changed unexpectedly. Press Refresh to check the row.` };
+  Object.assign(film, after);
+  derive();
+  return keys.length;
+}
+
+// Add one film as a new row at the bottom with the next id
+async function appendFilm(fields) {
+  const H = await sheetHeader();
+  const ids = (await idColumn(H)).map(r => num(r[0])).filter(n => n != null);
+  const id = Math.max(0, ...ids) + 1;
+  const vals = [];
+  for (const [k, v] of Object.entries({ ...fields, id })) {
+    const f = ALL[k], c = f ? H.indexOf(f.col) : -1;
+    if (c < 0) continue;
+    const cv = cellValue(f, v);
+    if (cv !== '') vals[c] = cv;
+  }
+  const row = Array.from({ length: vals.length }, (_, i) => vals[i] ?? '');
+  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${FILMS_TAB}!A1`, values: [row] }, { cache: false });
+  const p = (res && res.payload) || {};
+  const rowNum = Number((String((p.updates && p.updates.updatedRange) || p.updatedRange || '').match(/!?[A-Z]+(\d+)/) || [])[1]);
+  if (!rowNum) throw { code: 'tool_error', message: 'The row was sent but the sheet didn\'t say where it landed. Press Refresh to check.' };
+  const after = await readFilmRow(H, rowNum);
+  if (String(after.id) !== String(id) || normTitle(after.title) !== normTitle(fields.title)) throw { code: 'tool_error', message: `The new row (${rowNum}) doesn't read back as expected. Press Refresh to check the sheet.` };
+  const again = (await idColumn(H)).filter(r => String(r[0] ?? '').trim() === String(id)).length;
+  if (again !== 1) throw { code: 'tool_error', message: `Id ${id} now appears ${again} times in the sheet. Press Refresh and check the new rows.` };
+  state.films.push(after);
+  derive();
+  return after;
+}
+
+const saveFailed = async err => {
+  if (err && err.partial) { await refresh(); notice('Only partly saved: ' + err.message, 'error'); return; }
+  const unsure = err && (err.code === 'server_unavailable' || err.code === 'upstream_error' || err.code === 'cancelled');
+  if (unsure) { notice('The save may or may not have gone through. Checking your sheet now so nothing is saved twice.', 'error'); await refresh(); return; }
+  notice((err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + ((err && err.message) || 'unknown problem'), 'error');
+};
+const unseenFirst = rows => rows.find(r => !r.seen) || [...rows].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b._row - a._row)[0];
+
+/* ---------- Log a film ---------- */
+const lf = { sel: null, day: null, list: [], active: -1, busy: false };
+const logDay = () => lf.day || today();
+function setLogDay(d) {
+  lf.day = d && d !== today() ? d : null;
+  document.querySelectorAll('.logday button[data-day]').forEach(b => b.setAttribute('aria-pressed', String(addDays(today(), Number(b.dataset.day)) === logDay())));
+  $('logDate').value = lf.day || '';
+  const ban = $('logDayBanner');
+  ban.hidden = !lf.day;
+  if (lf.day) ban.textContent = `Logging for ${fromIso(lf.day).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}, not today.`;
+  lfDescribe();
+}
+function platformOptions(extra) {
+  return [...new Set([...PLATFORMS, ...state.films.map(f => f.platform).filter(Boolean), extra].filter(Boolean))].sort();
+}
+function fillLogPlatforms() {
+  const sel = $('lfPlatform'), cur = sel.value;
+  sel.innerHTML = '<option value="">–</option>' + platformOptions().map(p => `<option>${esc(p)}</option>`).join('');
+  sel.value = cur;
+}
+function suggestions(q) {
+  const n = normTitle(q);
+  if (!n) return [];
+  const out = [];
+  for (const rows of state.byKey.values()) {
+    const t = normTitle(rows[0].title);
+    if (!t.includes(n)) continue;
+    out.push({ film: unseenFirst(rows), rank: (t.startsWith(n) ? 0 : 2) + (rows.some(r => !r.seen) ? 0 : 1) });
+  }
+  return out.sort((a, b) => a.rank - b.rank || a.film.title.localeCompare(b.film.title)).slice(0, 8).map(x => x.film);
+}
+function suggMeta(f) {
+  if (!f.seen) return [f.status || 'Not seen', f.plan === 'Up next' && f.order ? 'Up next #' + f.order : ''].filter(Boolean).join(' · ');
+  return ['Seen', f.rating != null ? 'rated ' + f.rating : '', f.date ? showDate(f.date) : ''].filter(Boolean).join(' · ') + ' · logs as a rewatch';
+}
+function renderSugg() {
+  const ul = $('lfSugg');
+  ul.textContent = '';
+  lf.list = lf.sel ? [] : suggestions($('lfTitle').value);
+  ul.hidden = !lf.list.length;
+  $('lfTitle').setAttribute('aria-expanded', String(!ul.hidden));
+  lf.list.forEach((f, i) => {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'option');
+    li.innerHTML = '<button type="button"><span class="t"></span><span class="y"></span><span class="m"></span></button>';
+    li.querySelector('.t').textContent = f.title;
+    li.querySelector('.y').textContent = f.year ?? f.yearText;
+    li.querySelector('.m').textContent = suggMeta(f);
+    li.firstChild.dataset.i = i;
+    if (i === lf.active) li.firstChild.classList.add('on');
+    ul.appendChild(li);
+  });
+}
+function lfSelect(film) {
+  lf.sel = film; lf.list = []; lf.active = -1;
+  $('lfTitle').value = film.title;
+  $('lfSugg').hidden = true; $('lfTitle').setAttribute('aria-expanded', 'false');
+  if (film.platform && !$('lfPlatform').value) $('lfPlatform').value = film.platform;
+  lfDescribe();
+}
+function lfDescribe() {
+  const box = $('lfPlan'), raw = $('lfTitle').value.trim();
+  $('lfYearWrap').hidden = !!lf.sel || !raw;
+  box.hidden = !raw;
+  box.dataset.kind = '';
+  if (!raw) { box.textContent = ''; return; }
+  const when = lf.day ? showDate(lf.day) : 'today';
+  const f = lf.sel;
+  if (f && !f.seen) box.textContent = `Marks “${f.title}” (${f.year ?? '–'}) as watched ${when}${f.plan === 'Up next' ? ' and takes it off Up next' : ''}. Only its Status, Date${$('lfRating').value ? ', Rating' : ''}${$('lfPlatform').value ? ', Platform' : ''}${f.plan ? ' and Plan' : ''} cells change.`;
+  else if (f) box.textContent = `You've seen “${f.title}” (${f.year ?? '–'}) before. This adds a new row for ${when} as a rewatch.`;
+  else box.textContent = `New film: adds a row for “${raw}” watched ${when}.`;
+}
+function pickTarget(candidates, year) {
+  const exact = year == null ? [] : candidates.filter(f => f.year === year);
+  return exact.length ? unseenFirst(exact) : null;
+}
+async function lfSubmit(e) {
+  e.preventDefault();
+  if (lf.busy) return;
+  if (!isLive()) { notice('Logging needs the live connection. ' + connectHint(), 'error'); return; }
+  const raw = $('lfTitle').value.trim();
+  if (!raw) { $('lfTitle').focus(); return; }
+  const date = logDay();
+  if (date > today()) { notice('That date is in the future.', 'error'); return; }
+  const rText = $('lfRating').value.trim(), rating = rText ? Number(rText) : null;
+  if (rating != null && !(Number.isInteger(rating) && rating >= 1 && rating <= 10)) { notice('Rating is a whole number from 1 to 10.', 'error'); $('lfRating').focus(); return; }
+  const platform = $('lfPlatform').value, year = num($('lfYear').value);
+  let sel = lf.sel;
+  if (!sel) {
+    const same = state.films.filter(f => normTitle(f.title) === normTitle(raw));
+    const hit = pickTarget(same, year);
+    if (hit) sel = hit;
+    else if (same.length && !lf.newFilm) { lfAskSame(same); return; }
+  }
+  lf.busy = true;
+  const btn = $('lfSave'), old = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    let title = raw;
+    if (sel && !sel.seen) {
+      const ch = { status: 'Watched', date };
+      if (rating != null) ch.rating = rating;
+      if (platform) ch.platform = platform;
+      if (sel.plan) ch.plan = '';
+      if (sel.order != null) ch.order = null;
+      await updateFilm(sel, ch);
+      title = sel.title;
+    } else if (sel) {
+      await appendFilm({ title: sel.title, year: sel.year, starring: sel.starring, director: sel.director, cinematography: sel.cinematography, genre: sel.genre, purchase: sel.purchase, platform: platform || sel.platform, status: 'Watched', date, rating });
+      title = sel.title;
+    } else {
+      await appendFilm({ title: raw, year, status: 'Watched', date, rating, platform });
+    }
+    lf.sel = null; lf.newFilm = false;
+    $('lfTitle').value = ''; $('lfRating').value = ''; $('lfYear').value = ''; $('lfPlatform').value = '';
+    notice('');
+    renderAll();
+    lfDescribe();
+    setStatus('live', `Logged “${title}” on ${showDate(date)} · ` + new Date().toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }));
+  } catch (err) {
+    await saveFailed(err);
+  } finally {
+    lf.busy = false; btn.disabled = false; btn.textContent = old;
+  }
+}
+// Same title as something already in the sheet, different (or no) year: ask before adding a new film
+function lfAskSame(same) {
+  const box = $('lfPlan');
+  box.hidden = false; box.dataset.kind = 'ask';
+  box.textContent = '';
+  const p = document.createElement('div');
+  p.textContent = `“${same[0].title}” is already in your sheet (${[...new Set(same.map(f => f.year ?? '–'))].join(', ')}). Is it the same film?`;
+  box.appendChild(p);
+  const row = document.createElement('div'); row.className = 'lf-ask';
+  for (const f of same.slice(0, 4)) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.dataset.use = f._row;
+    b.textContent = `Yes, the ${f.year ?? '–'} entry`;
+    row.appendChild(b);
+  }
+  const nb = document.createElement('button'); nb.type = 'button'; nb.className = 'btn btn-primary'; nb.dataset.newfilm = '1';
+  nb.textContent = 'No, it\'s a different film';
+  row.appendChild(nb);
+  box.appendChild(row);
+}
+
+/* ---------- Edit / add dialog ---------- */
+const FORM = [
+  { sec: 'Film' }, { k: 'title', w: 'w2', req: true, label: 'Title' }, { k: 'year', t: 'number', label: 'Year' }, { k: 'rating', t: 'number', label: 'Rating (1 to 10)' },
+  { k: 'status', t: 'select' }, { k: 'date', t: 'date', label: 'Watched on' }, { k: 'platform', t: 'select' }, { k: 'purchase', t: 'select' },
+  { k: 'genre', t: 'select' }, { k: 'release', label: 'Release (if upcoming)' },
+  { sec: 'People' }, { k: 'director', w: 'w2' }, { k: 'starring', w: 'w2' }, { k: 'cinematography', w: 'w2', label: 'Cinematography' },
+  { sec: 'Plan' }, { k: 'plan', t: 'select' }, { k: 'why', w: 'w2', label: 'Why it\'s on the list' }, { k: 'notes', t: 'area', w: 'w4' }
+];
+const OPTS = k => ({
+  status: STATUS_OPTS, purchase: ['', 'Owned', 'To Purchase'], plan: ['', 'Up next', 'Soon', 'Someday'],
+  genre: ['', ...new Set([...GENRES, ...state.films.map(f => f.genre).filter(Boolean)])].sort(),
+  platform: ['', ...platformOptions()]
+}[k]);
+let editing = null;
+function openFilmDialog(film) {
+  editing = film ? { film } : { film: null };
+  $('fdTitle').textContent = film ? 'Edit film' : 'Add a film';
+  $('fdSave').textContent = film ? 'Save' : 'Add';
+  $('fdMsg').textContent = film ? `Row ${film._row} · id ${film.id || 'none yet'}` : 'A new id is given when you save';
+  const body = $('fdBody');
+  body.textContent = '';
+  for (const f of FORM) {
+    if (f.sec) { const d = document.createElement('div'); d.className = 'sec-label'; d.textContent = f.sec; body.appendChild(d); continue; }
+    const wrap = document.createElement('div');
+    wrap.className = 'field ' + (f.w || '');
+    const id = 'fd-' + f.k;
+    const lab = document.createElement('label');
+    lab.htmlFor = id; lab.textContent = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
+    let val = film ? film[f.k] : (f.k === 'status' ? 'Watchlist' : '');
+    if (val == null) val = '';
+    let el;
+    if (f.t === 'select') {
+      el = document.createElement('select');
+      const opts = [...OPTS(f.k)];
+      if (!opts.includes(String(val))) opts.push(String(val));
+      for (const o of opts) { const op = document.createElement('option'); op.value = o; op.textContent = o || '–'; el.appendChild(op); }
+    } else if (f.t === 'area') el = document.createElement('textarea');
+    else { el = document.createElement('input'); el.type = f.t || 'text'; if (f.t === 'number') { el.inputMode = 'numeric'; el.step = f.k === 'year' ? 1 : 1; } }
+    el.id = id; el.name = f.k; el.value = String(val);
+    if (f.req) el.required = true;
+    wrap.append(lab, el);
+    body.appendChild(wrap);
+  }
+  $('filmDlg').showModal();
+}
+async function saveFilmDialog(e) {
+  e.preventDefault();
+  const msg = $('fdMsg');
+  if (!state.mcp || !isLive()) { msg.textContent = 'Saving needs the live connection to your sheet. ' + connectHint(); return; }
+  const els = $('filmForm').elements, data = {};
+  for (const f of FORM) if (f.k) data[f.k] = els[f.k].value.trim();
+  if (!data.title) { msg.textContent = 'A title is needed.'; return; }
+  if (data.rating && !(Number.isInteger(Number(data.rating)) && Number(data.rating) >= 1 && Number(data.rating) <= 10)) { msg.textContent = 'Rating is a whole number from 1 to 10.'; return; }
+  if (data.year && !(Number.isInteger(Number(data.year)) && Number(data.year) >= 1880 && Number(data.year) <= 2100)) { msg.textContent = 'Year should look like 1994.'; return; }
+  if (data.date && (!toDate(data.date) || toDate(data.date) > today())) { msg.textContent = 'That date isn\'t valid (or it\'s in the future).'; return; }
+  const film = editing.film;
+  const maxOrder = Math.max(0, ...state.films.map(f => f.order || 0));
+  const unseen = !SEEN_STATUSES.includes(data.status);
+  const btn = $('fdSave'); btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    if (film) {
+      const changes = {};
+      for (const f of FORM) if (f.k && !sameVal(ALL[f.k], film[f.k], data[f.k])) changes[f.k] = data[f.k];
+      // Changing the plan stamps the date; Up next joins the end of the list and sets Status to Next Up
+      if ('plan' in changes) {
+        changes.sorted = today();
+        if (changes.plan === 'Up next') { changes.order = maxOrder + 1; if (unseen && !('status' in changes) && film.status !== 'Next Up') changes.status = 'Next Up'; }
+        else { if (film.order != null) changes.order = null; if (film.status === 'Next Up' && !('status' in changes)) changes.status = 'Watchlist'; }
+      }
+      const n = await updateFilm(film, changes);
+      setStatus('live', n ? `Saved ${n} change${n > 1 ? 's' : ''} to “${data.title}”` : 'No changes to save');
+    } else {
+      const dup = state.films.find(f => f.key === normTitle(data.title) + '|' + (num(data.year) ?? ''));
+      if (dup && !editing.dupAck) { editing.dupAck = true; msg.textContent = `“${dup.title}” (${dup.year ?? '–'}) is already in the sheet (row ${dup._row}). Press Add again to add another row.`; return; }
+      const fields = {};
+      for (const f of FORM) if (f.k && data[f.k]) fields[f.k] = data[f.k];
+      if (fields.plan) { fields.sorted = today(); if (fields.plan === 'Up next') { fields.order = maxOrder + 1; if (unseen) fields.status = 'Next Up'; } }
+      const added = await appendFilm(fields);
+      state.lib.open = added._row;
+      setStatus('live', `Added “${added.title}” with id ${added.id}`);
+    }
+    notice('');
+    $('filmDlg').close();
+    renderAll();
+  } catch (err) {
+    msg.textContent = (err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + ((err && err.message) || 'unknown problem');
+    if (err && (err.partial || err.code === 'server_unavailable' || err.code === 'upstream_error')) refresh();
+  } finally { btn.disabled = false; btn.textContent = film ? 'Save' : 'Add'; }
 }
 
 /* ---------- wiring ---------- */
@@ -985,12 +1389,45 @@ $('libHead').addEventListener('click', e => {
 });
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
 $('libBody').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { openFilmDialog(state.films.find(f => f._row === Number(ed.dataset.edit))); return; }
   const tr = e.target.closest('tr.row'); if (!tr) return;
   const row = Number(tr.dataset.row);
   state.lib.open = state.lib.open === row ? null : row; renderLibrary();
 });
 $('libMore').addEventListener('click', () => { state.lib.limit += 100; renderLibrary(); });
 $('dashPeriods').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state.dashYear = c.dataset.p; renderDashboard(); });
+// Log a film
+document.querySelectorAll('.logday button[data-day]').forEach(b => b.addEventListener('click', () => setLogDay(addDays(today(), Number(b.dataset.day)))));
+$('logDate').addEventListener('change', e => setLogDay(toDate(e.target.value)));
+$('logForm').addEventListener('submit', lfSubmit);
+$('lfTitle').addEventListener('input', () => { lf.sel = null; lf.newFilm = false; lf.active = -1; renderSugg(); lfDescribe(); });
+$('lfTitle').addEventListener('focus', () => { if (!lf.sel) renderSugg(); });
+$('lfTitle').addEventListener('keydown', e => {
+  const n = lf.list.length;
+  if (e.key === 'ArrowDown' && n) { e.preventDefault(); lf.active = (lf.active + 1) % n; renderSugg(); }
+  else if (e.key === 'ArrowUp' && n) { e.preventDefault(); lf.active = (lf.active - 1 + n) % n; renderSugg(); }
+  else if (e.key === 'Enter' && n && lf.active >= 0) { e.preventDefault(); lfSelect(lf.list[lf.active]); }
+  else if (e.key === 'Escape' && n) { lf.list = []; lf.active = -1; $('lfSugg').hidden = true; }
+});
+$('lfSugg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) lfSelect(lf.list[Number(b.dataset.i)]); });
+$('logForm').addEventListener('focusout', e => { if (!e.relatedTarget || !$('logForm').contains(e.relatedTarget)) { $('lfSugg').hidden = true; $('lfTitle').setAttribute('aria-expanded', 'false'); } });
+for (const id of ['lfRating', 'lfPlatform', 'lfYear']) $(id).addEventListener('input', () => { lf.newFilm = false; lfDescribe(); });
+$('lfPlan').addEventListener('click', e => {
+  const use = e.target.closest('[data-use]'), nf = e.target.closest('[data-newfilm]');
+  if (use) { lfSelect(state.films.find(f => f._row === Number(use.dataset.use))); $('logForm').requestSubmit(); }
+  else if (nf) { lf.newFilm = true; $('logForm').requestSubmit(); }
+});
+$('upList').addEventListener('click', e => {
+  const b = e.target.closest('[data-log]'); if (!b) return;
+  const f = state.films.find(x => x._row === Number(b.dataset.log)); if (!f) return;
+  lfSelect(f); $('logForm').scrollIntoView({ block: 'center', behavior: 'smooth' }); $('lfRating').focus({ preventScroll: true });
+});
+$('recList').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openFilmDialog(state.films.find(f => f._row === Number(b.dataset.edit))); });
+// Add / edit dialog
+$('addFilmBtn').addEventListener('click', () => { if (!state.loaded) { notice('Adding a film needs the live connection. ' + connectHint(), 'error'); return; } openFilmDialog(null); });
+$('filmForm').addEventListener('submit', saveFilmDialog);
+$('fdClose').addEventListener('click', () => $('filmDlg').close());
 $('refreshBtn').addEventListener('click', () => state.google && !google_.valid() ? googleConnect() : refresh());
 
 /* ---------- Google Sheets direct (GitHub Pages and other hosts outside claude.ai) ----------
@@ -1072,6 +1509,7 @@ $('gForm').addEventListener('submit', e => {
 });
 
 renderAll();
+setLogDay(null);
 try { const t = localStorage.getItem(TAB_KEY); if (['library', 'dashboard'].includes(t)) showTab(t); } catch (e) {}
 setStatus('loading', 'Connecting to your sheet…');
 (async () => {
