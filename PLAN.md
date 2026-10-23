@@ -1,7 +1,6 @@
 # Plan
 
-Status: **proposal, awaiting the owner's OK.** Nothing has been written to the
-sheet yet.
+Status: **Stage 0 (sheet setup) done 2026-10-23.** Next: Stage 1.
 
 ## Reference
 
@@ -77,10 +76,39 @@ chips), `Order`, `Why`, `Sorted` (date). Status stays in sync with Plan
 5. Tools (lucky dip, Do I own this?, stalled, goal planner, year in review,
    recommendations) and Discover (on this day, highlight of the day).
 
-## Open questions
+## Decisions (2026-10-23)
 
-- App name for the wordmark.
-- Data model A, B or C.
-- Rows 98–103 and row 880.
-- Does Plex count as owned?
-- Fix broken accents in Stage 0?
+- Data model **A**.
+- App name **Movie Library** (text wordmark until a brand kit arrives).
+- Rows 98–103 (six untagged sci-fi titles) and row 880 (empty): **remove**.
+- "Do I own this?" counts Purchase = Owned, Platform = Physical **and Plex**.
+- Broken accents: **fix**.
+
+## Sheet changes made on 2026-10-23
+
+- Backup: `🎥 backup 2026-10-23 (before ids)` (sheetId 1145566128), an exact
+  copy before any change (checked by script).
+- Added columns N–R: `id`, `Plan`, `Order`, `Why`, `Sorted`, formatted like
+  the tab. `Plan` has an Up next / Soon / Someday dropdown with chips.
+- `id`: plain numbers (no formulas), equal to the row number minus 2 at the
+  time of assignment, so 1–2291 with gaps at 96–101 and 878 (the rows to be
+  removed). New rows get the highest id + 1. Duplicate ids turn red.
+- The 13 Next Up rows (105–117) got Plan = Up next, Order 1–13 in sheet order.
+- Added 500 spare rows (to 2793) with the tab's formats and the Status,
+  Purchase, Genre and Platform dropdowns (chips); the filter now covers A2:R2793.
+- Fixed 62 broken-accent cells in Title and Director (e.g. `CuarÃ³n` → `Cuarón`).
+- New tab `🎥 Settings` (sheetId 1338861386): yearlyGoal 120, upNextMax 10,
+  deckBatch 10, somedayResurfaceDays 365, stalledDays 14, appName.
+- Read back after each step and compared by script: A–M unchanged apart from
+  the 62 fixes; ids unique.
+
+**Still to do by hand:** delete rows 98–103 and 880. The connector's row delete
+was blocked by a permission check; the ids don't depend on row positions, so
+deleting them is safe at any time.
+
+## Notes for building the app
+
+- Trim titles: some have trailing spaces (`Babel `).
+- Archive rows (212+) have Status and Genre dropdowns but no Purchase or
+  Platform dropdowns; that's how the sheet was, and was left alone.
+- Some Director cells list several names separated by commas without spaces.
