@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stage 0 (sheet setup) done 2026-10-23.** Next: Stage 1.
+Status: **Stage 0 (sheet setup) and Stage 1 (theme, Log, Library, Dashboard tiles) done 2026-10-23.** Next: Stage 2 (writes).
 
 ## Reference
 
@@ -80,7 +80,7 @@ chips), `Order`, `Why`, `Sorted` (date). Status stays in sync with Plan
 
 - Data model **A**.
 - App name **Movie Library** (text wordmark until a brand kit arrives).
-- Rows 98–103 (six untagged sci-fi titles) and row 880 (empty): **remove**.
+- Rows 98–103 (six untagged sci-fi titles): kept as Watchlist items. Row 880 (empty): deleted.
 - "Do I own this?" counts Purchase = Owned, Platform = Physical **and Plex**.
 - Broken accents: **fix**.
 
@@ -102,9 +102,10 @@ chips), `Order`, `Why`, `Sorted` (date). Status stays in sync with Plan
 - Read back after each step and compared by script: A–M unchanged apart from
   the 62 fixes; ids unique.
 
-**Still to do by hand:** delete rows 98–103 and 880. The connector's row delete
-was blocked by a permission check; the ids don't depend on row positions, so
-deleting them is safe at any time.
+**Rows 98–103 and 880:** row 880 was deleted by hand. Rows 98–103 turned out to
+be watchlist items, so they were kept with Status = Watchlist and given ids
+2292–2297 (the highest id so far is 2297). The app finds rows by id, so row
+positions don't matter.
 
 ## Notes for building the app
 
@@ -112,3 +113,34 @@ deleting them is safe at any time.
 - Archive rows (212+) have Status and Genre dropdowns but no Purchase or
   Platform dropdowns; that's how the sheet was, and was left alone.
 - Some Director cells list several names separated by commas without spaces.
+
+## Stage 1 (done 2026-10-23)
+
+- `app.html`: the book app's stylesheet and Proton Seasons theme (month colours
+  with drift), a text wordmark ("Movie Library", from 🎥 Settings `appName`), and
+  three tabs: Log, Library, Dashboard. Read-only.
+- Log: tiles (films this year vs goal, this month, average rating, last film),
+  Up next (first 10 by Order, with a "N more waiting" note), recent diary, coming soon.
+- Library: search, status chips with counts, genre / platform / owned filters,
+  sortable headers (third click returns to sheet order), detail rows that list the
+  other entries for the same film (a film = title + year).
+- Dashboard: year chips, tiles, films per month (Chart.js 4.4.1 from cdnjs, with a
+  plain bar fallback), rating distribution, decades, top directors.
+- Reads `'🎥'!A1:R6000` and `'🎥 Settings'!A1:C50` only. Columns are found by header
+  name. Dates are parsed from the sheet's `d-mmm-yyyy` display into `yyyy-mm-dd`.
+- No built-in snapshot of the films (the Pages site is public). Without a
+  connection the app shows an empty state.
+- Own storage keys: `mvl-google-token`, `mvl-tab`. The Client ID key `mbl_config`
+  is shared with the book app.
+- Tests: `node tests/stage1.test.mjs` (synthetic data, 246 checks at 1280 and 390 px).
+  Also run once against a copy of the real sheet: totals match the sheet counts.
+- GitHub Pages needs a one-time setup: the repo has no `main` content yet, so
+  merge this branch to `main` (or pick this branch as the Pages source) and enable
+  Pages on it.
+
+## Ideas for later stages
+
+- Rewatch detection and the Log's "log a film" flow need a rule for matching a film
+  by title + year (data has a few year mismatches such as Life of Pi 2012/2013).
+- Archive rows 212+ have no Purchase or Platform dropdowns; consider adding them in
+  Stage 2 when the edit dialog needs them.
