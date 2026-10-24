@@ -397,6 +397,7 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 .lf-plan{margin-top:12px;font-size:13px;color:var(--muted)}
 .lf-plan[data-kind="ask"]{color:var(--fg);padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
 .lf-ask{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@media (max-width:560px){.plan-list .acts button{min-height:40px;min-width:40px;padding:6px 12px}}
 @media (max-width:560px){.lf .lf-plat{flex:1 1 140px;width:auto}.lf .btn-primary{width:100%}}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wordmark{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,38px);letter-spacing:-.02em;line-height:1;margin:6px 0 0;color:#eef0fa}
@@ -1080,7 +1081,8 @@ async function locateRow(id) {
   return { H, row: hits[0] };
 }
 const readFilmRow = async (H, row) => filmFromRow(H, (await readRange(`${FILMS_TAB}!A${row}:Z${row}`))[0] || [], row);
-const putCell = (range, value) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: needSheet(), range, values: [[value]] }, { cache: false });
+let writesDone = 0;
+const putCell = async (range, value) => { const r = await state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: needSheet(), range, values: [[value]] }, { cache: false }); writesDone++; return r; };
 
 // Change some cells of one film. `changes` maps field -> new value; only cells that differ are written.
 async function updateFilm(film, changes) {
@@ -1127,6 +1129,7 @@ async function appendFilm(fields) {
   }
   const row = Array.from({ length: vals.length }, (_, i) => vals[i] ?? '');
   const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: needSheet(), range: `${FILMS_TAB}!A${state.headerRow}:Z${last}`, values: [row] }, { cache: false });
+  writesDone++;
   const p = (res && res.payload) || {};
   const landed = String((p.updates && p.updates.updatedRange) || p.updatedRange || '');
   const m = landed.match(/!([A-Z]+)(\d+)/);
@@ -1408,7 +1411,15 @@ const planUI = { limit: 50, whyOpen: null, deckSkipped: new Set(), deckDone: 0, 
 function planStatusLine() { setStatus('live', planQ.pending ? `Saving plan… (${planQ.pending})` : 'Plan saved'); }
 function planQueue(fn, onFail) {
   planQ.pending++; planStatusLine();
-  planQ.chain = planQ.chain.then(fn).catch(async err => { if (onFail) onFail(); await saveFailed(err); })
+  planQ.chain = planQ.chain.then(async () => {
+    const before = writesDone;
+    try { await fn(); }
+    catch (err) {
+      // something was already written for this change, so say so and re-read the sheet
+      if (writesDone > before && err && !err.partial && !err.reread) throw { code: 'tool_error', partial: true, message: `Some of the changes were saved before a problem (${(err && err.message) || explain(err)}). The sheet is being re-read so you can see where it stands.` };
+      throw err;
+    }
+  }).catch(async err => { if (onFail) onFail(); await saveFailed(err); })
     .finally(() => { planQ.pending--; planStatusLine(); renderAll(); });
   return planQ.chain;
 }
@@ -1422,7 +1433,7 @@ async function writeUpNextOrder(list) {
     if (Object.keys(ch).length) await updateFilm(f, ch);
   }
 }
-function setTier(film, tier) {
+function setTier(film, tier, fromDeck) {
   const id = film.id;
   return planQueue(async () => {
     const f = byId(id); if (!f) return;
@@ -1438,7 +1449,7 @@ function setTier(film, tier) {
     }
     await updateFilm(f, ch);
     if (wasUp || tier === 'Up next') await writeUpNextOrder(upNextList());
-  }, () => planUI.deckSkipped.delete(id));
+  }, () => { planUI.deckSkipped.delete(id); if (fromDeck) planUI.deckDone = Math.max(0, planUI.deckDone - 1); });
 }
 function moveUp(film, dir) {
   const id = film.id;
@@ -1457,9 +1468,12 @@ function saveWhy(film, text) {
 function rewatchNext(film) {
   const id = film.id;
   return planQueue(async () => {
-    const f = byId(id); if (!f) return;
+    const f = byId(id);
+    if (!f || !f.seen || (state.byKey.get(f.key) || []).some(o => !o.seen)) return;   // already queued or already planned
+    const last = Math.max(0, ...upNextList().map(x => x.order ?? 0));
     await appendFilm({ title: f.title, year: f.year, starring: f.starring, director: f.director, cinematography: f.cinematography, genre: f.genre, purchase: f.purchase,
-      platform: f.platform, status: 'Next Up', plan: 'Up next', order: upNextList().length + 1, sorted: today() });
+      platform: f.platform, status: 'Next Up', plan: 'Up next', order: last + 1, sorted: today() });
+    await writeUpNextOrder(upNextList());
   });
 }
 
@@ -1587,7 +1601,7 @@ function renderDeck() {
 }
 function deckPick(f, tier) {
   planUI.deckSkipped.add(f.id);
-  if (tier) { planUI.deckDone++; renderDeck(); setTier(f, tier); }
+  if (tier) { planUI.deckDone++; renderDeck(); setTier(f, tier, true); }
   else renderDeck();
 }
 

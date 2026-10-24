@@ -643,13 +643,14 @@ await scenario('G1 Rewatch next: visibility, one append, appears in Up next', BO
   eq(S + 'G Up next film: hidden', await openRow(page, 'Alder Gate'), { has: true, hidden: true });
   await openRow(page, 'Solo Seen');
   const before = fake.snapshot(), id = fake.maxId() + 1, newRow = fake.lastDataRow() + 1, upCount = modelOf(fake).up().length;
+  const maxOrder = 6;   // the fixture's Up next films are Ordered 1..6 (plus one with a blank Order)
   E.n0 = fake.calls.length;
   await page.click('#libBody .detail [data-rewatch]'); await settlePlan(page);
-  eq(S + 'G exactly one append, no updates', [APP_(fake, E.n0).length, UPD(fake, E.n0).length], [1, 0]);
-  eq(S + 'G appended raw row', APP_(fake, E.n0)[0].values[0], ["'Solo Seen", '', 'Next Up', '', "'Una Park, Q Lee", "'Una Park", "'Cam Era", 'Owned', 'Drama', 'Plex', '', 2000, '', id, 'Up next', upCount + 1, '', TODAY()]);
+  eq(S + 'G one append, then only the renumber of the owner-edited film (its Plan and Order)', [APP_(fake, E.n0).length, UPD(fake, E.n0).length], [1, 2]);
+  eq(S + 'G appended raw row', APP_(fake, E.n0)[0].values[0], ["'Solo Seen", '', 'Next Up', '', "'Una Park, Q Lee", "'Una Park", "'Cam Era", 'Owned', 'Drama', 'Plex', '', 2000, '', id, 'Up next', maxOrder + 1, '', TODAY()]);
   const o = fake.rowObj(newRow);
-  check(S + 'G stored types (id/Year/Order numbers, Sorted a date, Title text)', typeof o.id === 'number' && o.Year === 2000 && o.Order === upCount + 1 && JSON.stringify(o.Sorted) === JSON.stringify(D(TODAY())) && o.Title === 'Solo Seen', o);
-  eq(S + 'G only the new row changed', [...new Set(diffCells(before, fake.snapshot()).map(d => d.row))], [newRow]);
+  check(S + 'G stored types (id/Year/Order numbers, Sorted a date, Title text)', typeof o.id === 'number' && o.Year === 2000 && o.Order === maxOrder + 1 && JSON.stringify(o.Sorted) === JSON.stringify(D(TODAY())) && o.Title === 'Solo Seen', o);
+  eq(S + 'G only the new row and the owner-edited film changed', [...new Set(diffCells(before, fake.snapshot()).map(d => d.row))].sort((a, b) => a - b).length, 2);
   check(S + 'G the Watched row is untouched', JSON.stringify(fake.grid[rowOf(fake, 'Solo Seen') - 1]) === JSON.stringify(before.films[rowOf(fake, 'Solo Seen') - 1]));
   await goPlan(page);
   check(S + 'G film now appears in Up next', (await titles(page, '#planUp')).includes('Solo Seen'), await titles(page, '#planUp'));
