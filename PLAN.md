@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–2 merged to `main` (2026-10-23). Stage 3 (Plan) built and tested on the branch (2026-10-24).** Next: themes (Film Vault), then Stage 4.
+Status: **Stages 0–3 merged to `main`. Film Vault themes built 2026-10-24 (PR open).** Next: Stage 4 (Dashboard).
 
 ## Reference
 
@@ -214,3 +214,26 @@ positions don't matter.
   roundness, grain/glow, light/dark, reset, save as copy). Saved per device for now;
   syncing through 🎥 Settings later.
 - Fonts load on demand (only the active theme's two families).
+
+## Film Vault themes (built 2026-10-24)
+
+- Name Film Vault (🎥 Settings `appName` set to "Film Vault"), classic reel in the header,
+  favicon in the theme accent, new PNG icons (reel in #8fb8f2 on #0f1012).
+- 13 themes from `design/themes-board.html`; the app opens in the month's theme
+  (Oct Totoro, Sep No Country, Apr The Matrix; others as on the board), with ‹ › and a
+  menu to flick between themes, your saved copies and Default. Choice saved in
+  `mvl-theme` (this device).
+- Settings (gear): picker plus an editor for the active theme (colours, heading/text
+  font, roundness, grain, light/dark, live contrast badges, Reset, Save as a copy).
+  Stored in `mvl-theme-edits` and `mvl-theme-custom` on this device; sync later.
+- Only the active theme's fonts are loaded. All theme colours route through CSS
+  variables; status pills follow the theme.
+- Changes from the board for readability: True Romance's header gradient starts darker
+  and its reel is white; Indiana Jones's name gradient ends in orange-gold; Hateful
+  Eight's drips sit left of centre on wide screens.
+- Checked: every text item in 13 themes × 2 widths × 4 views measured against the
+  pixels behind it (≥ 4.5); `node tests/themes.test.mjs` (164) plus stages 1–3.
+- Built by a Sonnet helper from a written spec; reviewed by the lead (sheet code
+  unchanged, tests re-run, screenshots checked, real-data smoke run).
+- Not done yet: the alternate looks (one per film for now), syncing theme choices
+  through the sheet.

@@ -1,9 +1,13 @@
-# Movie Library
+# Film Vault
 
-My film diary, library and dashboard. The Google Sheet "Entertainment Tracker" (tab `🎥`) holds the data, and this app reads and writes it. Sister app to Jackets & Manuscripts (jcm-book-library/my-book-library).
+Film Vault is my film diary, library and dashboard. The Google Sheet "Entertainment Tracker" (tab `🎥`) holds the data, and this app reads and writes it. Sister app to Jackets & Manuscripts (jcm-book-library/my-book-library).
 
 - **Live site:** https://jcm-book-library.github.io/my-film-library/
 - **House rules:** https://github.com/jcm-book-library/control-room/blob/main/HOUSE-RULES.md
+
+## Themes and Settings
+The app opens in the current month's film theme (Jan Jurassic Park, Feb True Romance, Mar Indiana Jones, Apr The Matrix, May Star Wars, Jun Blade Runner, Jul The Hateful Eight, Aug Interstellar, Sep No Country for Old Men, Oct My Neighbour Totoro, Nov Project Hail Mary, Dec 12 Angry Men), with a plain Default. The palette button in the header opens the theme menu and the arrows flick through themes. The gear opens **Settings**, where the theme being worn can be edited (colours, heading and text fonts, roundness, grain, light or dark), reset, or saved as a copy under "Your themes". The design is in `design/themes-board.html`.
+Theme choices stay in this browser only: `mvl-theme` ("auto" or a theme id), `mvl-theme-edits` (changes per theme) and `mvl-theme-custom` (saved copies). Nothing about themes is written to the sheet.
 
 ## Files
 | File | What it is |
@@ -11,7 +15,7 @@ My film diary, library and dashboard. The Google Sheet "Entertainment Tracker" (
 | `app.html` | The app source. Edit this. The same file is published as the claude.ai artifact. |
 | `index.html` | Built from `app.html` for GitHub Pages. Rebuild it with `python3 tools/build-pages.py`. |
 | `manifest.webmanifest`, `icons/` | Home-screen install and icons. |
-| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`). They use made-up films, never real data. |
+| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3` and `themes`). They use made-up films, never real data. |
 | `PLAN.md` | Sheet findings, data model, decisions and stages. |
 | `CLAUDE.md` | Working notes for Claude sessions in this repo. |
 

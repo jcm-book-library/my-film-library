@@ -116,7 +116,7 @@ for (const size of ['laptop', 'phone']) {
     check(S + '1 only the two allowed ranges, each requested', calls.every(c => OK_RANGES.has(c.range)) && new Set(calls.map(c => c.range)).size === 2, calls.map(c => c.range));
     check(S + '1 no write calls', !calls.some(c => /update|append|clear|insert/.test(c.tool)));
     check(S + '1 no console errors / pageerrors', errors.length === 0, errors);
-    check(S + '1 app name from settings in title', (await page.title()) === 'Movie Library' && (await page.textContent('#wordmark')) === 'Movie Library');
+    check(S + '1 app name from settings in title', (await page.title()) === 'Film Vault' && (await page.textContent('#wordmark')) === 'Film Vault');
 
     // 3 Log
     eq(S + '3 tile: films this year', await page.textContent('#sYear'), String(E.yr.length));

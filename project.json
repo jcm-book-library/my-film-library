@@ -1,5 +1,5 @@
 {
-  "name": "Film Tracker",
+  "name": "Film Vault",
   "repo": "my-film-library",
   "purpose": "Film diary, library and dashboard (log, edit and add films) backed by the Entertainment Tracker Google Sheet; Plan, Tools and Discover come next.",
   "family": "Entertainment",
@@ -8,5 +8,5 @@
   "tags": [
     "media-tracker"
   ],
-  "updated": "2026-10-23"
+  "updated": "2026-10-24"
 }

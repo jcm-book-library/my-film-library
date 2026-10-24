@@ -1,4 +1,4 @@
-// In-memory fake of the Google Sheets tool surface the Movie Library uses (get_values / update_values / append_values),
+// In-memory fake of the Google Sheets tool surface the Film Vault uses (get_values / update_values / append_values),
 // built from a SYNTHETIC fixture (every film, person and id is invented). Cells are typed like Sheets with USER_ENTERED:
 //   number -> JS number, text -> JS string, date -> { date: 'yyyy-mm-dd' }, empty -> ''.
 // Every call is recorded in `calls`. Fault injection: dropWrites, mutateAfterLoad, failNext, failAll, appendLandsAt, beforeAppend.
@@ -227,6 +227,6 @@ export function buildSyntheticFixture() {
   mk({ title: '2012', year: 2009, rating: 5, status: 'Watched', genre: 'Sci Fi', director: 'Felix Moreau' });
   ['Crimson Harbour', 'Amber Lantern', 'Cobalt Garden', 'Pale Meridian', 'Iron Voyage', 'Ivory Station'].forEach((t, i) => mk({ title: t, year: 1960 + i * 7, rating: 7 - (i % 4), status: 'Watched', genre: ['Drama', 'Crime', 'Comedy'][i % 3], director: ['Mira Voss', 'Hana Seo'][i % 2] }));
   const films = [['', '', 'RATINGS'], HEADERS.slice(), ...rows];
-  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['appName', 'Movie Library', 'x']];
+  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['appName', 'Film Vault', 'x']];
   return { films, settings, names };
 }
