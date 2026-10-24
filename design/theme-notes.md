@@ -118,3 +118,4 @@ Hateful Eight great, Interstellar good, Totoro great, The Matrix excellent, Proj
 - Interstellar: the peach highlight became ice-planet blue (#9fc8ea).
 - Jurassic Park: rebuilt from the logo (black ground, yellow name bar edged in black, reel in a red disc with a yellow ring, white lettering
   outlined in red and black; yellow highlight, logo red second). Heading font Bevan with small capitals.
+- Months (owner, 2026-10-24): Totoro is October (live now), No Country for Old Men September, The Matrix April. One look per film for now.
