@@ -488,7 +488,7 @@ table.lib{min-width:0}
     </section>
 
     <section class="panel" aria-labelledby="upH" style="margin-bottom:20px">
-      <div class="panel-head"><h2 id="upH">Up next</h2><span class="muted small tnum" id="upNote"></span></div>
+      <div class="panel-head"><h2 id="upH">Up next</h2><span><span class="muted small tnum" id="upNote"></span> <button type="button" class="linkbtn" id="planLink">Plan</button></span></div>
       <ol class="plan-list up-detail" id="upList"></ol>
     </section>
 
@@ -506,7 +506,22 @@ table.lib{min-width:0}
       <select id="libOwned" aria-label="Owned"><option value="">Owned or not</option><option value="Owned">Owned</option><option value="To Purchase">To purchase</option><option value="None">No purchase noted</option></select>
       <button class="btn btn-primary" id="addFilmBtn" type="button">Add film</button>
     </div>
+    <div class="lib-mode" role="group" aria-label="Library view"><button type="button" data-mode="films" aria-pressed="true">Films</button><button type="button" data-mode="plan" aria-pressed="false">Plan</button></div>
     <div class="chips" id="libChips" role="group" aria-label="Status"></div>
+    <div id="planView" hidden>
+      <section class="panel" aria-labelledby="planUpH"><div class="panel-head"><h2 id="planUpH">Up next</h2><span class="muted small tnum" id="planUpNote"></span></div><ol class="plan-list up-detail" id="planUp"></ol></section>
+      <section class="panel deck" aria-labelledby="deckH" id="deckPanel">
+        <div class="panel-head"><h2 id="deckH">Sort deck</h2><span class="muted small tnum" id="deckNote"></span></div>
+        <div id="deckBody"></div>
+      </section>
+      <section class="panel" aria-labelledby="planSoonH"><div class="panel-head"><h2 id="planSoonH">Soon</h2><span class="muted small tnum" id="planSoonNote"></span></div><ol class="plan-list" id="planSoon"></ol></section>
+      <section class="panel" aria-labelledby="planBackH">
+        <div class="panel-head"><h2 id="planBackH">Your watchlist, in sheet order</h2><span class="muted small tnum" id="planBackNote"></span></div>
+        <p class="muted small" style="margin:-4px 0 10px">Watchlist and Rewatch films that aren't in Up next or Soon. Search and the filters above apply. Anything you don't pick stays unsorted until the deck shows it.</p>
+        <ol class="plan-list sheet-list" id="planBack"></ol>
+        <button class="btn" type="button" id="planMore" hidden>Show 50 more</button>
+      </section>
+    </div>
     <div class="table-wrap">
       <table class="lib">
         <thead><tr id="libHead"></tr></thead>
@@ -625,7 +640,7 @@ const state = {
   films: [], byKey: new Map(), seen: [],
   settings: { yearlyGoal: 120, upNextMax: 10, deckBatch: 10, somedayResurfaceDays: 365, stalledDays: 14, appName: 'Movie Library' },
   mcp: null, google: false, live: false, loaded: false, dashYear: null,
-  lib: { q: '', status: 'All', genre: '', platform: '', owned: '', sort: 'sheet', dir: 1, limit: 100, open: null }
+  lib: { mode: 'films', q: '', status: 'All', genre: '', platform: '', owned: '', sort: 'sheet', dir: 1, limit: 100, open: null }
 };
 const $ = id => document.getElementById(id);
 const SEEN_STATUSES = ['Watched', '2026 Watched'];
@@ -696,7 +711,7 @@ function renderLog() {
   $('sLastSub').textContent = last ? last.title : '';
 
   // Up next, ordered, about 10
-  const ups = state.films.filter(f => f.plan === 'Up next' && !f.seen).sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || a._row - b._row);
+  const ups = upNextList();
   const max = state.settings.upNextMax || 10, list = $('upList');
   list.textContent = '';
   if (!state.loaded) list.innerHTML = `<li class="empty-state" style="display:block">${isLive() ? 'Loading your films…' : esc(connectHint())}</li>`;
@@ -773,6 +788,13 @@ function fillSelect(id, field, label) {
 }
 function renderLibrary() {
   const L = state.lib, body = $('libBody');
+  const plan = L.mode === 'plan';
+  document.querySelectorAll('.lib-mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === (plan ? 'plan' : 'films'))));
+  $('planView').hidden = !plan;
+  $('libChips').hidden = plan;
+  document.querySelector('#view-library .table-wrap').hidden = plan;
+  document.querySelector('#view-library .lib-foot').hidden = plan;
+  if (plan) { renderPlan(); return; }
   $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${(c.num ? 'num ' : '') + (c.cls || '')}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
   body.textContent = '';
   if (!state.loaded) {
@@ -819,8 +841,10 @@ function detailRow(f) {
     ['Purchase', f.purchase], ['Release', f.release], ['Plan', f.plan ? f.plan + (f.plan === 'Up next' && f.order ? ' #' + f.order : '') : ''], ['Why', f.why], ['Notes', f.notes],
     ['Row when loaded · id', `${f._row} · ${f.id || 'none yet'}`]].filter(([, v]) => v);
   const others = (state.byKey.get(f.key) || []).filter(o => o !== f);
-  td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><div><dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="">Edit film</button></div></div></div>';
+  td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><div><dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="">Edit film</button> <button class="btn" type="button" data-rewatch="" hidden>Rewatch next</button></div></div></div>';
   td.querySelector('[data-edit]').dataset.edit = f._uid;
+  const rb = td.querySelector('[data-rewatch]');
+  if (f.seen && !(state.byKey.get(f.key) || []).some(o => !o.seen)) { rb.hidden = false; rb.dataset.rewatch = f._uid; }
   const ul = td.querySelector('.others');
   if (!others.length) ul.innerHTML = '<li>No other entries for this film.</li>';
   for (const o of others) {
@@ -1366,6 +1390,207 @@ async function saveFilmDialog(e) {
   } finally { btn.disabled = false; btn.textContent = film ? 'Save' : 'Add'; }
 }
 
+/* ---------- Stage 3: Plan (Up next / Soon / backlog / sort deck) ----------
+   Every change goes through updateFilm / appendFilm (row found by id, stale check, one cell per call, read back),
+   in a queue so quick taps are written in order. Nothing here writes on load. */
+// A film is in Up next when its Plan says so, or when its Status was set to Next Up in the sheet (Plan not filled in yet)
+const isUp = f => !f.seen && (f.plan === 'Up next' || (f.status === 'Next Up' && !f.plan));
+const upNextList = () => state.films.filter(isUp).sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9) || a._row - b._row);
+const soonList = () => state.films.filter(f => !f.seen && f.plan === 'Soon');
+const BACKLOG_STATUSES = ['Watchlist', 'Rewatch'];
+const inBacklog = f => !f.seen && !isUp(f) && f.plan !== 'Soon' && (BACKLOG_STATUSES.includes(f.status) || f.plan === 'Someday');
+const staleSomeday = f => f.plan === 'Someday' && (!f.sorted || daysBetween(f.sorted, today()) >= (state.settings.somedayResurfaceDays || 365));
+const byId = id => state.films.find(f => f.id === id);
+const seenBefore = f => (state.byKey.get(f.key) || []).filter(o => o.seen);
+
+const planQ = { chain: Promise.resolve(), pending: 0 };
+const planUI = { limit: 50, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
+function planStatusLine() { setStatus('live', planQ.pending ? `Saving plan… (${planQ.pending})` : 'Plan saved'); }
+function planQueue(fn, onFail) {
+  planQ.pending++; planStatusLine();
+  planQ.chain = planQ.chain.then(fn).catch(async err => { if (onFail) onFail(); await saveFailed(err); })
+    .finally(() => { planQ.pending--; planStatusLine(); renderAll(); });
+  return planQ.chain;
+}
+
+// Write 1..n into Order for a list of films, and Plan = Up next where the sheet doesn't say so yet; only differing cells are written
+async function writeUpNextOrder(list) {
+  for (let i = 0; i < list.length; i++) {
+    const f = byId(list[i].id) || list[i], ch = {};
+    if (f.order !== i + 1) ch.order = i + 1;
+    if (f.plan !== 'Up next') ch.plan = 'Up next';
+    if (Object.keys(ch).length) await updateFilm(f, ch);
+  }
+}
+function setTier(film, tier) {
+  const id = film.id;
+  return planQueue(async () => {
+    const f = byId(id); if (!f) return;
+    const wasUp = isUp(f), others = upNextList().filter(x => x.id !== id);
+    const ch = { plan: tier };
+    if (tier) ch.sorted = today();
+    if (tier === 'Up next') {
+      ch.order = Math.max(0, ...others.map(x => x.order ?? 0)) + 1;
+      if (f.status !== 'Next Up') ch.status = 'Next Up';
+    } else {
+      if (f.order != null) ch.order = null;
+      if (f.status === 'Next Up') ch.status = 'Watchlist';
+    }
+    await updateFilm(f, ch);
+    if (wasUp || tier === 'Up next') await writeUpNextOrder(upNextList());
+  }, () => planUI.deckSkipped.delete(id));
+}
+function moveUp(film, dir) {
+  const id = film.id;
+  return planQueue(async () => {
+    const list = upNextList(), i = list.findIndex(x => x.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j], list[i]];
+    await writeUpNextOrder(list);
+  });
+}
+function saveWhy(film, text) {
+  const id = film.id;
+  return planQueue(async () => { const f = byId(id); if (f) await updateFilm(f, { why: text }); });
+}
+// A film already seen goes back on the list as a new row (its Watched row stays as it is)
+function rewatchNext(film) {
+  const id = film.id;
+  return planQueue(async () => {
+    const f = byId(id); if (!f) return;
+    await appendFilm({ title: f.title, year: f.year, starring: f.starring, director: f.director, cinematography: f.cinematography, genre: f.genre, purchase: f.purchase,
+      platform: f.platform, status: 'Next Up', plan: 'Up next', order: upNextList().length + 1, sorted: today() });
+  });
+}
+
+/* ---------- what looks promising: ratings you gave films with the same director, cast and genre ---------- */
+const SHRINK = 3;
+const people = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+function buildProfile() {
+  const rated = state.seen.filter(s => s.rating != null);
+  const mean = rated.length ? avg(rated.map(s => s.rating)) : 6.5;
+  const group = keys => { const m = new Map(); for (const s of rated) for (const k of keys(s.rep)) { if (!m.has(k)) m.set(k, []); m.get(k).push(s.rating); } return m; };
+  return { mean, dir: group(directors), cast: group(f => people(f.starring)), genre: group(f => f.genre ? [f.genre] : []) };
+}
+const affinity = (arr, mean) => (arr.reduce((a, b) => a + b, 0) + SHRINK * mean) / (arr.length + SHRINK);
+const WEIGHT = { dir: 0.5, cast: 0.25, genre: 0.25 };
+function scoreFilm(f, P) {
+  const parts = [], why = [];
+  const best = (names, map, label) => {
+    let top = null;
+    for (const n of names) { const arr = map.get(n); if (arr && arr.length) { const a = affinity(arr, P.mean); if (!top || a > top.a) top = { a, n, arr }; } }
+    return top && { ...top, label };
+  };
+  const d = best(directors(f), P.dir, 'dir'), c = best(people(f.starring), P.cast, 'cast'), g = best(f.genre ? [f.genre] : [], P.genre, 'genre');
+  for (const t of [d, c, g]) if (t) {
+    parts.push([WEIGHT[t.label], t.a]);
+    const n = t.arr.length, m = one(avg(t.arr));
+    if (t.a >= P.mean + 0.3 || t.a <= P.mean - 0.8) why.push(t.label === 'genre' ? `${t.n}: you average ${m} over ${n}` : `${t.n}: ${n} film${n === 1 ? '' : 's'}, you average ${m}`);
+  }
+  const wsum = parts.reduce((a, [w]) => a + w, 0);
+  let s = wsum ? parts.reduce((a, [w, x]) => a + w * x, 0) / wsum : P.mean - 0.5;
+  if (f.purchase === 'Owned') { s += 0.3; why.push('You own it'); }
+  if (f.platform === 'Plex' || f.platform === 'Physical') { s += 0.15; why.push(f.platform === 'Plex' ? 'On Plex' : 'On disc'); }
+  const prev = seenBefore(f);
+  if (prev.length) why.unshift('Seen before' + (prev.find(r => r.rating != null) ? `, rated ${prev.find(r => r.rating != null).rating}` : ''));
+  return { f, s, why: why.slice(0, 4) };
+}
+
+/* ---------- Plan view ---------- */
+function planRow(f, { num, kind }) {
+  const li = document.createElement('li');
+  li.dataset.uid = f._uid;
+  if (kind === 'sheet' && f.plan === 'Someday') li.className = 'someday';
+  li.innerHTML = '<span class="n tnum"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"></span><span class="why"></span>';
+  li.querySelector('.n').textContent = num ?? '';
+  li.querySelector('.t').textContent = f.title;
+  li.querySelector('.m').textContent = [f.year, f.genre, directors(f)[0], f.platform, f.purchase === 'Owned' ? 'Owned' : '', kind === 'sheet' && f.plan === 'Someday' ? 'Someday' : '', f.status === 'Rewatch' ? 'Rewatch' : ''].filter(Boolean).join(' · ');
+  li.querySelector('.why').textContent = f.why ? '“' + f.why + '”' : '';
+  const acts = li.querySelector('.acts');
+  const btn = (label, fn, aria, disabled) => { const x = document.createElement('button'); x.type = 'button'; x.textContent = label; x.setAttribute('aria-label', aria + ' ' + f.title); if (disabled) x.disabled = true; x.addEventListener('click', fn); acts.appendChild(x); return x; };
+  if (kind === 'up') {
+    const n = upNextList().length;
+    btn('↑', () => moveUp(f, -1), 'Move up:', num === 1); btn('↓', () => moveUp(f, 1), 'Move down:', num === n);
+    btn('Why', () => { planUI.whyOpen = planUI.whyOpen === f._uid ? null : f._uid; renderPlan(); }, 'Edit why for');
+    btn('Soon', () => setTier(f, 'Soon'), 'Move to Soon:'); btn('Drop', () => setTier(f, ''), 'Take off the plan:');
+  } else if (kind === 'soon') {
+    btn('Up next', () => setTier(f, 'Up next'), 'Move to Up next:');
+    btn('Why', () => { planUI.whyOpen = planUI.whyOpen === f._uid ? null : f._uid; renderPlan(); }, 'Edit why for');
+    btn('Someday', () => setTier(f, 'Someday'), 'Move to Someday:'); btn('Drop', () => setTier(f, ''), 'Take off the plan:');
+  } else {
+    btn('Up next', () => setTier(f, 'Up next'), 'Add to Up next:'); btn('Soon', () => setTier(f, 'Soon'), 'Add to Soon:');
+    if (f.plan !== 'Someday') btn('Someday', () => setTier(f, 'Someday'), 'Put in Someday:');
+  }
+  if (planUI.whyOpen === f._uid) {
+    const w = document.createElement('div'); w.className = 'whyedit';
+    w.innerHTML = '<input type="text" maxlength="200" aria-label="Why it\'s on the list" placeholder="Why it\'s on the list"><button class="btn btn-primary" type="button">Save</button>';
+    const inp = w.querySelector('input'); inp.value = f.why || '';
+    const save = () => { const v = inp.value.trim(); planUI.whyOpen = null; if (v !== (f.why || '')) saveWhy(f, v); renderPlan(); };
+    w.querySelector('button').addEventListener('click', save);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { planUI.whyOpen = null; renderPlan(); } });
+    li.appendChild(w);
+    setTimeout(() => inp.focus());
+  }
+  return li;
+}
+function renderPlan() {
+  if (!state.loaded) { $('planUp').innerHTML = `<li class="empty-state" style="display:block">${isLive() ? 'Loading your films…' : esc(connectHint())}</li>`; return; }
+  const ups = upNextList(), soon = soonList(), max = state.settings.upNextMax || 10;
+  $('planUpNote').textContent = ups.length > max ? `${ups.length} films · the Log shows the first ${max}` : `${ups.length} of ${max}`;
+  $('planSoonNote').textContent = `${soon.length} film${soon.length === 1 ? '' : 's'}`;
+  const fill = (el, list, kind, empty) => {
+    el.textContent = '';
+    if (!list.length) { el.innerHTML = `<li class="empty-state" style="display:block">${empty}</li>`; return; }
+    list.forEach((f, i) => el.appendChild(planRow(f, { num: kind === 'up' ? i + 1 : '', kind })));
+  };
+  fill($('planUp'), ups, 'up', `Pick up to ${max} films from Soon or the list below.`);
+  fill($('planSoon'), soon, 'soon', 'Nothing here yet.');
+  const L = state.lib, q = L.q.toLowerCase().trim();
+  const rest = state.films.filter(inBacklog).filter(f =>
+    (!L.genre || f.genre === L.genre) && (!L.platform || f.platform === L.platform) && (!L.owned || (L.owned === 'None' ? !f.purchase : f.purchase === L.owned)) &&
+    (!q || [f.title, f.director, f.starring, f.genre, f.year].some(v => String(v ?? '').toLowerCase().includes(q))));
+  $('planBackNote').textContent = `${fmt(rest.length)} film${rest.length === 1 ? '' : 's'}`;
+  const bl = $('planBack'); bl.textContent = '';
+  for (const f of rest.slice(0, planUI.limit)) bl.appendChild(planRow(f, { kind: 'sheet' }));
+  if (!rest.length) bl.innerHTML = '<li class="empty-state" style="display:block">Nothing waiting.</li>';
+  $('planMore').hidden = rest.length <= planUI.limit;
+  renderDeck();
+}
+
+// Sort deck: unsorted films (and Someday films older than a year), most promising first
+function deckQueue() {
+  const P = buildProfile();
+  return state.films.filter(f => inBacklog(f) && (!f.plan || staleSomeday(f)) && !planUI.deckSkipped.has(f.id))
+    .map(f => scoreFilm(f, P)).sort((a, b) => b.s - a.s || a.f._row - b.f._row);
+}
+function renderDeck() {
+  const q = deckQueue(), box = $('deckBody'), batch = state.settings.deckBatch || 10;
+  $('deckNote').textContent = `${fmt(q.length)} to sort${planUI.deckDone ? ` · ${planUI.deckDone} sorted this visit` : ''}`;
+  if (!q.length) { box.innerHTML = '<p class="empty">All sorted. Films you put in Someday come back here after a year.</p>'; return; }
+  if (planUI.deckDone && planUI.deckDone % batch === 0 && planUI.roundAck !== planUI.deckDone) {
+    box.innerHTML = `<div class="deck-card"><div><h3>That's a round of ${batch}</h3><p class="muted" style="margin:6px 0 0">${fmt(q.length)} more are waiting. Carry on, or stop here.</p></div>
+      <div class="deck-btns"><button class="btn btn-primary" type="button" id="deckMore">Keep sorting</button></div></div>`;
+    $('deckMore').addEventListener('click', () => { planUI.roundAck = planUI.deckDone; renderDeck(); });
+    return;
+  }
+  const { f, why } = q[0];
+  box.innerHTML = `<div class="deck-card"><div><h3></h3><div class="m muted"></div><div class="chips"></div><p class="syn"></p></div>
+    <div class="deck-btns"><button class="btn btn-primary" type="button" data-t="Up next">Up next<kbd>1</kbd></button><button class="btn" type="button" data-t="Soon">Soon<kbd>2</kbd></button>
+    <button class="btn" type="button" data-t="Someday">Someday<kbd>3</kbd></button><button class="btn" type="button" data-t="">Skip<kbd>4</kbd></button></div></div>`;
+  box.querySelector('h3').textContent = f.title + (f.year ? ` (${f.year})` : '');
+  box.querySelector('.m').textContent = [directors(f).join(', '), f.genre, f.platform, f.release ? 'Release ' + f.release : '', staleSomeday(f) ? 'Someday for over a year' : ''].filter(Boolean).join(' · ');
+  const ch = box.querySelector('.chips');
+  for (const t of why) { const c = document.createElement('span'); c.className = 'why-chip'; c.textContent = t; ch.appendChild(c); }
+  if (!why.length) ch.remove();
+  box.querySelector('.syn').textContent = [f.starring ? 'Starring ' + f.starring : '', f.notes].filter(Boolean).join('. ') || 'No cast or notes in the sheet yet.';
+  box.querySelectorAll('.deck-btns button').forEach(x => x.addEventListener('click', () => deckPick(f, x.dataset.t)));
+}
+function deckPick(f, tier) {
+  planUI.deckSkipped.add(f.id);
+  if (tier) { planUI.deckDone++; renderDeck(); setTier(f, tier); }
+  else renderDeck();
+}
+
 /* ---------- wiring ---------- */
 function showTab(name) {
   for (const t of ['log', 'library', 'dashboard']) {
@@ -1393,6 +1618,8 @@ $('libHead').addEventListener('click', e => {
 });
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
 $('libBody').addEventListener('click', e => {
+  const rw = e.target.closest('[data-rewatch]');
+  if (rw) { if (!isLive()) { notice('This needs the live connection. ' + connectHint(), 'error'); return; } const f = state.films.find(x => x._uid === Number(rw.dataset.rewatch)); if (f) rewatchNext(f); return; }
   const ed = e.target.closest('[data-edit]');
   if (ed) { openFilmDialog(state.films.find(f => f._uid === Number(ed.dataset.edit))); return; }
   const tr = e.target.closest('tr.row'); if (!tr) return;
@@ -1432,6 +1659,15 @@ $('recList').addEventListener('click', e => { const b = e.target.closest('[data-
 $('addFilmBtn').addEventListener('click', () => { if (!state.loaded) { notice('Adding a film needs the live connection. ' + connectHint(), 'error'); return; } openFilmDialog(null); });
 $('filmForm').addEventListener('submit', saveFilmDialog);
 $('fdClose').addEventListener('click', () => $('filmDlg').close());
+document.querySelector('.lib-mode').addEventListener('click', e => { const m = e.target.closest('button'); if (!m) return; state.lib.mode = m.dataset.mode; renderLibrary(); });
+$('planLink').addEventListener('click', () => { state.lib.mode = 'plan'; showTab('library'); });
+$('planMore').addEventListener('click', () => { planUI.limit += 50; renderPlan(); });
+document.addEventListener('keydown', e => {
+  if ($('view-library').hidden || state.lib.mode !== 'plan' || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('dialog[open]')) return;
+  const i = ['1', '2', '3', '4'].indexOf(e.key);
+  const btn = i < 0 ? null : document.querySelectorAll('#deckBody .deck-btns button')[i];
+  if (btn) { e.preventDefault(); btn.click(); }
+});
 $('refreshBtn').addEventListener('click', () => state.google && !google_.valid() ? googleConnect() : refresh());
 
 /* ---------- Google Sheets direct (GitHub Pages and other hosts outside claude.ai) ----------
