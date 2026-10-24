@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–3 merged to `main`. Film Vault themes built 2026-10-24 (PR open).** Next: Stage 4 (Dashboard).
+Status: **Stages 0–3 and the Film Vault themes merged to `main`. Stage 4 (Dashboard and tidy layout) built 2026-10-24 (PR open).** Next: Stage 5 (Tools and Discover).
 
 ## Reference
 
@@ -237,3 +237,28 @@ positions don't matter.
   unchanged, tests re-run, screenshots checked, real-data smoke run).
 - Not done yet: the alternate looks (one per film for now), syncing theme choices
   through the sheet.
+
+## Stage 4: Dashboard and tidy layout (built 2026-10-24)
+
+- Year chips (each year with dated watches, plus All time). Six tiles: watched,
+  average rating, first-time, rewatches, top genre, owned share.
+- Panels: films per month (this month in the theme's second colour), a calendar of
+  days with a film, ratings 1–10, genres, decades, top people (directors, cast,
+  cinematographers), where you watched (Owned, Streaming, Cinema, Other, Not recorded,
+  then by platform) and rewatches (was → now rating; first 10, then "Show all").
+- Owned means Purchase "Owned", or Platform Physical or Plex (same as "Do I own this?").
+- A watch is a rewatch only when the same film (title + year) was seen earlier: an
+  undated seen row, an earlier date, or an earlier row on the same date. The first dated
+  watch of a film never counts.
+- Every bar, row and calendar day opens a list of its films; a film opens the edit dialog.
+- Genre, Platform, Starring and Cinematography are mostly filled for 2026 only, so on
+  All time those panels say how many watches they cover; Rewatches and Calendar ask for
+  a year.
+- Tidy layout: boxes side by side share a height and edges; panel headings line up;
+  a lone box spans the full width; 20px gaps between panels, 12px between tiles; tiles
+  3 across on a laptop, equal widths on a phone. Log's Recent diary and Coming soon match.
+- Checked: `node tests/stage4.test.mjs` (996, fake data, includes edge and gap checks),
+  stages 1–3 and themes re-run; real-data smoke run (95 watches, 17 rewatches, 56% owned,
+  checked against a separate script).
+- Built by a Sonnet helper from a written spec; reviewed by the lead, who fixed the
+  rewatch rule and capped the rewatch list.

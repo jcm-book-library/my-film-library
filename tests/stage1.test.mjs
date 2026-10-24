@@ -300,40 +300,44 @@ for (const size of ['laptop', 'phone']) {
   {
     const { page, ctx, errors } = await open(size, fx);
     await tab(page, 'dashboard');
-    eq(S + '5 year chips', await texts(page, '#dashPeriods .chip'), [E.Y]);
+    eq(S + '5 year chips (year + All time)', await texts(page, '#dashPeriods .chip'), [E.Y, 'All time']);
     check(S + '5 year chip pressed', (await page.getAttribute('#dashPeriods .chip', 'aria-pressed')) === 'true');
-    const tiles = await page.$$eval('#dashTiles .stat', ss => ss.map(s => [s.querySelector('.eyebrow').textContent, s.querySelector('.num').textContent, s.querySelector('.sub').textContent]));
-    const tv = l => tiles.find(t => t[0] === l);
+    const tilesOf = () => page.$$eval('#dashTiles .stat', ss => ss.map(s => [s.querySelector('.eyebrow').textContent, s.querySelector('.num').textContent, s.querySelector('.sub').textContent]));
+    let tiles = await tilesOf();
+    let tv = l => tiles.find(t => t[0] === l);
+    eq(S + '5 tile Watched (year)', tv('Watched')[1], String(E.yr.length));
+    eq(S + '5 tile Average rating (year)', tv('Average rating')[1], rnd1(mean(E.rated)));
+    eq(S + '5 tile Rewatches (year)', tv('Rewatches')[1], String(E.rewatchesInYear));
+    await page.click('#dashPeriods .chip[data-p="all"]');
+    tiles = await tilesOf(); tv = l => tiles.find(t => t[0] === l);
     eq(S + '5 tile Films seen (unique title+year)', tv('Films seen')[1], String(E.seen.length));
     check(S + '5 unique films < watched rows (rewatch counted once)', E.seen.length < E.recs.filter(r => r.status === 'Watched').length);
-    eq(S + `5 tile Watched in ${E.Y}`, tv(`Watched in ${E.Y}`)[1], String(E.yr.length));
-    eq(S + '5 tile Average rating', tv('Average rating')[1], rnd1(mean(E.rated)));
-    check(S + '5 tile Average rating sub has all-time', tv('Average rating')[2].includes('all time ' + rnd1(mean(E.ratedSeen))), tv('Average rating')[2]);
-    eq(S + '5 tile Rewatches', tv('Rewatches')[1], String(E.rewatchesInYear));
+    eq(S + '5 tile Average rating (all time, unique films)', tv('Average rating')[1], rnd1(mean(E.ratedSeen)));
     eq(S + '5 tile Directors (A,B counts as two)', tv('Directors')[1], String(E.directorSet.size));
     eq(S + '5 tile Watchlist (Watchlist + Next Up)', tv('Watchlist')[1], String(E.recs.filter(r => r.status === 'Watchlist' || r.status === 'Next Up').length));
+    eq(S + '5 tile Dated watches', tv('Dated watches')[1], String(E.diary.length));
     // ratings
     const rb = await page.$$eval('#ratBars li', ls => ls.map(l => [l.querySelector('.lab').textContent, Number(l.querySelector('.val').textContent.replace(/,/g, ''))]));
     eq(S + '5 ratings labels 10..1', rb.map(x => x[0]), ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1']);
     eq(S + '5 ratings bars sum = rated unique films', rb.reduce((a, b) => a + b[1], 0), E.ratedSeen.length);
     const wantDist = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(r => E.ratedSeen.filter(x => Math.round(x) === r).length);
     eq(S + '5 ratings per-bar counts', rb.map(x => x[1]), wantDist);
-    check(S + '5 ratings note', (await page.textContent('#ratNote')).startsWith(`${E.ratedSeen.length} films`), await page.textContent('#ratNote'));
+    check(S + '5 ratings note', (await page.textContent('#ratNote')).startsWith(`${E.ratedSeen.length} rated`), await page.textContent('#ratNote'));
     const fills = await page.$$eval('#ratBars .fill', f => f.map(x => x.style.width));
     check(S + '5 ratings fills have widths', fills.every(w => /%$/.test(w)) && fills.some(w => w === '100%'), fills);
     // decades
     const db = await page.$$eval('#decBars li', ls => ls.map(l => [l.querySelector('.lab').textContent, l.querySelector('.val').textContent]));
-    const wantDec = [...E.dec.entries()].sort((a, b) => b[0] - a[0]).map(([k, a]) => { const r = a.filter(x => x != null); return [k + 's', `${a.length} · ${r.length ? rnd1(mean(r)) : '–'}`]; });
+    const wantDec = [...E.dec.entries()].sort((a, b) => b[0] - a[0]).map(([k, a]) => { const r = a.filter(x => x != null); return [k + 's', `${a.length} · avg ${r.length ? rnd1(mean(r)) : '–'}`]; });
     eq(S + '5 decades bars (counts and averages)', db, wantDec);
     eq(S + '5 decades total excludes Year TBA', db.reduce((a, b) => a + Number(b[1].split(' ')[0]), 0), E.seen.filter(s => Number.isFinite(s.year)).length);
     // directors
-    const dl = await page.$$eval('#dirList li', ls => ls.map(l => [l.children[0].textContent, l.children[1].textContent]));
+    const dl = await page.$$eval('#peopleList li', ls => ls.map(l => [l.children[0].textContent, l.children[1].textContent]));
     eq(S + '5 top directors names and counts', dl.map(x => [x[0], Number(x[1].match(/^(\d+)/)[1])]), E.topDirs.map(d => [d.n, d.c]));
     const m = dl.find(x => x[0] === 'Mira Voss'), t = dl.find(x => x[0] === 'Teo Hartley');
     check(S + '5 "A,B" director cell counts for both', !!m && !!t && !dl.some(x => x[0].includes(',')), dl);
     // chart
     const monthNote = await page.textContent('#monthNote');
-    eq(S + '5 films-per-month note', monthNote, `${E.yr.length} in ${E.Y}`);
+    eq(S + '5 films-per-month note is empty on All time', monthNote, '');
     const chartLoaded = await page.evaluate(() => typeof Chart !== 'undefined');
     console.log(`INFO  ${S}Chart.js ${chartLoaded ? 'loaded' : 'not available (cdnjs blocked in sandbox, routed to empty); chart pixel checks skipped'}`);
     check(S + '5 dashboard renders without Chart.js and without errors', errors.length === 0, errors);

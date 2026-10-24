@@ -15,7 +15,7 @@ Theme choices stay in this browser only: `mvl-theme` ("auto" or a theme id), `mv
 | `app.html` | The app source. Edit this. The same file is published as the claude.ai artifact. |
 | `index.html` | Built from `app.html` for GitHub Pages. Rebuild it with `python3 tools/build-pages.py`. |
 | `manifest.webmanifest`, `icons/` | Home-screen install and icons. |
-| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3` and `themes`). They use made-up films, never real data. |
+| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3`, `stage4` and `themes`). They use made-up films, never real data. |
 | `PLAN.md` | Sheet findings, data model, decisions and stages. |
 | `CLAUDE.md` | Working notes for Claude sessions in this repo. |
 

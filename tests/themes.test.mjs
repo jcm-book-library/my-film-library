@@ -6,6 +6,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildFixture } from './fixtures.mjs';
+import { buildDashFixture } from './dashfixture.mjs';
+import { fmtCell } from './fakesheet.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.join(here, '..', 'app.html');
@@ -22,6 +24,8 @@ const check = (name, cond, detail) => { if (cond) { passes++; console.log(`PASS 
 const eq = (name, got, want) => check(name, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)} expected ${JSON.stringify(want)}`);
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
 const fx = buildFixture();
+const dfx0 = buildDashFixture();
+const dfx = { films: dfx0.films.map(r => r.map(fmtCell)), settings: dfx0.settings }; // the Stage 4 dashboard fixture, cells as the sheet shows them
 const IDS = ['default', 'jurassic', 'trueromance', 'indiana', 'matrix', 'starwars', 'bladerunner', 'hateful', 'interstellar', 'nocountry', 'totoro', 'hailmary', 'angrymen'];
 const BY_MONTH = ['jurassic', 'trueromance', 'indiana', 'matrix', 'starwars', 'bladerunner', 'hateful', 'interstellar', 'nocountry', 'totoro', 'hailmary', 'angrymen'];
 const FILMS = { default: 'Default', jurassic: 'Jurassic Park', trueromance: 'True Romance', indiana: 'Indiana Jones', matrix: 'The Matrix', starwars: 'Star Wars', bladerunner: 'Blade Runner', hateful: 'The Hateful Eight', interstellar: 'Interstellar', nocountry: 'No Country for Old Men', totoro: 'My Neighbour Totoro', hailmary: 'Project Hail Mary', angrymen: '12 Angry Men' };
@@ -49,7 +53,7 @@ async function open(size, opts = {}) {
       if (tool === 'get_values' && input.range === "'🎥 Settings'!A1:C50") return { payload: { values: settings } };
       throw { code: 'tool_error', message: 'unexpected call' };
     } } : null };
-  }, { films: fx.films, settings: fx.settings, storage: opts.storage, noStorage: opts.noStorage });
+  }, { films: (opts.rich ? dfx : fx).films, settings: (opts.rich ? dfx : fx).settings, storage: opts.storage, noStorage: opts.noStorage });
   await page.goto('file://' + PAGE);
   await page.waitForFunction(() => { const s = document.getElementById('status'); return s && s.dataset.state !== 'loading'; }, null, { timeout: 8000 }).catch(() => {});
   return { page, ctx, errors };
@@ -232,8 +236,8 @@ for (const [m, id] of [[1, 'jurassic'], [4, 'matrix'], [10, 'totoro'], [12, 'ang
 
 /* ---------- (f) every theme, both widths, every view: overflow, errors, contrast ---------- */
 // Measures every piece of text in the page against what is actually painted behind it (screenshot with the text hidden).
-async function contrastScan(page) {
-  const items = await page.evaluate(() => {
+async function contrastScan(page, root) {
+  const items = await page.evaluate(root => {
     const cv = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
     const rgba = c => { cv.clearRect(0, 0, 1, 1); cv.fillStyle = '#000'; cv.fillStyle = c; cv.fillRect(0, 0, 1, 1); const d = cv.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
     const out = [];
@@ -242,6 +246,7 @@ async function contrastScan(page) {
     const desc = el => el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (typeof el.className === 'string' && el.className ? '.' + el.className.trim().split(/\s+/).join('.') : '');
     for (const el of document.body.querySelectorAll('*')) {
       if (['SCRIPT', 'STYLE', 'CANVAS', 'SVG', 'PATH', 'OPTION', 'OPTGROUP'].includes(el.tagName.toUpperCase()) || !vis(el) || el.disabled) continue;
+      if (root && !el.closest(root)) continue;
       let rect = null, text = '';
       if (/^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) {
         if (['range', 'color', 'checkbox', 'radio', 'hidden'].includes(el.type)) continue;
@@ -271,7 +276,7 @@ async function contrastScan(page) {
       out.push({ sel: desc(el), text: text.slice(0, 40), rect: [rect.left + scrollX, rect.top + scrollY, rect.width, rect.height], fg, op: opac(el) });
     }
     return out;
-  });
+  }, root || null);
   await page.evaluate(() => { const st = document.createElement('style'); st.id = '__hide'; st.textContent = '*,*::placeholder{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;-webkit-text-stroke:0!important;caret-color:transparent!important}'; document.head.appendChild(st); });
   const buf = await page.screenshot({ fullPage: true });
   await page.evaluate(() => document.getElementById('__hide').remove());
@@ -329,6 +334,28 @@ for (const size of ['phone', 'laptop']) {
       for (const b of r.bad) problems.push(`${name}: ${b.sel} "${b.text}" ${b.ratio} fg${JSON.stringify(b.fg)} bg${JSON.stringify(b.bg)}`);
       scanSummary[`${size}/${id}/${name}`] = r.n;
     }
+    { // Stage 4 dashboard on the richer fixture: year, All time, every people mode, calendar and the drill-down dialog
+      const R = await open(size, { month: 10, storage: { 'mvl-theme': id }, rich: true });
+      await R.page.click('#tab-dashboard'); await R.page.waitForTimeout(250);
+      const rviews = [
+        ['dash-year', async () => {}, null],
+        ['dash-cast', async () => { await R.page.click('#peopleChips [data-pk="cast"]'); }, null],
+        ['dash-cine', async () => { await R.page.click('#peopleChips [data-pk="cine"]'); }, null],
+        ['dash-2025', async () => { await R.page.click('#dashPeriods [data-p="2025"]'); }, null],
+        ['dash-all', async () => { await R.page.click('#dashPeriods [data-p="all"]'); }, null],
+        ['drill', async () => { await R.page.click('#dashPeriods [data-p="2026"]'); await R.page.click('#ratBars .hbar[data-fk="ratBars:8"]'); await R.page.waitForTimeout(100); }, '#drillDlg']
+      ];
+      for (const [name, go, root] of rviews) {
+        await go(); await R.page.waitForTimeout(120);
+        const sw = await R.page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        if (sw > 0) problems.push(`${name}: horizontal scroll ${sw}px`);
+        const r = await contrastScan(R.page, root);
+        for (const b of r.bad) problems.push(`${name}: ${b.sel} "${b.text}" ${b.ratio} fg${JSON.stringify(b.fg)} bg${JSON.stringify(b.bg)}`);
+        scanSummary[`${size}/${id}/${name}`] = r.n;
+      }
+      if (R.errors.length) problems.push('errors: ' + R.errors.join(' | '));
+      await R.ctx.close();
+    }
     // brand logotype vs the band behind it
     await page.click('#tab-log');
     const brand = await page.evaluate(() => { const e = document.getElementById('wordmark'), r = e.getBoundingClientRect(), cs = getComputedStyle(e); return { rect: [r.left, r.top, r.width, r.height], color: cs.color, fill: cs.webkitTextFillColor }; });
@@ -349,7 +376,7 @@ for (const size of ['phone', 'laptop']) {
       }, { b64: buf.toString('base64'), cols: BRAND_COLOURS[id], color: brand.color, fill: brand.fill });
       if (rr < 4.5) problems.push(`brand: ${rr.toFixed(2)}`);
     }
-    check(S + 'no horizontal scroll, contrast >= 4.5 on every text pair (log, library, plan, dashboard, brand)', problems.length === 0, problems.slice(0, 12));
+    check(S + 'no horizontal scroll, contrast >= 4.5 on every text pair (log, library, plan, dashboard, Stage 4 panels and drill dialog, brand)', problems.length === 0, problems.slice(0, 12));
     check(S + 'no page or console errors', errors.length === 0, errors);
     await ctx.close();
   }
