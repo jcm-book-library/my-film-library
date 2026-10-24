@@ -702,9 +702,12 @@ await scenario('H3 deck: stale refusal puts the card back', LAPTOP, { setup: f =
   const top = fake.__top, before = fake.snapshot();
   check(S + 'H3 deck still shows the film', (await deckTitle(page)).startsWith(top), await deckTitle(page));
   E.n0 = fake.calls.length;
+  // record every card the deck shows: the fake answers instantly, so the refusal can bring the card back before a single read
+  await page.evaluate(() => { window.__deckSeen = []; new MutationObserver(() => { const h = document.querySelector('#deckBody h3'); if (h) window.__deckSeen.push(h.textContent); }).observe(document.getElementById('deckBody'), { childList: true, subtree: true }); });
   await page.click('#deckBody button[data-t="Up next"]');
-  check(S + 'H3 card advanced at once', !(await deckTitle(page)).startsWith(top));
   await settlePlan(page);
+  const seen = await page.evaluate(() => window.__deckSeen);
+  check(S + 'H3 card advanced at once (another film was shown straight after the tap)', seen.length > 0 && !seen[0].startsWith(top), seen.slice(0, 3));
   eq(S + 'H3 zero writes', UPD(fake, E.n0).length, 0);
   check(S + 'H3 card is back in the deck after the refusal', (await page.evaluate(() => deckQueue().map(x => x.f.title))).includes(top));
   const n = await noticeState(page);
