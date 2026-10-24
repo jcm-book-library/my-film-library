@@ -1,4 +1,4 @@
-// Synthetic fixtures for the Movie Library tests. Every film, person and id here is invented.
+// Synthetic fixtures for the Film Vault tests. Every film, person and id here is invented.
 export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted'];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const sheetDate = d => `${d.getDate()}-${MON[d.getMonth()]}-${d.getFullYear()}`;
@@ -69,7 +69,7 @@ export function buildFixture(opts = {}) {
     return row;
   };
   const films = [['', '', 'RATINGS'], HEADERS, ...rec.map(toRow)];
-  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['appName', 'Movie Library', 'x']];
+  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['appName', 'Film Vault', 'x']];
   return { films, settings, records: rec, today };
 }
 

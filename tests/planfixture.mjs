@@ -71,6 +71,6 @@ export function buildPlanFixture(opts = {}) {
   mk({ title: 'Unavail One', year: 1975, status: 'Unavailable', genre: 'Drama' });
   mk({ title: 'Dnf One', year: 1988, status: 'DNF', genre: 'Drama' });
   const films = [['', '', 'RATINGS'], HEADERS.slice(), ...rows];
-  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['deckBatch', String(deckBatch), 'x'], ['somedayResurfaceDays', '365', 'x'], ['appName', 'Movie Library', 'x']];
+  const settings = [['key', 'value', 'note'], ['yearlyGoal', '120', 'x'], ['upNextMax', '10', 'x'], ['deckBatch', String(deckBatch), 'x'], ['somedayResurfaceDays', '365', 'x'], ['appName', 'Film Vault', 'x']];
   return { films, settings, names: {} };
 }
