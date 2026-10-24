@@ -1,0 +1,288 @@
+<title>Film Vault Themes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Archivo:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&family=Barlow:wght@400;600&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@600&family=EB+Garamond:wght@600;700&family=Exo+2:wght@400;600&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;600&family=Libre+Franklin:wght@400;600&family=Manrope:wght@400;600&family=Michroma&family=Nunito:wght@400;700&family=Orbitron:wght@700;900&family=Oswald:wght@500;700&family=Rye&family=Saira:wght@400;600&family=Share+Tech+Mono&family=Source+Sans+3:wght@400;600&family=Syncopate:wght@700&family=Titillium+Web:wght@400;600&display=swap">
+<style>
+/* Layout: a single column of theme cards; each card pairs the theme's notes with a small mock-up of the app wearing that theme.
+   The page itself wears the Default theme (near-black, light highlights, blue), dark only by design. */
+:root{
+  --pg-bg:#0f1012; --pg-surface:#17181b; --pg-raise:#202226; --pg-line:#2c2e33;
+  --pg-fg:#ececee; --pg-muted:#9fa2aa; --pg-accent:#8fb8f2;
+  --pg-display:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --pg-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pg-bg);color:var(--pg-fg);font:15px/1.55 var(--pg-body)}
+.page{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+h1{font-family:var(--pg-display);font-size:clamp(28px,5vw,40px);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lede{color:var(--pg-muted);max-width:68ch;margin:8px 0 0}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--pg-muted);font-weight:600}
+.intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;margin:24px 0 18px;align-items:start}
+.card{background:var(--pg-surface);border:1px solid var(--pg-line);border-radius:14px;padding:16px;min-width:0}
+.months{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;font-size:14px}
+.months li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--pg-line)}
+.months li:nth-child(-n+2){border-top:0}
+.months a{color:var(--pg-fg);text-decoration:none}
+.months a:hover{color:var(--pg-accent)}
+.months .m{color:var(--pg-muted);font-variant-numeric:tabular-nums;min-width:2.5em}
+.months li.now a{color:var(--pg-accent);font-weight:600}
+.howto{margin:8px 0 0;padding-left:18px;color:var(--pg-fg);font-size:14px}
+.howto li{margin:4px 0}
+.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;background:var(--pg-bg);border-bottom:1px solid var(--pg-line);margin-bottom:22px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--pg-bg)}
+.jump a{flex:none;font-size:13px;font-weight:600;color:var(--pg-muted);text-decoration:none;border:1px solid var(--pg-line);border-radius:999px;padding:4px 12px}
+.jump a:hover,.jump a:focus-visible{color:var(--pg-fg);border-color:var(--pg-accent)}
+:focus-visible{outline:2px solid var(--pg-accent);outline-offset:2px}
+
+/* theme card */
+.th{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:20px;align-items:start;padding:22px 0;border-top:1px solid var(--pg-line);scroll-margin-top:64px}
+.th-meta h2{font-family:var(--pg-display);font-size:24px;margin:2px 0 0;letter-spacing:-.01em;text-wrap:balance}
+.th-meta .tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.th-meta .tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid var(--pg-line);color:var(--pg-muted)}
+.th-meta .tag.now{color:#0b1424;background:var(--pg-accent);border-color:var(--pg-accent)}
+.th-meta p{margin:6px 0;font-size:14px;color:var(--pg-fg)}
+.th-meta .muted{color:var(--pg-muted)}
+.sw{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:10px 0}
+.sw > div{min-width:0}
+.sw > div > div{border-radius:8px;height:34px;border:1px solid rgba(255,255,255,.14)}
+.sw span{display:block;font-size:10px;color:var(--pg-muted);margin-top:3px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.checks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.checks span{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--pg-raise);color:var(--pg-fg);font-variant-numeric:tabular-nums}
+.checks span.bad{background:#5a1f24;color:#ffd6d9}
+
+/* ---- the mock-up: everything below reads only the theme tokens ---- */
+.app{
+  --dcase:none; --dtrack:-.01em; --dweight:700; --glow:none; --shadow:0 1px 0 rgba(0,0,0,.25); --hdr:transparent;
+  position:relative;isolation:isolate;overflow:hidden;
+  background:var(--bg);color:var(--fg);font:14px/1.5 var(--fb);border-radius:calc(var(--r) + 6px);border:1px solid var(--line);padding:16px;min-width:0
+}
+.app::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+.app::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:var(--grain,0);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:-16px -16px 14px;padding:16px;background:var(--hdr)}
+.lock{display:flex;align-items:center;gap:10px;min-width:0}
+.reel{width:30px;height:30px;color:var(--accent);flex:none}
+.brand{font-family:var(--fd);font-weight:var(--dweight);text-transform:var(--dcase);letter-spacing:var(--dtrack);font-size:24px;line-height:1.05;color:var(--fg);text-shadow:var(--glow)}
+.today{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tabs{display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:4px;margin-bottom:14px;max-width:100%;overflow-x:auto}
+.tabs b{font-weight:600;font-size:13px;color:var(--muted);padding:5px 12px;border-radius:calc(var(--r) - 3px);white-space:nowrap}
+.tabs b.on{background:color-mix(in srgb,var(--accent) 22%,var(--surface));color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;box-shadow:var(--shadow);min-width:0}
+.tile .lab{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.tile .num{font-family:var(--fd);font-weight:var(--dweight);font-size:26px;line-height:1.1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.tile.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,var(--surface)),var(--surface) 80%);border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.tile.hero .num{color:var(--accent);text-shadow:var(--glow)}
+.tile .sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal{height:5px;border-radius:3px;background:var(--raise);overflow:hidden;margin-top:6px}
+.goal i{display:block;height:100%;width:79%;background:var(--accent2);border-radius:3px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);min-width:0}
+.panel h3{font-family:var(--fd);font-weight:var(--dweight);text-transform:var(--dcase);letter-spacing:var(--dtrack);font-size:15px;margin:0 0 8px;color:var(--fg)}
+.up{list-style:none;margin:0;padding:0}
+.up li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.up li:first-child{border-top:0;padding-top:0}
+.up .n{font-family:var(--fd);font-weight:var(--dweight);color:var(--accent);font-size:18px;min-width:1.2em;text-align:right}
+.up .t{font-weight:600}
+.up .m{display:block;font-size:12px;color:var(--muted)}
+.up .why{grid-column:2/-1;font-size:12px;font-style:italic;opacity:.9}
+.up button,.btns button{font:600 12px var(--fb);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:3px 10px;cursor:pointer}
+.bars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;align-items:end;height:120px;border-bottom:1px solid var(--line);padding-top:6px}
+.bars i{display:block;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;opacity:.9}
+.bars i.cur{background:var(--accent2);opacity:1}
+.bars i:hover{opacity:1;filter:brightness(1.12)}
+.blab{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;font-size:10px;color:var(--muted);text-align:center;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:6px 6px;background:var(--raise)}
+td{padding:7px 6px;border-top:1px solid var(--line)}
+td.r,th.r{text-align:right}
+td .y{color:var(--muted);font-size:12px;margin-left:5px}
+.rt{font-weight:700;font-variant-numeric:tabular-nums}.rt small{color:var(--muted);font-weight:500}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.pill.w{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.pill.n{color:var(--fg);background:color-mix(in srgb,var(--accent2) 30%,transparent);border-color:var(--accent2)}
+.pill.l{color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.btns .pri{background:var(--accent);color:var(--ink);border-color:var(--accent);padding:6px 14px;border-radius:var(--r)}
+.btns .sec{color:var(--fg);background:var(--raise);padding:6px 14px;border-radius:var(--r)}
+.btns .warn{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 50%,var(--line))}
+@media (max-width:860px){.th{grid-template-columns:minmax(0,1fr)}.intro{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:620px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.cols{grid-template-columns:minmax(0,1fr)}.c-dir{display:none}.sw{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- per-theme treatments (shading, patterns, the name) ---- */
+[data-t="jurassic"] .app{--hdr:radial-gradient(ellipse at 20% -40%,rgba(77,122,58,.55),transparent 65%),linear-gradient(180deg,rgba(240,138,28,.12),transparent);--glow:0 0 16px rgba(240,138,28,.45)}
+[data-t="jurassic"] .app::before{background:radial-gradient(ellipse at 50% 0%,transparent 40%,rgba(0,0,0,.45) 100%)}
+[data-t="jurassic"] .brand{background:linear-gradient(180deg,#f7a33a,#d4372a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 1px #f2c230) drop-shadow(0 1px 0 #3a1508);text-shadow:none;font-size:22px}
+[data-t="hailmary"] .app{--hdr:linear-gradient(115deg,rgba(90,63,160,.45),rgba(224,128,58,.28) 62%,transparent),linear-gradient(90deg,#ff4a4a,#ffa53a,#f4e04a,#4ae0a0,#4ab0ff,#9a6aff) bottom/100% 2px no-repeat;--glow:0 0 22px rgba(240,146,58,.55)}
+[data-t="hailmary"] .app::before{background:repeating-linear-gradient(115deg,rgba(240,146,58,.045) 0 2px,transparent 2px 15px),radial-gradient(ellipse at 100% 0%,rgba(95,212,220,.12),transparent 60%)}
+[data-t="hailmary"] .brand{color:#fff;font-size:18px}
+[data-t="totoro"] .app{--hdr:radial-gradient(60px 26px at 18% 70%,#fff 60%,transparent 62%),radial-gradient(90px 34px at 30% 62%,#fff 60%,transparent 62%),radial-gradient(70px 28px at 78% 40%,rgba(255,255,255,.9) 60%,transparent 62%),linear-gradient(180deg,#a9d6f3,#d7ecf8);--shadow:0 2px 8px rgba(47,122,52,.10)}
+[data-t="totoro"] .app::before{background:radial-gradient(ellipse at 50% 120%,rgba(124,194,67,.22),transparent 60%)}
+[data-t="indiana"] .app{--hdr:radial-gradient(ellipse at 50% -10%,rgba(191,26,41,.6),transparent 70%);--glow:0 2px 0 #000,0 0 18px rgba(227,161,74,.35)}
+[data-t="indiana"] .app::before{background:radial-gradient(ellipse at 50% 30%,transparent 35%,rgba(0,0,0,.55) 100%)}
+[data-t="indiana"] .brand{background:linear-gradient(180deg,#f7d046,#f08a1c 55%,#c8261e);-webkit-background-clip:text;background-clip:text;color:transparent;transform:skewX(-10deg);filter:drop-shadow(0 2px 0 #000);text-shadow:none}
+[data-t="bladerunner"] .app{--hdr:linear-gradient(90deg,rgba(192,4,26,.55),rgba(240,176,48,.22) 50%,rgba(9,135,146,.55));--glow:0 0 14px rgba(255,79,160,.65)}
+[data-t="bladerunner"] .app::before{background:repeating-linear-gradient(100deg,rgba(255,255,255,.035) 0 1px,transparent 1px 9px),radial-gradient(ellipse at 80% 100%,rgba(200,60,208,.18),transparent 60%)}
+[data-t="bladerunner"] .brand{background:linear-gradient(90deg,#ff7a3a,#f0b030 45%,#2fc4cf);-webkit-background-clip:text;background-clip:text;color:transparent;transform:skewX(-12deg);text-shadow:none;font-size:20px}
+[data-t="nocountry"] .app{--hdr:linear-gradient(180deg,#000,transparent),radial-gradient(ellipse at 50% 160%,rgba(232,162,74,.55),transparent 60%)}
+[data-t="nocountry"] .app::before{background:radial-gradient(ellipse at 50% 110%,rgba(232,162,74,.16),transparent 55%)}
+[data-t="nocountry"] .brand{font-size:30px;letter-spacing:.02em}
+[data-t="starwars"] .app{--hdr:radial-gradient(circle at 12% -20%,rgba(9,68,152,.75),transparent 60%);--glow:0 0 12px rgba(90,176,255,.65)}
+[data-t="starwars"] .app::before{background:radial-gradient(1px 1px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 12%,#fff,transparent),radial-gradient(1.5px 1.5px at 38% 62%,#cfe0ff,transparent),radial-gradient(1px 1px at 86% 48%,#fff,transparent),radial-gradient(1px 1px at 22% 82%,#fff,transparent),radial-gradient(1.5px 1.5px at 58% 88%,#fff,transparent),radial-gradient(1px 1px at 92% 78%,#cfe0ff,transparent),radial-gradient(1px 1px at 48% 32%,#fff,transparent);background-size:220px 220px}
+[data-t="starwars"] .brand{color:transparent;-webkit-text-stroke:1.4px #ffd21f;text-shadow:none;font-size:22px}
+[data-t="angrymen"] .app{--hdr:#f4d21a;--shadow:3px 3px 0 rgba(17,17,17,.9)}
+[data-t="angrymen"] .app::before{background:radial-gradient(rgba(17,17,17,.09) 1px,transparent 1.4px) 0 0/6px 6px,radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.5),transparent 60%)}
+[data-t="angrymen"] .hd .today{color:#111}
+[data-t="angrymen"] .brand{font-size:30px;text-shadow:5px -4px 0 rgba(17,17,17,.18)}
+[data-t="angrymen"] .tile,[data-t="angrymen"] .panel,[data-t="angrymen"] .tabs{border-color:#111}
+[data-t="interstellar"] .app{--hdr:linear-gradient(90deg,transparent,rgba(255,255,255,.07) 30%,rgba(255,255,255,.07) 70%,transparent);--glow:0 0 18px rgba(242,196,162,.55)}
+[data-t="interstellar"] .app::before{background:radial-gradient(ellipse at 85% 115%,rgba(242,196,162,.32),transparent 55%),radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 64% 18%,#fff,transparent),radial-gradient(1px 1px at 44% 70%,rgba(255,255,255,.8),transparent);background-size:auto,260px 260px,260px 260px,260px 260px}
+[data-t="interstellar"] .brand{font-size:18px}
+[data-t="matrix"] .app{--glow:0 0 8px rgba(76,242,106,.55)}
+[data-t="matrix"] .app::before{background:repeating-linear-gradient(90deg,rgba(76,242,106,.06) 0 2px,transparent 2px 24px),repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+[data-t="matrix"] .brand{color:var(--accent);font-size:22px}
+[data-t="trueromance"] .app{--hdr:linear-gradient(100deg,#1fa0e0,#0a4aa0)}
+[data-t="trueromance"] .hd{clip-path:polygon(0 0,100% 0,100% 78%,92% 92%,80% 80%,64% 100%,48% 84%,30% 96%,16% 82%,0 100%);padding-bottom:28px}
+[data-t="trueromance"] .brand,[data-t="trueromance"] .hd .today{color:#fff}
+[data-t="trueromance"] .brand{font-size:28px}
+[data-t="hateful"] .app{--hdr:linear-gradient(90deg,transparent 6%,rgba(212,32,30,.85) 6% 9%,transparent 9% 34%,rgba(212,32,30,.85) 34% 36.5%,transparent 36.5% 63%,rgba(212,32,30,.85) 63% 66%,transparent 66% 88%,rgba(212,32,30,.85) 88% 90%,transparent 90%);--shadow:2px 2px 0 rgba(21,18,15,.85)}
+[data-t="hateful"] .brand{font-size:26px;text-shadow:0 1px 0 #f4f1eb,0 0 1px #15120f}
+</style>
+
+<div class="page">
+  <div class="eyebrow">Film Vault · theme proposal</div>
+  <h1>Twelve films, twelve months</h1>
+  <p class="lede">Each theme borrows colour, type and shading from a film you picked. Nothing here copies a still, poster or logo: the look is built from colours, fonts and CSS texture only, and the films are made up. The app would open in the month's theme, with a switcher to flick between them and a plain Default.</p>
+
+  <div class="intro">
+    <section class="card" aria-labelledby="monH">
+      <div class="eyebrow" id="monH">Proposed month for each theme</div>
+      <ul class="months" id="months"></ul>
+    </section>
+    <section class="card" aria-labelledby="fbH">
+      <div class="eyebrow" id="fbH">How to give feedback</div>
+      <ol class="howto">
+        <li>Scroll the cards (or jump with the row below). Each mock-up uses only that theme's colours and fonts.</li>
+        <li>Tell me in chat what to change, in plain words: “Matrix: green too bright”, “Totoro: swap the red for yellow”, “Hateful Eight: no stripes”.</li>
+        <li>Say if a month should swap with another.</li>
+        <li>The small badges show text contrast against the panel colour. 4.5 or more reads comfortably; anything lower is flagged in red.</li>
+      </ol>
+    </section>
+  </div>
+
+  <nav class="jump" id="jump" aria-label="Jump to a theme"></nav>
+  <div id="themes"></div>
+</div>
+
+<script>
+// One source of truth for the themes: these tokens become the app's theme file once approved.
+const THEMES = [
+  { id: 'default', film: 'Default', month: null, mode: 'dark', fonts: ['Atkinson Hyperlegible', 'Figtree'],
+    note: 'Near-black grey with light, quiet highlights in the Watched blue. No colour drift. For when you want something plain.',
+    c: { bg: '#0f1012', surface: '#17181b', raise: '#202226', line: '#2c2e33', fg: '#ececee', muted: '#9fa2aa', accent: '#8fb8f2', ink: '#0b1424', accent2: '#c7dbf8', danger: '#f29a9a' }, r: 12, grain: 0 },
+  { id: 'jurassic', film: 'Jurassic Park', month: 1, mode: 'dark', fonts: ['Bungee', 'Barlow'],
+    note: 'Night-jungle green and black, torch-orange highlights with a gold keyline, and the chunky credit lettering for headings. Summer blockbuster for January.',
+    c: { bg: '#0b110a', surface: '#131c12', raise: '#1b2819', line: '#2a3b26', fg: '#f4ecd8', muted: '#b0b89c', accent: '#f08a1c', ink: '#1a0d02', accent2: '#f2c230', danger: '#ef6a4f' }, r: 10, grain: .25 },
+  { id: 'trueromance', film: 'True Romance', month: 2, mode: 'light', fonts: ['Oswald', 'Archivo'],
+    note: 'Bright 90s print: white ground, a cobalt-to-cyan ink splash across the top, hot pink and black type. February, for Valentine’s.',
+    c: { bg: '#f4f8fc', surface: '#ffffff', raise: '#eaf4fb', line: '#cfe0ed', fg: '#0a0c18', muted: '#4a5468', accent: '#0a68b8', ink: '#ffffff', accent2: '#d01f6a', danger: '#c8243a' }, r: 4, grain: 0 },
+  { id: 'indiana', film: 'Indiana Jones', month: 3, mode: 'dark', fonts: ['Alfa Slab One', 'Libre Franklin'],
+    note: 'Black and temple crimson with parchment text, a gold highlight and the slanted gold-to-red name. End-of-summer adventure for March.',
+    c: { bg: '#0e0806', surface: '#1a0f0b', raise: '#261611', line: '#3a2219', fg: '#f3e3c3', muted: '#c4a784', accent: '#e3a14a', ink: '#1a0d03', accent2: '#e5545e', danger: '#ee7a4f' }, r: 8, grain: .35 },
+  { id: 'nocountry', film: 'No Country for Old Men', month: 4, mode: 'dark', fonts: ['Bebas Neue', 'Source Sans 3'],
+    note: 'Desert dusk: black fading to a low amber horizon, sand-coloured text, faded denim as the one cool note, heavy grain. Autumn gold for April.',
+    c: { bg: '#0b0806', surface: '#15100b', raise: '#201810', line: '#31261a', fg: '#f1e9d6', muted: '#b5a687', accent: '#e8a24a', ink: '#1a0f03', accent2: '#8fb0cc', danger: '#e07a4a' }, r: 6, grain: .45 },
+  { id: 'starwars', film: 'Star Wars', month: 5, mode: 'dark', fonts: ['Orbitron', 'Saira'],
+    note: 'Deep-space navy with a starfield, glowing saber-blue headings and the name in a yellow outline. May, for the 4th.',
+    c: { bg: '#03050d', surface: '#091021', raise: '#0f1a35', line: '#1b2a52', fg: '#eaf2ff', muted: '#93a7cf', accent: '#ffd21f', ink: '#121212', accent2: '#5ab0ff', danger: '#ff5a4d' }, r: 10, grain: 0 },
+  { id: 'bladerunner', film: 'Blade Runner', month: 6, mode: 'dark', fonts: ['Michroma', 'Titillium Web'],
+    note: 'Rain-streaked indigo night, neon pink highlights, teal second colour and the red-to-teal split from the 2049 poster in the header. First winter rain for June.',
+    c: { bg: '#07060d', surface: '#0f0d1a', raise: '#17142a', line: '#262142', fg: '#f3effc', muted: '#a39dc6', accent: '#ff4fa0', ink: '#1a0410', accent2: '#2fc4cf', danger: '#ff7a5a' }, r: 6, grain: .15 },
+  { id: 'hateful', film: 'The Hateful Eight', month: 7, mode: 'light', fonts: ['Rye', 'Barlow'],
+    note: 'Off-white poster paper, black Western slab type and blood-red brush strokes, with cabin-wood brown. Deep winter for July.',
+    c: { bg: '#e6e2da', surface: '#f4f1eb', raise: '#ebe6dc', line: '#c9c1b3', fg: '#15120f', muted: '#5a5247', accent: '#a8191a', ink: '#ffffff', accent2: '#6a4428', danger: '#8a2a10' }, r: 3, grain: .3 },
+  { id: 'interstellar', film: 'Interstellar', month: 8, mode: 'dark', fonts: ['Cinzel', 'Manrope'],
+    note: 'Quiet indigo space with a warm black-hole glow in one corner, peach highlights, rose second colour and the widely spaced title caps. Long nights for August.',
+    c: { bg: '#07080f', surface: '#0e1120', raise: '#161a2e', line: '#252a44', fg: '#eef0f6', muted: '#a0a7bd', accent: '#f2c4a2', ink: '#1a0f0a', accent2: '#d98aa6', danger: '#ff8a7a' }, r: 14, grain: .1 },
+  { id: 'totoro', film: 'My Neighbour Totoro', month: 9, mode: 'light', fonts: ['EB Garamond', 'Nunito'],
+    note: 'Sunny sky and fresh leaf green, soft round corners, cloud shapes in the header and the credits’ serif capitals. Spring for September.',
+    c: { bg: '#e9f4fa', surface: '#ffffff', raise: '#f1f7ea', line: '#cfe1cc', fg: '#1d2a20', muted: '#55685a', accent: '#2f7a34', ink: '#ffffff', accent2: '#c0392b', danger: '#b8321f' }, r: 20, grain: 0 },
+  { id: 'matrix', film: 'The Matrix', month: 10, mode: 'dark', fonts: ['Share Tech Mono', 'IBM Plex Mono'],
+    note: 'Black with phosphor green, faint code columns and scanlines, monospaced type, and the red pill as the second colour. October.',
+    c: { bg: '#000a03', surface: '#031208', raise: '#061c0d', line: '#0d3318', fg: '#d4f5d8', muted: '#7fbf8a', accent: '#4cf26a', ink: '#001a06', accent2: '#ff4a52', danger: '#ffb14a' }, r: 4, grain: .12 },
+  { id: 'hailmary', film: 'Project Hail Mary', month: 11, mode: 'dark', fonts: ['Syncopate', 'Exo 2'],
+    note: 'Deep teal ship interior, amber glow, a thin prism stripe under the header and wide geometric capitals. Hopeful late spring for November.',
+    c: { bg: '#061219', surface: '#0c1d25', raise: '#132a35', line: '#1e3f4c', fg: '#eef6f8', muted: '#93b3bd', accent: '#f0923a', ink: '#1a0c02', accent2: '#5fd4dc', danger: '#ff6a5a' }, r: 14, grain: .1 },
+  { id: 'angrymen', film: '12 Angry Men', month: 12, mode: 'light', fonts: ['Anton', 'Libre Franklin'],
+    note: 'Old Hollywood: studio-grey paper, black ink, hard print shadows, halftone dots and the 1957 poster’s yellow band. December, the season for classics.',
+    c: { bg: '#d8d8d5', surface: '#f5f5f2', raise: '#e9e9e5', line: '#b5b5b0', fg: '#111111', muted: '#4a4a4a', accent: '#111111', ink: '#f4d21a', accent2: '#8a3a10', danger: '#b8321a' }, r: 2, grain: .2 }
+];
+const DISPLAY = { // how each theme sets its headings
+  default: [700, 'none', '-.01em'], jurassic: [400, 'uppercase', '.02em'], trueromance: [700, 'uppercase', '.01em'], indiana: [400, 'none', '0'],
+  nocountry: [400, 'uppercase', '.03em'], starwars: [900, 'uppercase', '.05em'], bladerunner: [400, 'uppercase', '.06em'], hateful: [400, 'uppercase', '.02em'],
+  interstellar: [600, 'uppercase', '.32em'], totoro: [700, 'uppercase', '.05em'], matrix: [400, 'uppercase', '.16em'], hailmary: [700, 'uppercase', '.28em'], angrymen: [400, 'uppercase', '.01em']
+};
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SAMPLE_UP = [['The Long Field', 1998, 'Drama · Plex', 'Recommended at book club'], ['Copper Sky', 2025, 'Sci Fi · Cinema', ''], ['Harbour Lights', 2024, 'Thriller · Stan', '']];
+const SAMPLE_LIB = [['Paper Lanterns', 2019, 8, 'w', 'Watched', 'A. Moreau'], ['The Long Field', 1998, null, 'n', 'Next Up', 'R. Okafor'], ['Night Ferry', 2011, null, 'l', 'Watchlist', 'S. Lindqvist']];
+const PER_MONTH = [8, 11, 7, 9, 12, 6, 5, 10, 9, 4, 0, 0];
+
+// Classic reel: a disc with five round holes and a hub (even-odd fill keeps the holes see-through)
+const circ = (cx, cy, r) => `M${cx - r},${cy}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0`;
+const holes = [0, 1, 2, 3, 4].map(k => { const a = (-90 + k * 72) * Math.PI / 180; return circ(+(32 + 15 * Math.cos(a)).toFixed(2), +(32 + 15 * Math.sin(a)).toFixed(2), 6.2); }).join('');
+const REEL = `<svg class="reel" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="${circ(32, 32, 29)}${holes}${circ(32, 32, 3.4)}"/><circle cx="32" cy="32" r="1.6" fill="currentColor"/></svg>`;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+const nowMonth = new Date().getMonth() + 1;
+
+function card(t) {
+  const [w, cs, tr] = DISPLAY[t.id];
+  const vars = Object.entries(t.c).map(([k, v]) => `--${k}:${v}`).join(';') + `;--r:${t.r}px;--grain:${t.grain};--fd:'${t.fonts[0]}',ui-sans-serif,system-ui,sans-serif;--fb:'${t.fonts[1]}',ui-sans-serif,system-ui,sans-serif;--dweight:${w};--dcase:${cs};--dtrack:${tr}`;
+  const checks = [['Text', t.c.fg, t.c.surface], ['Muted', t.c.muted, t.c.surface], ['Highlight', t.c.accent, t.c.surface], ['Second', t.c.accent2, t.c.surface], ['Button', t.c.ink, t.c.accent]]
+    .map(([l, a, b]) => { const r = ratio(a, b); return `<span class="${r < 4.5 ? 'bad' : ''}" title="${l} on ${l === 'Button' ? 'highlight' : 'panel'}">${l} ${r.toFixed(1)}</span>`; }).join('');
+  const sw = ['bg', 'surface', 'fg', 'accent', 'accent2'].map(k => `<div style="background:${t.c[k]}" title="${k} ${t.c[k]}"></div>`);
+  const swl = ['Ground', 'Panel', 'Text', 'Highlight', 'Second'];
+  const maxM = Math.max(...PER_MONTH);
+  const bars = PER_MONTH.map((v, i) => `<i class="${i + 1 === 10 ? 'cur' : ''}" style="height:${Math.max(2, v / maxM * 100)}%" title="${MONTHS[i]}: ${v} film${v === 1 ? '' : 's'}"></i>`).join('');
+  return `<section class="th" id="${t.id}" data-t="${t.id}" aria-labelledby="h-${t.id}">
+  <div class="th-meta">
+    <div class="eyebrow">${t.month ? MONTHS[t.month - 1] : 'Any time'}</div>
+    <h2 id="h-${t.id}">${esc(t.film)}</h2>
+    <div class="tags"><span class="tag">${t.mode === 'dark' ? 'Dark' : 'Light'}</span>${t.month === nowMonth ? '<span class="tag now">This month</span>' : ''}${t.id === 'default' ? '<span class="tag">Plain option</span>' : ''}</div>
+    <p>${esc(t.note)}</p>
+    <p class="muted">Headings: ${esc(t.fonts[0])} · Text: ${esc(t.fonts[1])}</p>
+    <div class="sw">${sw.map((s, i) => `<div>${s}<span>${swl[i]} ${t.c[['bg', 'surface', 'fg', 'accent', 'accent2'][i]]}</span></div>`).join('')}</div>
+    <div class="checks">${checks}</div>
+  </div>
+  <div class="app" style="${vars}">
+    <header class="hd"><div class="lock">${REEL}<span class="brand">Film Vault</span></div><span class="today">Saturday 24 October</span></header>
+    <div class="tabs"><b class="on">Log</b><b>Library</b><b>Dashboard</b></div>
+    <div class="tiles">
+      <div class="tile hero"><div class="lab">Films in 2026</div><div class="num">95</div><div class="sub">of 120 goal</div><div class="goal"><i></i></div></div>
+      <div class="tile"><div class="lab">October</div><div class="num">4</div><div class="sub">films</div></div>
+      <div class="tile"><div class="lab">Average</div><div class="num">6.8</div><div class="sub">out of 10</div></div>
+      <div class="tile"><div class="lab">Last film</div><div class="num">2 days</div><div class="sub">Paper Lanterns</div></div>
+    </div>
+    <div class="cols">
+      <div class="panel"><h3>Up next</h3><ol class="up">${SAMPLE_UP.map((u, i) => `<li><span class="n">${i + 1}</span><span><span class="t">${u[0]}</span><span class="m">${u[1]} · ${u[2]}</span></span><button type="button" tabindex="-1">Watched</button>${u[3] ? `<span class="why">“${u[3]}”</span>` : ''}</li>`).join('')}</ol></div>
+      <div class="panel"><h3>Films per month</h3><div class="bars" role="img" aria-label="Films watched per month in 2026, made-up numbers">${bars}</div><div class="blab">${MONTHS.map(m => `<span>${m[0]}</span>`).join('')}</div></div>
+    </div>
+    <div class="panel"><h3>Library</h3>
+      <table><thead><tr><th>Title</th><th class="r">Rating</th><th>Status</th><th class="c-dir">Director</th></tr></thead>
+      <tbody>${SAMPLE_LIB.map(l => `<tr><td><b>${l[0]}</b><span class="y">${l[1]}</span></td><td class="r">${l[2] ? `<span class="rt">${l[2]}<small>/10</small></span>` : ''}</td><td><span class="pill ${l[3]}">${l[4]}</span></td><td class="c-dir">${l[5]}</td></tr>`).join('')}</tbody></table>
+      <div class="btns"><button type="button" class="pri" tabindex="-1">Log film</button><button type="button" class="sec" tabindex="-1">Add film</button><button type="button" class="warn" tabindex="-1">Drop</button></div>
+    </div>
+  </div>
+</section>`;
+}
+
+document.getElementById('themes').innerHTML = THEMES.map(card).join('');
+document.getElementById('jump').innerHTML = THEMES.map(t => `<a href="#${t.id}">${esc(t.film)}</a>`).join('');
+document.getElementById('months').innerHTML = THEMES.filter(t => t.month).sort((a, b) => a.month - b.month)
+  .map(t => `<li class="${t.month === nowMonth ? 'now' : ''}"><span class="m">${MONTHS[t.month - 1].slice(0, 3)}</span><a href="#${t.id}">${esc(t.film)}</a></li>`).join('');
+if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+</script>

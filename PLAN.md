@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0, 1 and 2 (writes) done 2026-10-23, merged to `main` for GitHub Pages.** Next: Stage 3 (Plan).
+Status: **Stages 0–2 merged to `main` (2026-10-23). Stage 3 (Plan) built and tested on the branch (2026-10-24).** Next: themes (Film Vault), then Stage 4.
 
 ## Reference
 
@@ -179,3 +179,38 @@ positions don't matter.
 - Dates are shown as `19 Oct 26` (house style); the sheet keeps real dates.
 - The id and some film details are still in earlier commits of this public repo. Removing
   them from history needs the owner's go-ahead.
+
+## Stage 3 (built 2026-10-24)
+
+- Library → Plan: Up next (ordered, ↑ ↓, Why, Soon, Drop), Soon, the watchlist in
+  sheet order with one-tap Up next / Soon / Someday, and a sort deck (keys 1–4, Skip,
+  a pause after every `deckBatch` films).
+- A film counts as Up next when Plan = Up next, or when its Status was set to Next Up
+  in the sheet and Plan is blank (it sorts last until it is first reordered; then its
+  Plan and Order are filled in). Up next Orders are kept as 1..n.
+- The deck ranks unsorted Watchlist/Rewatch films (and Someday ones older than
+  `somedayResurfaceDays`) by your ratings of films with the same director, cast and
+  genre (shrunk towards your average), plus small boosts for Owned and Plex/disc.
+- "Rewatch next" (Library detail row, for a seen film with nothing planned) adds a new
+  row in Up next and leaves the Watched row alone.
+- Changes are queued and written with the Stage 2 rules; a change that fails part-way
+  across several films is reported as partly saved and the sheet is re-read.
+- Tests: `node tests/stage3.test.mjs` (774 checks), plus stage 1 (256) and 2 (545).
+- Billy Elliot (id 776): its Watched row was changed to Next Up by hand, so it now
+  counts as Up next and no longer as seen. Left as the owner set it.
+
+## Film Vault look (proposal 2026-10-24)
+
+- Name "Film Vault" as text in the theme's display font, with a classic reel icon
+  (disc, five holes, hub) in the theme accent. Static icons use the Default blue.
+- 13 themes: Default (near-black, Watched blue `#8fb8f2`, no drift) and one per film:
+  Jurassic Park, Project Hail Mary, My Neighbour Totoro, Indiana Jones, Blade Runner,
+  No Country for Old Men, Star Wars, 12 Angry Men, Interstellar, The Matrix, True
+  Romance, The Hateful Eight. Inspiration only: no stills, posters or logos.
+- Opens in the month's theme; a switcher flicks between themes; Default for something
+  plain. Proposed months and every token are in `design/themes-board.html` (also the
+  private claude.ai board); notes per film in `design/theme-notes.md`.
+- Theme editor in Settings (colours, heading/text font from a short Google Fonts list,
+  roundness, grain/glow, light/dark, reset, save as copy). Saved per device for now;
+  syncing through 🎥 Settings later.
+- Fonts load on demand (only the active theme's two families).
