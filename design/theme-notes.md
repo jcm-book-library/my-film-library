@@ -108,3 +108,13 @@ Type: title in a heavy, rough, stamped slab-serif/Western caps in black with ink
 tiny tracked caps for names and quoted roles (Oswald / Barlow Condensed).
 Shading: dry-brush red strokes, paper grain and ink speckle, hard flat shadows, warm lantern glow inside versus cold snow haze outside, strong vignette.
 Candidates: a LIGHT theme (off-white paper, black slab type, blood-red strokes) and a DARK cabin theme (dark wood, lantern amber, red accent) with a snowy cold-grey variant.
+
+## Owner feedback (2026-10-24) and changes made
+Ratings: Default great, Jurassic Park mid, True Romance great, Indiana Jones good, No Country great, Star Wars great, Blade Runner great,
+Hateful Eight great, Interstellar good, Totoro great, The Matrix excellent, Project Hail Mary great, 12 Angry Men great.
+- Indiana Jones and No Country needed to be distinct: Indiana Jones is now temple crimson throughout (red panels, gold highlight, torch-orange second);
+  No Country is stark and neutral (near-black, white credits, bone-sand highlight, denim second; amber only as the horizon glow).
+- Hateful Eight: the red header bars became subtle blood trails dripping from the top edge (inline drawing, kept clear of the name and date).
+- Interstellar: the peach highlight became ice-planet blue (#9fc8ea).
+- Jurassic Park: rebuilt from the logo (black ground, yellow name bar edged in black, reel in a red disc with a yellow ring, white lettering
+  outlined in red and black; yellow highlight, logo red second). Heading font Bevan with small capitals.

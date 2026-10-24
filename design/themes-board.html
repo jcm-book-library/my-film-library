@@ -1,7 +1,7 @@
 <title>Film Vault Themes</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Archivo:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&family=Barlow:wght@400;600&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@600&family=EB+Garamond:wght@600;700&family=Exo+2:wght@400;600&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;600&family=Libre+Franklin:wght@400;600&family=Manrope:wght@400;600&family=Michroma&family=Nunito:wght@400;700&family=Orbitron:wght@700;900&family=Oswald:wght@500;700&family=Rye&family=Saira:wght@400;600&family=Share+Tech+Mono&family=Source+Sans+3:wght@400;600&family=Syncopate:wght@700&family=Titillium+Web:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Archivo:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&family=Barlow:wght@400;600&family=Bebas+Neue&family=Bevan&family=Cinzel:wght@600&family=EB+Garamond:wght@600;700&family=Exo+2:wght@400;600&family=Figtree:wght@400;600&family=IBM+Plex+Mono:wght@400;600&family=Libre+Franklin:wght@400;600&family=Manrope:wght@400;600&family=Michroma&family=Nunito:wght@400;700&family=Orbitron:wght@700;900&family=Oswald:wght@500;700&family=Rye&family=Saira:wght@400;600&family=Share+Tech+Mono&family=Source+Sans+3:wght@400;600&family=Syncopate:wght@700&family=Titillium+Web:wght@400;600&display=swap">
 <style>
 /* Layout: a single column of theme cards; each card pairs the theme's notes with a small mock-up of the app wearing that theme.
    The page itself wears the Default theme (near-black, light highlights, blue), dark only by design. */
@@ -112,15 +112,18 @@ td .y{color:var(--muted);font-size:12px;margin-left:5px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ---- per-theme treatments (shading, patterns, the name) ---- */
-[data-t="jurassic"] .app{--hdr:radial-gradient(ellipse at 20% -40%,rgba(77,122,58,.55),transparent 65%),linear-gradient(180deg,rgba(240,138,28,.12),transparent);--glow:0 0 16px rgba(240,138,28,.45)}
-[data-t="jurassic"] .app::before{background:radial-gradient(ellipse at 50% 0%,transparent 40%,rgba(0,0,0,.45) 100%)}
-[data-t="jurassic"] .brand{background:linear-gradient(180deg,#f7a33a,#d4372a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 1px #f2c230) drop-shadow(0 1px 0 #3a1508);text-shadow:none;font-size:22px}
+[data-t="jurassic"] .app{--hdr:#f4cf1d;--glow:none}
+[data-t="jurassic"] .hd{border-bottom:4px solid #111;box-shadow:inset 0 4px 0 #111}
+[data-t="jurassic"] .app::before{background:radial-gradient(ellipse at 50% -10%,rgba(227,27,35,.16),transparent 55%)}
+[data-t="jurassic"] .brand{font-variant:small-caps;color:#fffaf0;-webkit-text-stroke:.8px #e31b23;text-shadow:-1.5px -1.5px 0 #111,1.5px -1.5px 0 #111,-1.5px 1.5px 0 #111,1.5px 1.5px 0 #111,0 3px 0 #111;font-size:27px}
+[data-t="jurassic"] .reel{color:#111;background:#e31b23;border-radius:50%;padding:3px;width:34px;height:34px;box-shadow:0 0 0 3px #f4cf1d,0 0 0 5px #111}
+[data-t="jurassic"] .hd .today{color:#111;font-weight:600}
 [data-t="hailmary"] .app{--hdr:linear-gradient(115deg,rgba(90,63,160,.45),rgba(224,128,58,.28) 62%,transparent),linear-gradient(90deg,#ff4a4a,#ffa53a,#f4e04a,#4ae0a0,#4ab0ff,#9a6aff) bottom/100% 2px no-repeat;--glow:0 0 22px rgba(240,146,58,.55)}
 [data-t="hailmary"] .app::before{background:repeating-linear-gradient(115deg,rgba(240,146,58,.045) 0 2px,transparent 2px 15px),radial-gradient(ellipse at 100% 0%,rgba(95,212,220,.12),transparent 60%)}
 [data-t="hailmary"] .brand{color:#fff;font-size:18px}
 [data-t="totoro"] .app{--hdr:radial-gradient(60px 26px at 18% 70%,#fff 60%,transparent 62%),radial-gradient(90px 34px at 30% 62%,#fff 60%,transparent 62%),radial-gradient(70px 28px at 78% 40%,rgba(255,255,255,.9) 60%,transparent 62%),linear-gradient(180deg,#a9d6f3,#d7ecf8);--shadow:0 2px 8px rgba(47,122,52,.10)}
 [data-t="totoro"] .app::before{background:radial-gradient(ellipse at 50% 120%,rgba(124,194,67,.22),transparent 60%)}
-[data-t="indiana"] .app{--hdr:radial-gradient(ellipse at 50% -10%,rgba(191,26,41,.6),transparent 70%);--glow:0 2px 0 #000,0 0 18px rgba(227,161,74,.35)}
+[data-t="indiana"] .app{--hdr:radial-gradient(ellipse at 50% -10%,rgba(214,32,44,.75),transparent 70%);--glow:0 2px 0 #000,0 0 18px rgba(227,161,74,.35)}
 [data-t="indiana"] .app::before{background:radial-gradient(ellipse at 50% 30%,transparent 35%,rgba(0,0,0,.55) 100%)}
 [data-t="indiana"] .brand{background:linear-gradient(180deg,#f7d046,#f08a1c 55%,#c8261e);-webkit-background-clip:text;background-clip:text;color:transparent;transform:skewX(-10deg);filter:drop-shadow(0 2px 0 #000);text-shadow:none}
 [data-t="bladerunner"] .app{--hdr:linear-gradient(90deg,rgba(192,4,26,.55),rgba(240,176,48,.22) 50%,rgba(9,135,146,.55));--glow:0 0 14px rgba(255,79,160,.65)}
@@ -137,7 +140,7 @@ td .y{color:var(--muted);font-size:12px;margin-left:5px}
 [data-t="angrymen"] .hd .today{color:#111}
 [data-t="angrymen"] .brand{font-size:30px;text-shadow:5px -4px 0 rgba(17,17,17,.18)}
 [data-t="angrymen"] .tile,[data-t="angrymen"] .panel,[data-t="angrymen"] .tabs{border-color:#111}
-[data-t="interstellar"] .app{--hdr:linear-gradient(90deg,transparent,rgba(255,255,255,.07) 30%,rgba(255,255,255,.07) 70%,transparent);--glow:0 0 18px rgba(242,196,162,.55)}
+[data-t="interstellar"] .app{--hdr:linear-gradient(90deg,transparent,rgba(255,255,255,.07) 30%,rgba(255,255,255,.07) 70%,transparent);--glow:0 0 18px rgba(159,200,234,.55)}
 [data-t="interstellar"] .app::before{background:radial-gradient(ellipse at 85% 115%,rgba(242,196,162,.32),transparent 55%),radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 64% 18%,#fff,transparent),radial-gradient(1px 1px at 44% 70%,rgba(255,255,255,.8),transparent);background-size:auto,260px 260px,260px 260px,260px 260px}
 [data-t="interstellar"] .brand{font-size:18px}
 [data-t="matrix"] .app{--glow:0 0 8px rgba(76,242,106,.55)}
@@ -147,7 +150,9 @@ td .y{color:var(--muted);font-size:12px;margin-left:5px}
 [data-t="trueromance"] .hd{clip-path:polygon(0 0,100% 0,100% 78%,92% 92%,80% 80%,64% 100%,48% 84%,30% 96%,16% 82%,0 100%);padding-bottom:28px}
 [data-t="trueromance"] .brand,[data-t="trueromance"] .hd .today{color:#fff}
 [data-t="trueromance"] .brand{font-size:28px}
-[data-t="hateful"] .app{--hdr:linear-gradient(90deg,transparent 6%,rgba(212,32,30,.85) 6% 9%,transparent 9% 34%,rgba(212,32,30,.85) 34% 36.5%,transparent 36.5% 63%,rgba(212,32,30,.85) 63% 66%,transparent 66% 88%,rgba(212,32,30,.85) 88% 90%,transparent 90%);--shadow:2px 2px 0 rgba(21,18,15,.85)}
+[data-t="hateful"] .app{--hdr:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='76' viewBox='0 0 340 76'%3E%3Cg fill='%238f1212' fill-opacity='.88'%3E%3Crect x='33.0' y='-2' width='6' height='46' rx='3.0'/%3E%3Cellipse cx='36' cy='44' rx='6.7' ry='9.6'/%3E%3Crect x='110.2' y='-2' width='3.5' height='28' rx='1.8'/%3E%3Cellipse cx='112' cy='26' rx='4.3' ry='6.2'/%3E%3Crect x='186.5' y='-2' width='7' height='60' rx='3.5'/%3E%3Cellipse cx='190' cy='58' rx='7.6' ry='11.0'/%3E%3Crect x='207.8' y='-2' width='2.5' height='22' rx='1.2'/%3E%3Cellipse cx='209' cy='20' rx='3.4' ry='4.9'/%3E%3Crect x='265.5' y='-2' width='5' height='38' rx='2.5'/%3E%3Cellipse cx='268' cy='36' rx='5.8' ry='8.2'/%3E%3Crect x='316.5' y='-2' width='3' height='26' rx='1.5'/%3E%3Cellipse cx='318' cy='24' rx='3.8' ry='5.6'/%3E%3C/g%3E%3Cg fill='%23fff' fill-opacity='.38'%3E%3Cellipse cx='34.3' cy='44.6' rx='1.2' ry='2.7'/%3E%3Cellipse cx='111.0' cy='26.6' rx='0.7' ry='1.6'/%3E%3Cellipse cx='188.0' cy='58.6' rx='1.4' ry='3.1'/%3E%3Cellipse cx='208.3' cy='20.6' rx='0.6' ry='1.1'/%3E%3Cellipse cx='266.6' cy='36.6' rx='1.0' ry='2.2'/%3E%3Cellipse cx='317.2' cy='24.6' rx='0.6' ry='1.4'/%3E%3C/g%3E%3C/svg%3E") center top/340px 76px no-repeat;--shadow:2px 2px 0 rgba(21,18,15,.85)}
+[data-t="hateful"] .hd{min-height:76px;align-items:flex-start}
+@media (max-width:620px){[data-t="hateful"] .app{--hdr:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='76' viewBox='0 0 340 76'%3E%3Cg fill='%238f1212' fill-opacity='.88'%3E%3Crect x='33.0' y='-2' width='6' height='46' rx='3.0'/%3E%3Cellipse cx='36' cy='44' rx='6.7' ry='9.6'/%3E%3Crect x='110.2' y='-2' width='3.5' height='28' rx='1.8'/%3E%3Cellipse cx='112' cy='26' rx='4.3' ry='6.2'/%3E%3Crect x='186.5' y='-2' width='7' height='60' rx='3.5'/%3E%3Cellipse cx='190' cy='58' rx='7.6' ry='11.0'/%3E%3Crect x='207.8' y='-2' width='2.5' height='22' rx='1.2'/%3E%3Cellipse cx='209' cy='20' rx='3.4' ry='4.9'/%3E%3Crect x='265.5' y='-2' width='5' height='38' rx='2.5'/%3E%3Cellipse cx='268' cy='36' rx='5.8' ry='8.2'/%3E%3Crect x='316.5' y='-2' width='3' height='26' rx='1.5'/%3E%3Cellipse cx='318' cy='24' rx='3.8' ry='5.6'/%3E%3C/g%3E%3Cg fill='%23fff' fill-opacity='.38'%3E%3Cellipse cx='34.3' cy='44.6' rx='1.2' ry='2.7'/%3E%3Cellipse cx='111.0' cy='26.6' rx='0.7' ry='1.6'/%3E%3Cellipse cx='188.0' cy='58.6' rx='1.4' ry='3.1'/%3E%3Cellipse cx='208.3' cy='20.6' rx='0.6' ry='1.1'/%3E%3Cellipse cx='266.6' cy='36.6' rx='1.0' ry='2.2'/%3E%3Cellipse cx='317.2' cy='24.6' rx='0.6' ry='1.4'/%3E%3C/g%3E%3C/svg%3E") right 4px top 0/140px 31px no-repeat}[data-t="hateful"] .hd{min-height:0}}
 [data-t="hateful"] .brand{font-size:26px;text-shadow:0 1px 0 #f4f1eb,0 0 1px #15120f}
 </style>
 
@@ -182,18 +187,18 @@ const THEMES = [
   { id: 'default', film: 'Default', month: null, mode: 'dark', fonts: ['Atkinson Hyperlegible', 'Figtree'],
     note: 'Near-black grey with light, quiet highlights in the Watched blue. No colour drift. For when you want something plain.',
     c: { bg: '#0f1012', surface: '#17181b', raise: '#202226', line: '#2c2e33', fg: '#ececee', muted: '#9fa2aa', accent: '#8fb8f2', ink: '#0b1424', accent2: '#c7dbf8', danger: '#f29a9a' }, r: 12, grain: 0 },
-  { id: 'jurassic', film: 'Jurassic Park', month: 1, mode: 'dark', fonts: ['Bungee', 'Barlow'],
-    note: 'Night-jungle green and black, torch-orange highlights with a gold keyline, and the chunky credit lettering for headings. Summer blockbuster for January.',
-    c: { bg: '#0b110a', surface: '#131c12', raise: '#1b2819', line: '#2a3b26', fg: '#f4ecd8', muted: '#b0b89c', accent: '#f08a1c', ink: '#1a0d02', accent2: '#f2c230', danger: '#ef6a4f' }, r: 10, grain: .25 },
+  { id: 'jurassic', film: 'Jurassic Park', month: 1, mode: 'dark', fonts: ['Bevan', 'Barlow'],
+    note: 'Built from the logo: black ground, the yellow name bar edged in black, the reel set in a red disc with a yellow ring, and the name in white letters outlined in red and black. Yellow highlights, logo red second. Summer blockbuster for January.',
+    c: { bg: '#0a0a0a', surface: '#151413', raise: '#1f1d1b', line: '#34302b', fg: '#fbf4e4', muted: '#b9b1a3', accent: '#f4cf1d', ink: '#111111', accent2: '#ff5048', danger: '#ff7a5a' }, r: 8, grain: 0 },
   { id: 'trueromance', film: 'True Romance', month: 2, mode: 'light', fonts: ['Oswald', 'Archivo'],
     note: 'Bright 90s print: white ground, a cobalt-to-cyan ink splash across the top, hot pink and black type. February, for Valentine’s.',
     c: { bg: '#f4f8fc', surface: '#ffffff', raise: '#eaf4fb', line: '#cfe0ed', fg: '#0a0c18', muted: '#4a5468', accent: '#0a68b8', ink: '#ffffff', accent2: '#d01f6a', danger: '#c8243a' }, r: 4, grain: 0 },
   { id: 'indiana', film: 'Indiana Jones', month: 3, mode: 'dark', fonts: ['Alfa Slab One', 'Libre Franklin'],
-    note: 'Black and temple crimson with parchment text, a gold highlight and the slanted gold-to-red name. End-of-summer adventure for March.',
-    c: { bg: '#0e0806', surface: '#1a0f0b', raise: '#261611', line: '#3a2219', fg: '#f3e3c3', muted: '#c4a784', accent: '#e3a14a', ink: '#1a0d03', accent2: '#e5545e', danger: '#ee7a4f' }, r: 8, grain: .35 },
+    note: 'Temple crimson all the way through: deep red panels, parchment text, a gold highlight, torch orange as the second colour and the slanted gold-to-red name. End-of-summer adventure for March.',
+    c: { bg: '#140405', surface: '#240a0c', raise: '#330f12', line: '#4f1a1e', fg: '#f6e7c8', muted: '#d6b48e', accent: '#f0b64a', ink: '#1a0d03', accent2: '#ff9a4a', danger: '#ffb3a0' }, r: 8, grain: .35 },
   { id: 'nocountry', film: 'No Country for Old Men', month: 4, mode: 'dark', fonts: ['Bebas Neue', 'Source Sans 3'],
-    note: 'Desert dusk: black fading to a low amber horizon, sand-coloured text, faded denim as the one cool note, heavy grain. Autumn gold for April.',
-    c: { bg: '#0b0806', surface: '#15100b', raise: '#201810', line: '#31261a', fg: '#f1e9d6', muted: '#b5a687', accent: '#e8a24a', ink: '#1a0f03', accent2: '#8fb0cc', danger: '#e07a4a' }, r: 6, grain: .45 },
+    note: 'Stark and dry: neutral near-black, white credit lettering, bone-sand highlights, faded denim blue as the second colour, heavy grain, and the amber dusk only as a low glow at the horizon. Autumn for April.',
+    c: { bg: '#070605', surface: '#12110f', raise: '#1c1a17', line: '#2f2c27', fg: '#f4f1ea', muted: '#b3ab9c', accent: '#e7cea6', ink: '#16100a', accent2: '#8fb0cc', danger: '#e08a4a' }, r: 4, grain: .45 },
   { id: 'starwars', film: 'Star Wars', month: 5, mode: 'dark', fonts: ['Orbitron', 'Saira'],
     note: 'Deep-space navy with a starfield, glowing saber-blue headings and the name in a yellow outline. May, for the 4th.',
     c: { bg: '#03050d', surface: '#091021', raise: '#0f1a35', line: '#1b2a52', fg: '#eaf2ff', muted: '#93a7cf', accent: '#ffd21f', ink: '#121212', accent2: '#5ab0ff', danger: '#ff5a4d' }, r: 10, grain: 0 },
@@ -204,8 +209,8 @@ const THEMES = [
     note: 'Off-white poster paper, black Western slab type and blood-red brush strokes, with cabin-wood brown. Deep winter for July.',
     c: { bg: '#e6e2da', surface: '#f4f1eb', raise: '#ebe6dc', line: '#c9c1b3', fg: '#15120f', muted: '#5a5247', accent: '#a8191a', ink: '#ffffff', accent2: '#6a4428', danger: '#8a2a10' }, r: 3, grain: .3 },
   { id: 'interstellar', film: 'Interstellar', month: 8, mode: 'dark', fonts: ['Cinzel', 'Manrope'],
-    note: 'Quiet indigo space with a warm black-hole glow in one corner, peach highlights, rose second colour and the widely spaced title caps. Long nights for August.',
-    c: { bg: '#07080f', surface: '#0e1120', raise: '#161a2e', line: '#252a44', fg: '#eef0f6', muted: '#a0a7bd', accent: '#f2c4a2', ink: '#1a0f0a', accent2: '#d98aa6', danger: '#ff8a7a' }, r: 14, grain: .1 },
+    note: 'Quiet indigo space with a warm black-hole glow in one corner, ice-planet blue highlights, rose second colour and the widely spaced title caps. Long nights for August.',
+    c: { bg: '#07080f', surface: '#0e1120', raise: '#161a2e', line: '#252a44', fg: '#eef0f6', muted: '#a0a7bd', accent: '#9fc8ea', ink: '#07101a', accent2: '#d98aa6', danger: '#ff8a7a' }, r: 14, grain: .1 },
   { id: 'totoro', film: 'My Neighbour Totoro', month: 9, mode: 'light', fonts: ['EB Garamond', 'Nunito'],
     note: 'Sunny sky and fresh leaf green, soft round corners, cloud shapes in the header and the credits’ serif capitals. Spring for September.',
     c: { bg: '#e9f4fa', surface: '#ffffff', raise: '#f1f7ea', line: '#cfe1cc', fg: '#1d2a20', muted: '#55685a', accent: '#2f7a34', ink: '#ffffff', accent2: '#c0392b', danger: '#b8321f' }, r: 20, grain: 0 },
@@ -220,7 +225,7 @@ const THEMES = [
     c: { bg: '#d8d8d5', surface: '#f5f5f2', raise: '#e9e9e5', line: '#b5b5b0', fg: '#111111', muted: '#4a4a4a', accent: '#111111', ink: '#f4d21a', accent2: '#8a3a10', danger: '#b8321a' }, r: 2, grain: .2 }
 ];
 const DISPLAY = { // how each theme sets its headings
-  default: [700, 'none', '-.01em'], jurassic: [400, 'uppercase', '.02em'], trueromance: [700, 'uppercase', '.01em'], indiana: [400, 'none', '0'],
+  default: [700, 'none', '-.01em'], jurassic: [400, 'none', '.02em'], trueromance: [700, 'uppercase', '.01em'], indiana: [400, 'none', '0'],
   nocountry: [400, 'uppercase', '.03em'], starwars: [900, 'uppercase', '.05em'], bladerunner: [400, 'uppercase', '.06em'], hateful: [400, 'uppercase', '.02em'],
   interstellar: [600, 'uppercase', '.32em'], totoro: [700, 'uppercase', '.05em'], matrix: [400, 'uppercase', '.16em'], hailmary: [700, 'uppercase', '.28em'], angrymen: [400, 'uppercase', '.01em']
 };
