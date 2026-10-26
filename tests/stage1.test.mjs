@@ -15,7 +15,7 @@ const PAGE = path.join(tmp, 'index.html');
 fs.writeFileSync(PAGE, '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + fs.readFileSync(APP, 'utf8').replace('__SHEET_ID__', 'TESTSHEETID000000000000000000000000') + '</body></html>');
 
 const SIZES = { laptop: { width: 1280, height: 800 }, phone: { width: 390, height: 844 } };
-const OK_RANGES = new Set(["'🎥'!A1:R6000", "'🎥 Settings'!A1:C50"]);
+const OK_RANGES = new Set(["'🎥'!A1:S6000", "'🎥 Settings'!A1:C50"]);
 let failures = 0, passes = 0;
 const check = (name, cond, detail) => { if (cond) { passes++; console.log(`PASS  ${name}`); } else { failures++; console.log(`FAIL  ${name}${detail !== undefined ? '  -> ' + (typeof detail === 'string' ? detail : JSON.stringify(detail)) : ''}`); } };
 const eq = (name, got, want) => check(name, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)} expected ${JSON.stringify(want)}`);
@@ -39,7 +39,7 @@ async function open(size, fixture, mode = 'ok') {
       window.claude = { use: async name => name === 'mcp' ? { callTool: async (server, tool, input) => {
         window.__calls.push({ server, tool, range: input && input.range });
         if (mode === 'error') throw { code: 'server_not_connected' };
-        if (tool === 'get_values' && input.range === "'🎥'!A1:R6000") return { payload: { values: films } };
+        if (tool === 'get_values' && input.range === "'🎥'!A1:S6000") return { payload: { values: films } };
         if (tool === 'get_values' && input.range === "'🎥 Settings'!A1:C50") return { payload: { values: settings } };
         throw { code: 'tool_error', message: 'unexpected call' };
       } } : null };
@@ -133,13 +133,13 @@ for (const size of ['laptop', 'phone']) {
     eq(S + '3 up next note', await page.textContent('#upNote'), '10 of 13 · 3 more waiting');
     const whys = await texts(page, '#upList li .why');
     eq(S + '3 up next why text shown', whys, ups.slice(0, 10).map(r => r.why));
-    // recent diary
-    const exp12 = E.last.slice(0, 12);
-    eq(S + '3 recent diary titles newest first (ties: later sheet row first)', await texts(page, '#recList li .t'), exp12.map(r => r.title));
-    const subs = (await texts(page, '#recList li .sub')).map(s => s.split(' · ')[0]);
-    eq(S + '3 recent diary dates', subs, exp12.map(r => `${Number(r.iso.slice(8))} ${MON[Number(r.iso.slice(5, 7)) - 1]}`));
-    check(S + '3 recent diary first item is dated today', exp12[0].iso === E.todayIso && subs[0] === `${fx.today.getDate()} ${MON[fx.today.getMonth()]}`, subs[0]);
-    eq(S + '3 recent note', await page.textContent('#recNote'), `${E.diary.length} dated in total`);
+    // last 5 watched (replaces the old Recent diary)
+    const exp12 = E.last.slice(0, 5);
+    eq(S + '3 last 5 titles newest first (ties: later sheet row first)', await texts(page, '#last5List li .t'), exp12.map(r => r.title));
+    const subs = (await texts(page, '#last5List li .sub')).map(s => s.split(' · ')[0]);
+    eq(S + '3 last 5 dates', subs, exp12.map(r => `${Number(r.iso.slice(8))} ${MON[Number(r.iso.slice(5, 7)) - 1]}`));
+    check(S + '3 last 5 first item is dated today', exp12[0].iso === E.todayIso && subs[0] === `${fx.today.getDate()} ${MON[fx.today.getMonth()]}`, subs[0]);
+    eq(S + '3 last 5 note', await page.textContent('#last5Note'), `${E.diary.length} dated in total`);
     const soon = E.recs.filter(r => r.status === 'Coming Soon');
     eq(S + '3 coming soon titles', await texts(page, '#soonList li .t'), soon.map(r => r.title));
     eq(S + '3 coming soon release values', await texts(page, '#soonList li .r'), soon.map(r => r.release));
@@ -195,7 +195,8 @@ for (const size of ['laptop', 'phone']) {
     // chips
     const statuses = ['Watched', 'Watchlist', 'Next Up', 'Rewatch', 'Coming Soon', 'In Development', 'Unavailable'];
     const chipTxt = await texts(page, '#libChips .chip');
-    const wantChips = ['All' + R.length, ...statuses.map(s => s + R.filter(r => r.status === s).length)];
+    const favFilms = new Set(R.filter(r => r.favourite).map(r => norm(r.title) + '|' + (parseFloat(r.year) || '')));   // the fixture marks 3 films as favourites
+    const wantChips = ['All' + R.length, 'Favourites' + favFilms.size, ...statuses.map(s => s + R.filter(r => r.status === s).length)];
     eq(S + '4 status chips and counts', chipTxt, wantChips);
     for (const s of statuses) {
       await page.click(`#libChips .chip[data-st="${s}"]`);
@@ -348,7 +349,7 @@ for (const size of ['laptop', 'phone']) {
   {
     const { page, ctx, errors } = await open(size, emptyFixture());
     check(S + '6 empty: status live', /^Live from your sheet/.test(await page.textContent('#statusText')), await page.textContent('#statusText'));
-    check(S + '6 empty: log empty states', (await page.textContent('#upList')).includes('Nothing in Up next yet.') && (await page.textContent('#recList')).includes('No dated watches yet.') && (await page.textContent('#soonList')).includes('Nothing marked Coming Soon.'));
+    check(S + '6 empty: log empty states', (await page.textContent('#upList')).includes('Nothing in Up next yet.') && (await page.textContent('#last5List')).includes('No dated watches yet.') && (await page.textContent('#soonList')).includes('Nothing marked Coming Soon.'));
     eq(S + '6 empty: tiles zero', [await page.textContent('#sYear'), await page.textContent('#sMonth'), await page.textContent('#sAvg'), await page.textContent('#sLast')], ['0', '0', '–', '–']);
     await tab(page, 'library');
     check(S + '6 empty: library empty state', (await page.textContent('#libBody')).includes('No films match'), await page.textContent('#libBody'));

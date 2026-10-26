@@ -1,5 +1,5 @@
 // Synthetic fixtures for the Film Vault tests. Every film, person and id here is invented.
-export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted'];
+export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted', 'Favourite'];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const sheetDate = d => `${d.getDate()}-${MON[d.getMonth()]}-${d.getFullYear()}`;
 
@@ -42,6 +42,8 @@ export function buildFixture(opts = {}) {
   for (let i = 0; i < 30; i++) archive.push(mk({ title: nextTitle(), status: 'Watched', rating: i === 5 ? '' : String(4 + (i % 7)) }));
   archive[0].director = 'Mira Voss'; archive[1].director = 'Mira Voss'; archive[2].director = 'Teo Hartley';
   archive[6].year = 'TBA';
+  // a few favourites (the Favourite column holds a date)
+  dated[2].favourite = sheetDate(new Date(cy, cm, 1)); dated[3].favourite = sheetDate(new Date(cy, cm, 2)); archive[2].favourite = sheetDate(new Date(cy, 0, 5));
   // rewatches: same Title + Year as a dated row (different case / spacing on purpose)
   for (let i = 0; i < 4; i++) { const src = dated[8 + i]; const a = archive[10 + i]; a.title = i % 2 ? src.title.toUpperCase() : src.title; a.year = src.year; a.director = src.director; a.rating = String(5 + i); }
   // remakes: same title, different year
@@ -64,7 +66,7 @@ export function buildFixture(opts = {}) {
   rec.forEach((r, i) => { r._row = i + 3; });
 
   const toRow = r => {
-    const row = [r.title, r.rating, r.status, r.date, r.starring, r.director, r.cinematography, r.purchase, r.genre, r.platform, r.release, r.year, r.notes, r.id, r.plan, r.order, r.why, r.sorted];
+    const row = [r.title, r.rating, r.status, r.date, r.starring, r.director, r.cinematography, r.purchase, r.genre, r.platform, r.release, r.year, r.notes, r.id, r.plan, r.order, r.why, r.sorted, r.favourite || ''];
     while (row.length && row[row.length - 1] === '') row.pop(); // Sheets drops trailing empties
     return row;
   };

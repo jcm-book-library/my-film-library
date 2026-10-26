@@ -4,7 +4,7 @@
 // Every call is recorded in `calls`. Fault injection: dropWrites, mutateAfterLoad, failNext, failAll, appendLandsAt, beforeAppend.
 
 export const SHEET_ID = 'TESTSHEETID000000000000000000000000'; // a made-up id: the real one is not kept in this repo
-export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted'];
+export const HEADERS = ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Release', 'Year', 'Notes', 'id', 'Plan', 'Order', 'Why', 'Sorted', 'Favourite'];
 export const WIDTH = HEADERS.length;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -48,12 +48,13 @@ export function parseRange(range) {
 }
 
 export class FakeSheet {
-  constructor(fixture, { filmsTab = '🎥', settingsTab = '🎥 Settings' } = {}) {
+  constructor(fixture, { filmsTab = '🎥', settingsTab = '🎥 Settings', favourite = true } = {}) {
     this.filmsTab = filmsTab; this.settingsTab = settingsTab;
     this.grid = structuredClone(fixture.films).map(r => { while (r.length < WIDTH) r.push(''); return r; });
     this.settings = structuredClone(fixture.settings);
     this.names = fixture.names || {};
     this.calls = [];
+    if (!favourite) this.grid[1][colOf('Favourite')] = '';   // the Favourite header is missing: the app must cope
     this.initialRows = this.grid.length;
     this._drop = []; this._fail = []; this._failAll = null; this._afterLoad = null; this._loaded = false; this._landAt = null; this._beforeAppend = null;
   }

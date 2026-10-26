@@ -422,13 +422,15 @@ await scenario('symmetry', ['laptop'], async E => {
   const st = await R(page, '#view-log .stats .stat'); sameRow(S + 'Log stat tiles', st, 12);
   const sn = await R(page, '#view-log .stats .stat .num'); check(S + 'Log stat numbers share a top and bottom', sn.every(r => near(r.t, sn[0].t) && near(r.b, sn[0].b)), sn.map(r => [r.t, r.b]));
   const ss = await R(page, '#view-log .stats .stat .sub'); check(S + 'Log stat sub-lines share a top', ss.every(r => near(r.t, ss[0].t)), ss.map(r => r.t));
-  const logPanels = await R(page, '#view-log > .panel, #view-log > .dash-2');
-  check(S + 'Log: 20px between stat tiles, Log a film, Up next and the row below', [[st[0].b, logPanels[0].t], [logPanels[0].b, logPanels[1].t], [logPanels[1].b, logPanels[2].t]].every(([a, b]) => near(b - a, 20)), [[st[0].b, logPanels[0].t], [logPanels[0].b, logPanels[1].t], [logPanels[1].b, logPanels[2].t]]);
-  const lr = await R(page, '#view-log .dash-2 > .panel'); sameRow(S + 'Log Recent diary / Coming soon', lr, 20);
-  const lh = await R(page, '#view-log .dash-2 .panel-head'); check(S + 'Log row: panel heads line up', lh.every(r => near(r.t, lh[0].t) && near(r.b, lh[0].b)), lh);
-  const lh2 = await R(page, '#view-log .dash-2 h2'); check(S + 'Log row: titles line up', lh2.every(r => near(r.t, lh2[0].t)), lh2);
-  const lcount = await page.$$eval('#recList li', l => l.length), scount = await page.$$eval('#soonList li, #soonList .empty-state', l => l.length);
-  check(S + 'Log lists are capped at 12', lcount <= 12 && scount <= 12, [lcount, scount]);
+  const logPanels = await R(page, '#view-log > .picks, #view-log > .panel, #view-log > .dash-2');
+  const gapsL = [[st[0].b, logPanels[0].t], [logPanels[0].b, logPanels[1].t], [logPanels[1].b, logPanels[2].t], [logPanels[2].b, logPanels[3].t]];
+  check(S + 'Log: 20px between stat tiles, picks, Log a film, Up next and the row below', gapsL.every(([a, b]) => near(b - a, 20)), gapsL);
+  const lp = await R(page, '#view-log .picks > .panel'); check(S + 'Log: three picks boxes in one row', lp.length === 3); sameRow(S + 'Log picks (Recommended / Last 5 / Favourites)', lp, 20);
+  const lr = await R(page, '#view-log .dash-2 > .panel'); check(S + 'Log: Coming soon is alone in its row and spans the full width', lr.length === 1 && near(lr[0].w, st[st.length - 1].r - st[0].l), lr);
+  const lh = await R(page, '#view-log .picks .panel-head'); check(S + 'Log row: panel heads line up', lh.every(r => near(r.t, lh[0].t) && near(r.b, lh[0].b)), lh);
+  const lh2 = await R(page, '#view-log .picks h2'); check(S + 'Log row: titles line up', lh2.every(r => near(r.t, lh2[0].t)), lh2);
+  const lcount = await page.$$eval('#last5List li', l => l.length), scount = await page.$$eval('#soonList li, #soonList .empty-state', l => l.length);
+  check(S + 'Log lists are capped (5 and 12)', lcount <= 5 && scount <= 12, [lcount, scount]);
   // Dashboard
   await tab(page, 'dashboard');
   for (const y of ['2026', 'all']) {
@@ -459,7 +461,7 @@ await scenario('symmetry', ['laptop'], async E => {
 await scenario('symmetry', ['phone'], async E => {
   const { page, S } = E;
   const widths = async sel => (await R(page, sel)).map(r => [Math.round(r.l), Math.round(r.w)]);
-  const lw = await widths('#view-log > .panel, #view-log .dash-2 > .panel');
+  const lw = await widths('#view-log > .panel, #view-log .picks > .panel, #view-log .dash-2 > .panel');
   check(S + 'Log: every panel has the same left edge and width', new Set(lw.map(x => x.join())).size === 1, lw);
   const ls = await R(page, '#view-log .stats .stat');
   check(S + 'Log tiles: 2 across, equal sizes per row', ls.length === 4 && near(ls[0].t, ls[1].t) && near(ls[2].t, ls[3].t) && ls.every(r => near(r.w, ls[0].w) && near(r.h, ls[0].h)), ls.map(r => [r.l, r.t, r.w, r.h]));
