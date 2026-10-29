@@ -88,7 +88,7 @@ async function scenario(name, sizes, opts, fn) {
 }
 
 /* ---- N: global safety assertions, run after EVERY scenario ---- */
-const READ_OK = [/^'🎥'!A1:R6000$/, /^'🎥'!A2:Z2$/, /^'🎥'!N1:N6000$/, /^'🎥'!A1:A6000$/, /^'🎥'!A\d+:Z\d+$/, /^'🎥 Settings'!A1:C50$/];
+const READ_OK = [/^'🎥'!A1:S6000$/, /^'🎥'!A2:Z2$/, /^'🎥'!N1:N6000$/, /^'🎥'!A1:A6000$/, /^'🎥'!A\d+:Z\d+$/, /^'🎥 Settings'!A1:C50$/];
 function globalSafety(E) {
   const { fake, S } = E, bad = [];
   for (const c of fake.calls) {
@@ -101,7 +101,7 @@ function globalSafety(E) {
       const m = String(c.range).match(/^'🎥'!([A-Z]+)(\d+)$/);
       if (!m) bad.push(tag + ' update is not a single cell on the 🎥 tab');
       else {
-        if (m[1].length !== 1 || m[1] > 'R') bad.push(tag + ' column outside A..R');
+        if (m[1].length !== 1 || m[1] > 'R') bad.push(tag + ' column outside A..S');
         if (+m[2] < 3) bad.push(tag + ' touches a header row');
       }
       if (!(Array.isArray(c.values) && c.values.length === 1 && c.values[0].length === 1)) bad.push(tag + ' values are not exactly [[x]]');
@@ -109,14 +109,14 @@ function globalSafety(E) {
     } else if (c.tool === 'append_values') {
       if (!/^'🎥'!A2:Z\d+$/.test(c.range)) bad.push(tag + ' append not anchored to the data block (A2:Z<last row>)');
       if (!(Array.isArray(c.values) && c.values.length === 1)) bad.push(tag + ' append is not exactly one row');
-      else if (c.values[0].length > WIDTH) bad.push(tag + ' append wider than A..R');
+      else if (c.values[0].length > WIDTH) bad.push(tag + ' append wider than A..S');
     }
   }
   const snapSettings = JSON.stringify(fake.settings);
   if (snapSettings !== JSON.stringify(buildSyntheticFixture().settings)) bad.push('settings tab changed');
   if (!E.allowShrink && fake.grid.length < fake.initialRows) bad.push(`row count shrank ${fake.initialRows} -> ${fake.grid.length}`);
-  if (fake.grid.some(r => r.length > WIDTH)) bad.push('a row grew beyond column R');
-  check(S + 'N global safety (spreadsheetId, tabs, single-cell updates in A..R, appends, no settings/header writes, no row loss)', bad.length === 0, bad.slice(0, 6));
+  if (fake.grid.some(r => r.length > WIDTH)) bad.push('a row grew beyond column S');
+  check(S + 'N global safety (spreadsheetId, tabs, single-cell updates in A..S, appends, no settings/header writes, no row loss)', bad.length === 0, bad.slice(0, 6));
   check(S + 'N no page errors / console errors', E.errors.length === 0, E.errors.slice(0, 3));
   check(S + 'N no network requests outside the local stubs', E.badReq.length === 0, E.badReq.slice(0, 3));
 }
@@ -160,7 +160,7 @@ const noticeState = page => page.evaluate(() => { const n = document.getElementB
 const noticeHistory = page => page.evaluate(() => window.__notices.filter(x => !x.h && x.t).map(x => x.t));
 const statusText = page => page.textContent('#statusText');
 const upTitles = page => page.$$eval('#upList li .t', els => els.map(e => e.textContent.trim()));
-const recTitles = page => page.$$eval('#recList li .t', els => els.map(e => e.textContent.trim()));
+const recTitles = page => page.$$eval('#last5List li .t', els => els.map(e => e.textContent.trim()));
 
 async function pick(page, title, year) {
   await page.fill('#lfTitle', title);
@@ -202,7 +202,7 @@ await scenario('A log Next Up film via typing + suggestion', BOTH, async E => {
   check(S + 'A every write landed on the row holding this film\'s id', UPD(fake, E.n0).every(c => c.targets[0].id === id && c.targets[0].title === 'Quiet Harbour'));
   expectSequence(E, 'A', row, 6);
   check(S + 'A film left the Up next list', !(await upTitles(page)).includes('Quiet Harbour'), await upTitles(page));
-  eq(S + 'A film is first in Recent diary', (await recTitles(page))[0], 'Quiet Harbour');
+  eq(S + 'A film is first in Last 5 watched', (await recTitles(page))[0], 'Quiet Harbour');
   check(S + 'A status text says Logged', /^Logged .Quiet Harbour. on /.test(await statusText(page)), await statusText(page));
   check(S + 'A no error notice', (await noticeState(page)).hidden);
   check(S + 'A form was reset', (await page.inputValue('#lfTitle')) === '' && (await page.inputValue('#lfRating')) === '');
@@ -222,7 +222,7 @@ await scenario('A2 log via the Up next [data-log] button, rating blank', BOTH, a
   expectDiff(E, 'A2', before, [[row, 'Status', 'Watched'], [row, 'Date', D(TODAY())], [row, 'Plan', ''], [row, 'Order', '']]);
   check(S + 'A2 Rating cell untouched and still empty', !UPD(fake, E.n0).some(c => /!B\d+$/.test(c.range)) && fake.cell(row, 'Rating') === '');
   check(S + 'A2 no append', APP_(fake, E.n0).length === 0);
-  check(S + 'A2 left Up next, first in Recent diary', !(await upTitles(page)).includes('Last Orchard') && (await recTitles(page))[0] === 'Last Orchard');
+  check(S + 'A2 left Up next, first in Last 5 watched', !(await upTitles(page)).includes('Last Orchard') && (await recTitles(page))[0] === 'Last Orchard');
 });
 
 /* =============================== B. Backdating =============================== */
@@ -289,7 +289,7 @@ await scenario('C rewatch of a Watched-only film', BOTH, async E => {
   check(S + 'C stored cell types: id/Year/Rating numbers, Title text, Date a date', typeof o.id === 'number' && o.id === newId && o.Year === 1985 && o.Rating === 9 && o.Title === 'Midnight Orchard' && JSON.stringify(o.Date) === JSON.stringify(D(T)), o);
   expectDiff(E, 'C', before, ['Title', 'Rating', 'Status', 'Date', 'Starring', 'Director', 'Cinematography', 'Purchase', 'Genre', 'Platform', 'Year', 'id'].map(k => [newRow, k, o[k]]));
   check(S + 'C old row untouched', JSON.stringify(fake.grid[old - 1]) === JSON.stringify(before.films[old - 1]));
-  eq(S + 'C new row is first in Recent diary', (await recTitles(page))[0], 'Midnight Orchard');
+  eq(S + 'C new row is first in Last 5 watched', (await recTitles(page))[0], 'Midnight Orchard');
   await page.click('#tab-library'); await page.fill('#libSearch', 'Midnight Orchard'); await page.waitForTimeout(350);
   await page.locator('#libBody tr.row').first().locator('.t').click();
   const others = await page.$$eval('#libBody .detail .others li', l => l.map(x => x.textContent));
@@ -586,7 +586,7 @@ await scenario('J1 server_unavailable on the first update', LAPTOP, { setup: f =
   const after = fake.calls.slice(E.n0);
   eq(S + 'J1 exactly one update_values attempt (no retry)', after.filter(c => c.tool === 'update_values').length, 1);
   const lastUpd = after.map(c => c.tool).lastIndexOf('update_values');
-  check(S + 'J1 a fresh get_values of A1:R6000 follows the failure', after.slice(lastUpd + 1).some(c => c.tool === 'get_values' && c.range === "'🎥'!A1:R6000"), after.map(c => c.range));
+  check(S + 'J1 a fresh get_values of A1:S6000 follows the failure', after.slice(lastUpd + 1).some(c => c.tool === 'get_values' && c.range === "'🎥'!A1:S6000"), after.map(c => c.range));
   sheetUnchanged(E, 'J1', before);
 });
 await scenario('J2 server_unavailable AFTER the update landed', LAPTOP, { setup: f => f.failNext('update_values', { code: 'server_unavailable', message: 'x' }, { apply: true }) }, async E => {
@@ -623,7 +623,7 @@ await scenario('J4 non-"unsure" error in the middle of several cells (partial wr
   check(S + 'J4 two cells already landed before the failure (Status, Date)', written);
   check(S + 'J4 notice is still visible after the re-read and says "Only partly saved: 2 of 5"', !n.hidden && /Only partly saved: 2 of 5/.test(n.text), n);
   eq(S + 'J4 no 4th write attempted, no retry', UPD(fake, E.n0).length, 3);
-  check(S + 'J4 page re-read the sheet (fresh A1:R6000)', fake.calls.slice(E.n0).some((c, i, a) => c.tool === 'get_values' && c.range === "'🎥'!A1:R6000"));
+  check(S + 'J4 page re-read the sheet (fresh A1:S6000)', fake.calls.slice(E.n0).some((c, i, a) => c.tool === 'get_values' && c.range === "'🎥'!A1:S6000"));
 });
 
 /* =============================== K. Edit dialog =============================== */
@@ -687,11 +687,11 @@ await scenario('K5 clear Plan on an Up next film', LAPTOP, async E => {
   expectUpdates(E, 'K5', row, { Plan: '', Order: '', Sorted: TODAY(), Status: 'Watchlist' });
   expectDiff(E, 'K5', before, [[row, 'Plan', ''], [row, 'Order', ''], [row, 'Sorted', D(TODAY())], [row, 'Status', 'Watchlist']]);
 });
-await scenario('K6 edit a past diary date from Recent diary', LAPTOP, async E => {
+await scenario('K6 edit a past diary date from Last 5 watched', LAPTOP, async E => {
   const { page, fake, S } = E;
   const row = rowOf(fake, 'Hollow Citadel', 2022);
-  const idx = await page.evaluate(() => [...document.querySelectorAll('#recList li')].findIndex(li => li.querySelector('.t').textContent.trim() === 'Hollow Citadel'));
-  await page.locator('#recList li').nth(idx).locator('[data-edit]').click();
+  const idx = await page.evaluate(() => [...document.querySelectorAll('#last5List li')].findIndex(li => li.querySelector('.t').textContent.trim() === 'Hollow Citadel'));
+  await page.locator('#last5List li').nth(idx).locator('[data-edit]').click();
   await page.waitForSelector('#filmDlg[open]');
   check(S + 'K6 date field holds the ISO date', (await page.inputValue('#fd-date')) === '2026-10-21', await page.inputValue('#fd-date'));
   await page.fill('#fd-date', '2026-10-19');

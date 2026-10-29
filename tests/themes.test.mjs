@@ -49,7 +49,7 @@ async function open(size, opts = {}) {
     if (noStorage) Object.defineProperty(window, 'localStorage', { get() { throw new Error('blocked'); } });
     window.claude = { use: async name => name === 'mcp' ? { callTool: async (server, tool, input) => {
       window.__calls.push({ server, tool, range: input && input.range });
-      if (tool === 'get_values' && input.range === "'🎥'!A1:R6000") return { payload: { values: films } };
+      if (tool === 'get_values' && input.range === "'🎥'!A1:S6000") return { payload: { values: films } };
       if (tool === 'get_values' && input.range === "'🎥 Settings'!A1:C50") return { payload: { values: settings } };
       throw { code: 'tool_error', message: 'unexpected call' };
     } } : null };
@@ -333,6 +333,26 @@ for (const size of ['phone', 'laptop']) {
       const r = await contrastScan(page);
       for (const b of r.bad) problems.push(`${name}: ${b.sel} "${b.text}" ${b.ratio} fg${JSON.stringify(b.fg)} bg${JSON.stringify(b.bg)}`);
       scanSummary[`${size}/${id}/${name}`] = r.n;
+      if (name === 'log') { // the ticket-stub sticker is a graphic, not text: off (outline in the muted colour) and on (filled with the accent) need >= 3:1 against the panel
+        const st = await page.evaluate(() => {
+          const cv = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+          const px = c => { cv.clearRect(0, 0, 1, 1); cv.fillStyle = '#000'; cv.fillStyle = c; cv.fillRect(0, 0, 1, 1); const d = cv.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; };
+          const lin = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; };
+          const Lm = ([r, g, b]) => .2126 * lin(r) + .7152 * lin(g) + .0722 * lin(b);
+          const ratio = (x, y) => { const a = Lm(x), b = Lm(y); return (Math.max(a, b) + .05) / (Math.min(a, b) + .05); };
+          const off = document.querySelector('#last5List button[data-fav][aria-pressed="false"]'), on = document.querySelector('#favList button[data-fav][aria-pressed="true"]');
+          const bgOf = el => px(getComputedStyle(el.closest('.panel')).backgroundColor);
+          const cs = e => getComputedStyle(e);
+          const root = name => px(getComputedStyle(document.documentElement).getPropertyValue(name).trim());
+          return {
+            off: off ? ratio(px(cs(off).color), bgOf(off)) : null,
+            on: on ? ratio(root('--accent'), bgOf(on)) : null,
+            perf: on ? ratio(root('--accent-ink'), root('--accent')) : null
+          };
+        });
+        if (st.off == null || st.on == null) problems.push('log: no off/on sticker to measure');
+        else { if (st.off < 3) problems.push(`sticker off ${st.off.toFixed(2)}`); if (st.on < 3) problems.push(`sticker on ${st.on.toFixed(2)}`); if (st.perf < 3) problems.push(`sticker perforation ${st.perf.toFixed(2)}`); }
+      }
     }
     { // Stage 4 dashboard on the richer fixture: year, All time, every people mode, calendar and the drill-down dialog
       const R = await open(size, { month: 10, storage: { 'mvl-theme': id }, rich: true });

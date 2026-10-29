@@ -9,13 +9,16 @@ Film Vault is my film diary, library and dashboard. The Google Sheet "Entertainm
 The app opens in the current month's film theme (Jan Jurassic Park, Feb True Romance, Mar Indiana Jones, Apr The Matrix, May Star Wars, Jun Blade Runner, Jul The Hateful Eight, Aug Interstellar, Sep No Country for Old Men, Oct My Neighbour Totoro, Nov Project Hail Mary, Dec 12 Angry Men), with a plain Default. The palette button in the header opens the theme menu and the arrows flick through themes. The gear opens **Settings**, where the theme being worn can be edited (colours, heading and text fonts, roundness, grain, light or dark), reset, or saved as a copy under "Your themes". The design is in `design/themes-board.html`.
 Theme choices stay in this browser only: `mvl-theme` ("auto" or a theme id), `mvl-theme-edits` (changes per theme) and `mvl-theme-custom` (saved copies). Nothing about themes is written to the sheet.
 
+## Favourites
+The ticket stub marks a favourite film. Tapping it writes today's date into the `Favourite` column (S) of `🎥` on the film's latest row; tapping again clears it on every row of that film. It is separate from the rating. The Log page opens with three boxes: Recommended for you, Last 5 watched and Favourites (the 5 most recently picked, with See all). Without a `Favourite` column the app still works and the stubs are switched off.
+
 ## Files
 | File | What it is |
 |---|---|
 | `app.html` | The app source. Edit this. The same file is published as the claude.ai artifact. |
 | `index.html` | Built from `app.html` for GitHub Pages. Rebuild it with `python3 tools/build-pages.py`. |
 | `manifest.webmanifest`, `icons/` | Home-screen install and icons. |
-| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3`, `stage4` and `themes`). They use made-up films, never real data. |
+| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3`, `stage4`, `themes` and `favourites`). They use made-up films, never real data. |
 | `PLAN.md` | Sheet findings, data model, decisions and stages. |
 | `CLAUDE.md` | Working notes for Claude sessions in this repo. |
 

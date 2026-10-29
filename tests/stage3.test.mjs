@@ -74,7 +74,7 @@ async function scenario(name, sizes, opts, fn) {
   }
 }
 
-const READ_OK = [/^'🎥'!A1:R6000$/, /^'🎥'!A2:Z2$/, /^'🎥'!N1:N6000$/, /^'🎥'!A1:A6000$/, /^'🎥'!A\d+:Z\d+$/, /^'🎥 Settings'!A1:C50$/];
+const READ_OK = [/^'🎥'!A1:S6000$/, /^'🎥'!A2:Z2$/, /^'🎥'!N1:N6000$/, /^'🎥'!A1:A6000$/, /^'🎥'!A\d+:Z\d+$/, /^'🎥 Settings'!A1:C50$/];
 function globalSafety(E) {
   const { fake, S } = E, bad = [];
   for (const c of fake.calls) {
@@ -86,20 +86,20 @@ function globalSafety(E) {
     else if (c.tool === 'update_values') {
       const m = String(c.range).match(/^'🎥'!([A-Z]+)(\d+)$/);
       if (!m) bad.push(tag + ' update is not a single cell on the 🎥 tab');
-      else { if (m[1].length !== 1 || m[1] > 'R') bad.push(tag + ' column outside A..R'); if (+m[2] < 3) bad.push(tag + ' touches a header row'); }
+      else { if (m[1].length !== 1 || m[1] > 'R') bad.push(tag + ' column outside A..S'); if (+m[2] < 3) bad.push(tag + ' touches a header row'); }
       if (!(Array.isArray(c.values) && c.values.length === 1 && c.values[0].length === 1)) bad.push(tag + ' values are not exactly [[x]]');
       else if (!['string', 'number'].includes(typeof c.values[0][0])) bad.push(tag + ' value type ' + typeof c.values[0][0]);
     } else if (c.tool === 'append_values') {
       if (!/^'🎥'!A2:Z\d+$/.test(c.range)) bad.push(tag + ' append not anchored to the data block (A2:Z<last row>)');
       if (!(Array.isArray(c.values) && c.values.length === 1)) bad.push(tag + ' append is not exactly one row');
-      else if (c.values[0].length > WIDTH) bad.push(tag + ' append wider than A..R');
+      else if (c.values[0].length > WIDTH) bad.push(tag + ' append wider than A..S');
     }
   }
   if (JSON.stringify(fake.settings) !== E.settings0) bad.push('settings tab changed');
   if (fake.grid.length < fake.initialRows) bad.push(`row count shrank ${fake.initialRows} -> ${fake.grid.length}`);
-  if (fake.grid.some(r => r.length > WIDTH)) bad.push('a row grew beyond column R');
+  if (fake.grid.some(r => r.length > WIDTH)) bad.push('a row grew beyond column S');
   // no row deleted/moved: every original id still on the same row
-  check(S + 'N global safety (spreadsheetId, tabs, single-cell updates in A..R, appends, no settings/header writes, no row loss)', bad.length === 0, bad.slice(0, 6));
+  check(S + 'N global safety (spreadsheetId, tabs, single-cell updates in A..S, appends, no settings/header writes, no row loss)', bad.length === 0, bad.slice(0, 6));
   check(S + 'N no page errors / console errors', E.errors.length === 0, E.errors.slice(0, 3));
   check(S + 'N no network requests outside the local stubs', E.badReq.length === 0, E.badReq.slice(0, 3));
 }
@@ -681,7 +681,7 @@ await scenario('H1 failure on the 2nd cell of a multi-cell change', BOTH, async 
   check(S + 'H1 notice says "Only partly saved" and survives the re-read', !n.hidden && /Only partly saved/.test(n.text), n);
   eq(S + 'H1 only 2 update attempts (1 landed, 1 failed), no retry, no later cells', UPD(fake, E.n0).length, 2);
   eq(S + 'H1 sheet holds exactly the first cell', diffCells(before, fake.snapshot()).map(d => d.colName + '=' + d.to), ['Plan="Up next"']);
-  check(S + 'H1 page re-read the sheet afterwards', fake.calls.slice(E.n0).some(c => c.tool === 'get_values' && c.range === "'🎥'!A1:R6000"));
+  check(S + 'H1 page re-read the sheet afterwards', fake.calls.slice(E.n0).some(c => c.tool === 'get_values' && c.range === "'🎥'!A1:S6000"));
   void row;
 });
 await scenario('H2 someone else changed the Plan after load', BOTH, { setup: f => f.mutateAfterLoad(s => s.setCell(s.rowOfTitle('Pending K'), 'Plan', 'Soon')) }, async E => {

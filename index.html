@@ -554,7 +554,39 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 :root[data-film-theme="hateful"] .hdband header{align-items:flex-start}
 @media (max-width:620px){:root[data-film-theme="hateful"]{--hdr:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='76' viewBox='0 0 340 76'%3E%3Cg fill='%238f1212' fill-opacity='.88'%3E%3Crect x='33.0' y='-2' width='6' height='46' rx='3.0'/%3E%3Cellipse cx='36' cy='44' rx='6.7' ry='9.6'/%3E%3Crect x='110.2' y='-2' width='3.5' height='28' rx='1.8'/%3E%3Cellipse cx='112' cy='26' rx='4.3' ry='6.2'/%3E%3Crect x='186.5' y='-2' width='7' height='60' rx='3.5'/%3E%3Cellipse cx='190' cy='58' rx='7.6' ry='11.0'/%3E%3Crect x='207.8' y='-2' width='2.5' height='22' rx='1.2'/%3E%3Cellipse cx='209' cy='20' rx='3.4' ry='4.9'/%3E%3Crect x='265.5' y='-2' width='5' height='38' rx='2.5'/%3E%3Cellipse cx='268' cy='36' rx='5.8' ry='8.2'/%3E%3Crect x='316.5' y='-2' width='3' height='26' rx='1.5'/%3E%3Cellipse cx='318' cy='24' rx='3.8' ry='5.6'/%3E%3C/g%3E%3Cg fill='%23fff' fill-opacity='.38'%3E%3Cellipse cx='34.3' cy='44.6' rx='1.2' ry='2.7'/%3E%3Cellipse cx='111.0' cy='26.6' rx='0.7' ry='1.6'/%3E%3Cellipse cx='188.0' cy='58.6' rx='1.4' ry='3.1'/%3E%3Cellipse cx='208.3' cy='20.6' rx='0.6' ry='1.1'/%3E%3Cellipse cx='266.6' cy='36.6' rx='1.0' ry='2.2'/%3E%3Cellipse cx='317.2' cy='24.6' rx='0.6' ry='1.4'/%3E%3C/g%3E%3C/svg%3E") right 4px top 0/140px 31px no-repeat}:root[data-film-theme="hateful"] .hdband{min-height:0}}
 :root[data-film-theme="hateful"] .wordmark{text-shadow:0 1px 0 #f4f1eb,0 0 1px #15120f}
+
+/* ---- Favourites: the ticket-stub sticker and the three picks on Log ---- */
+.fav{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:30px;min-height:30px;padding:4px;border:0;background:transparent;color:var(--muted);border-radius:var(--r-ctl);font-size:13px;font-weight:600;line-height:1;--stub-fill:none;--stub-stroke:currentColor;--stub-perf:currentColor;flex:none}
+.fav .stub{width:22px;height:15px;display:block;flex:none}
+.fav:hover:not(:disabled){color:var(--fg)}
+.fav[aria-pressed="true"]{color:var(--accent);--stub-fill:var(--accent);--stub-stroke:var(--accent);--stub-perf:var(--accent-ink)}
+.fav:disabled{opacity:.45;cursor:not-allowed}
+.fav.labelled{border:1px solid var(--line);padding:6px 12px;min-height:34px}
+.fav.labelled[aria-pressed="true"]{border-color:var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.stub.ind{width:18px;height:12px;vertical-align:-1px;margin-left:6px;color:var(--accent);--stub-fill:var(--accent);--stub-stroke:var(--accent);--stub-perf:var(--accent-ink)}
+.lib td.c-fav,.lib th.c-fav{text-align:center;width:1%;padding-inline:4px}
+.lib td.c-fav{padding-block:3px}
+.chip:disabled{opacity:.5;cursor:not-allowed}
+.picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-bottom:20px;align-items:stretch}
+.picks .panel-head{min-height:32px;align-items:center;flex-wrap:nowrap}
+.picks .panel-head > span{white-space:nowrap}
+.picks .panel{display:flex;flex-direction:column}
+.picks .mini-list li{align-items:center}
+.picks .mini-list .r{display:flex;align-items:center;gap:8px}
+.picks .mini-list li > span:first-child{flex:1 1 auto}
+.pick h3{font-family:var(--display);font-weight:var(--d-weight);font-size:20px;margin:0;line-height:1.25;overflow-wrap:anywhere}
+.pick .m{font-size:13px;color:var(--muted);margin-top:4px}
+.pick .pwhy{margin:10px 0 0;font-size:13px;font-style:italic;color:var(--fg);opacity:.9}
+.pick .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+.pick .pnote{margin-top:8px}
+.pick{display:flex;flex-direction:column;flex:1 1 auto}
+@media (min-width:861px) and (max-width:1100px){.picks{grid-template-columns:repeat(2,minmax(0,1fr))}.picks > .panel:last-child:nth-child(odd){grid-column:1/-1}}
+@media (max-width:860px){.picks{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.fav,.fav.labelled{min-width:40px;min-height:40px}.pick .acts .btn{min-height:40px}}
 </style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ticket" viewBox="0 0 24 16"><path d="M1.5 1.5h21v3.9a2.6 2.6 0 0 0 0 5.2v3.9h-21v-3.9a2.6 2.6 0 0 0 0-5.2Z" style="fill:var(--stub-fill,none);stroke:var(--stub-stroke,currentColor)" stroke-width="1.4" stroke-linejoin="round"/><path d="M16.5 3.4v9.2" style="stroke:var(--stub-perf,currentColor)" stroke-width="1.3" stroke-dasharray="1.2 1.6" fill="none"/></symbol>
+</defs></svg>
 <div class="hdband">
   <div class="wrap hdwrap">
     <header>
@@ -614,6 +646,21 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       </div>
     </section>
 
+    <div class="picks" id="picks">
+      <section class="panel" aria-labelledby="pickH">
+        <div class="panel-head"><h2 id="pickH">Recommended for you</h2></div>
+        <div class="pick" id="pickBody"></div>
+      </section>
+      <section class="panel" aria-labelledby="last5H">
+        <div class="panel-head"><h2 id="last5H">Last 5 watched</h2><span class="muted small tnum" id="last5Note"></span></div>
+        <ul class="mini-list" id="last5List"></ul>
+      </section>
+      <section class="panel" aria-labelledby="favH">
+        <div class="panel-head"><h2 id="favH">Favourites</h2><span><span class="muted small tnum" id="favNote"></span> <button type="button" class="linkbtn" id="favAll">See all</button></span></div>
+        <ul class="mini-list" id="favList"></ul>
+      </section>
+    </div>
+
     <section class="panel" aria-labelledby="logH" style="margin-bottom:20px">
       <div class="panel-head">
         <h2 id="logH">Log a film</h2>
@@ -644,7 +691,6 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
     </section>
 
     <div class="dash-2">
-      <section class="panel" aria-labelledby="recH"><div class="panel-head"><h2 id="recH">Recent diary</h2><span class="muted small" id="recNote"></span></div><ul class="mini-list" id="recList"></ul></section>
       <section class="panel" aria-labelledby="soonH"><div class="panel-head"><h2 id="soonH">Coming soon</h2><span class="muted small" id="soonNote"></span></div><ul class="mini-list" id="soonList"></ul></section>
     </div>
   </div>
@@ -1099,7 +1145,7 @@ function filmFromRow(H, r, rowNum) {
     rating: num(cell('Rating')), status, date: toDate(cell('Date')),
     starring: cell('Starring'), director: cell('Director'), cinematography: cell('Cinematography'),
     purchase: cell('Purchase'), genre: cell('Genre'), platform: cell('Platform'), release: cell('Release'),
-    notes: cell('Notes'), plan: cell('Plan'), order: num(cell('Order')), why: cell('Why'), sorted: toDate(cell('Sorted')),
+    notes: cell('Notes'), plan: cell('Plan'), order: num(cell('Order')), why: cell('Why'), sorted: toDate(cell('Sorted')), favourite: toDate(cell('Favourite')) || cell('Favourite'),
     key: normTitle(title) + '|' + (year ?? ''), seen: SEEN_STATUSES.includes(status)
   };
 }
@@ -1107,7 +1153,7 @@ function parseFilms(values) {
   const hi = values.findIndex(r => r.some(c => String(c).trim() === 'Title') && r.some(c => String(c).trim() === 'Status'));
   if (hi < 0) throw { code: 'tool_error', message: 'The 🎥 tab has no Title / Status header row' };
   const H = values[hi].map(h => String(h).trim());
-  state.header = H; state.headerRow = hi + 1;
+  state.header = H; state.headerRow = hi + 1; state.hasFav = H.includes('Favourite');
   const films = [];
   values.slice(hi + 1).forEach((r, i) => { const f = filmFromRow(H, r, hi + 2 + i); if (f.title) films.push(f); });
   return films;
@@ -1171,22 +1217,6 @@ function renderLog() {
   });
   $('upNote').textContent = state.loaded ? (ups.length > max ? `${max} of ${ups.length} · ${ups.length - max} more waiting` : `${ups.length} film${ups.length === 1 ? '' : 's'}`) : '';
 
-  // Recent diary
-  const recent = [...d].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b._row - a._row)).slice(0, 12);
-  const rl = $('recList'); rl.textContent = '';
-  if (!recent.length) rl.innerHTML = `<li class="empty-state" style="display:block">${state.loaded ? 'No dated watches yet.' : ''}</li>`;
-  for (const f of recent) {
-    const li = document.createElement('li');
-    li.innerHTML = '<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>';
-    li.querySelector('.t').textContent = f.title;
-    li.querySelector('.sub').textContent = [shortDate(f.date), f.platform].filter(Boolean).join(' · ');
-    li.querySelector('.r').textContent = f.rating != null ? f.rating + '/10' : '';
-    const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'linkbtn'; eb.textContent = 'Edit'; eb.dataset.edit = f._uid; eb.style.marginLeft = '10px';
-    li.querySelector('.r').appendChild(eb);
-    rl.appendChild(li);
-  }
-  $('recNote').textContent = state.loaded ? `${fmt(d.length)} dated in total` : '';
-
   // Coming soon
   const soon = state.films.filter(f => f.status === 'Coming Soon');
   const sl = $('soonList'); sl.textContent = '';
@@ -1200,25 +1230,27 @@ function renderLog() {
     sl.appendChild(li);
   });
   $('soonNote').textContent = state.loaded && soon.length > 12 ? `12 of ${soon.length}` : '';
+  renderPicks();
 }
 
 /* ---------- Library view ---------- */
 const LIB_COLS = [
-  { k: 'title', label: 'Title' }, { k: 'rating', label: 'Rating', num: true }, { k: 'status', label: 'Status' },
+  { k: 'fav', label: 'Fav', cls: 'c-fav' }, { k: 'title', label: 'Title' }, { k: 'rating', label: 'Rating', num: true }, { k: 'status', label: 'Status' },
   { k: 'date', label: 'Watched', cls: 'c-date' }, { k: 'director', label: 'Director', cls: 'c-dir' },
   { k: 'genre', label: 'Genre', cls: 'c-gen' }, { k: 'platform', label: 'Platform', cls: 'c-plat' }
 ];
-const NUMERIC_FIRST_DESC = ['rating', 'date', 'year'];
+const NUMERIC_FIRST_DESC = ['rating', 'date', 'year', 'fav'];
 const sortKey = (f, k) => {
   if (k === 'sheet') return f._row;
   if (k === 'rating' || k === 'year') return f[k] == null ? -1 : f[k];
   if (k === 'date') return f.date || '';
+  if (k === 'fav') return isFav(f) ? 1 : 0;
   return String(f[k] || '').toLowerCase();
 };
 function libFiltered() {
   const L = state.lib, q = L.q.toLowerCase().trim();
   return state.films.filter(f =>
-    (L.status === 'All' || f.status === L.status) &&
+    (L.status === 'All' ? true : L.status === FAV_CHIP ? (isFav(f) && f === latestRow(filmRows(f))) : f.status === L.status) &&
     (!L.genre || f.genre === L.genre) && (!L.platform || f.platform === L.platform) &&
     (!L.owned || (L.owned === 'None' ? !f.purchase : f.purchase === L.owned)) &&
     (!q || [f.title, f.director, f.starring, f.cinematography, f.genre, f.year].some(v => String(v ?? '').toLowerCase().includes(q))));
@@ -1238,19 +1270,21 @@ function renderLibrary() {
   document.querySelector('#view-library .table-wrap').hidden = plan;
   document.querySelector('#view-library .lib-foot').hidden = plan;
   if (plan) { renderPlan(); return; }
-  $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${(c.num ? 'num ' : '') + (c.cls || '')}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
+  $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${(c.num ? 'num ' : '') + (c.cls || '')}"${c.k === 'fav' ? ' title="Favourite films first"' : ''} ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
   body.textContent = '';
   if (!state.loaded) {
     body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="empty-state">${isLive() ? 'Loading your library…' : esc('Your library loads from the sheet. ' + connectHint())}</td></tr>`;
     $('libChips').textContent = ''; $('libCount').textContent = ''; $('libMore').hidden = true; $('libSheetOrder').hidden = true;
     return;
   }
+  if (L.status === FAV_CHIP && !state.hasFav) L.status = 'All';
   const counts = { All: state.films.length };
   for (const f of state.films) if (f.status) counts[f.status] = (counts[f.status] || 0) + 1;
   const order = ['Watched', 'Watchlist', 'Next Up', 'Rewatch', 'Coming Soon', 'In Development', 'Unavailable'];
   const extra = Object.keys(counts).filter(s => s !== 'All' && !order.includes(s)).sort();
-  $('libChips').innerHTML = ['All', ...order, ...extra].filter(s => s === 'All' || counts[s]).map(s =>
-    `<button class="chip" type="button" data-st="${esc(s)}" aria-pressed="${L.status === s}">${esc(s)}<span class="n">${fmt(counts[s] || 0)}</span></button>`).join('');
+  $('libChips').innerHTML = ['All', FAV_CHIP, ...order, ...extra].filter(s => s === 'All' || s === FAV_CHIP || counts[s]).map(s => s === FAV_CHIP
+    ? `<button class="chip" type="button" data-st="${FAV_CHIP}" aria-pressed="${L.status === s}"${state.hasFav ? '' : ` disabled title="${esc(FAV_MISSING)}"`}>Favourites<span class="n">${fmt(favKeys().length)}</span></button>`
+    : `<button class="chip" type="button" data-st="${esc(s)}" aria-pressed="${L.status === s}">${esc(s)}<span class="n">${fmt(counts[s] || 0)}</span></button>`).join('');
   const first = NUMERIC_FIRST_DESC.includes(L.sort) ? -1 : 1;
   const rows = libFiltered().sort((a, b) => { const x = sortKey(a, L.sort), y = sortKey(b, L.sort); return (x < y ? -1 : x > y ? 1 : 0) * L.dir || a._row - b._row; });
   void first;
@@ -1258,7 +1292,7 @@ function renderLibrary() {
     const tr = document.createElement('tr');
     tr.className = 'row' + (L.open === f._uid ? ' open' : '');
     tr.dataset.uid = f._uid; tr.dataset.row = f._row;
-    tr.innerHTML = '<td><span class="t"></span><span class="y"></span></td>' +
+    tr.innerHTML = '<td class="c-fav"></td><td><span class="t"></span><span class="y"></span></td>' +
       `<td class="num tnum">${f.rating != null ? `<span class="rt">${f.rating}<small>/10</small></span>` : ''}</td>` +
       `<td><span class="pill" data-s="${esc(f.status)}">${esc(f.status) || '–'}</span></td>` +
       `<td class="c-date">${esc(showDate(f.date))}</td><td class="c-dir"></td><td class="c-gen"></td><td class="c-plat"></td>`;
@@ -1267,6 +1301,7 @@ function renderLibrary() {
     tr.querySelector('.c-dir').textContent = directors(f).join(', ');
     tr.querySelector('.c-gen').textContent = f.genre;
     tr.querySelector('.c-plat').textContent = f.platform;
+    tr.querySelector('.c-fav').appendChild(favButton(f));
     body.appendChild(tr);
     if (L.open === f._uid) body.appendChild(detailRow(f));
   }
@@ -1282,6 +1317,7 @@ function detailRow(f) {
   td.colSpan = LIB_COLS.length;
   const kv = [['Director', directors(f).join(', ')], ['Starring', f.starring], ['Cinematography', f.cinematography], ['Genre', f.genre], ['Platform', f.platform],
     ['Purchase', f.purchase], ['Release', f.release], ['Plan', f.plan ? f.plan + (f.plan === 'Up next' && f.order ? ' #' + f.order : '') : ''], ['Why', f.why], ['Notes', f.notes],
+    ['Favourite', favDate(f.key) ? showDate(favDate(f.key)) : ''],
     ['Row when loaded · id', `${f._row} · ${f.id || 'none yet'}`]].filter(([, v]) => v);
   const others = (state.byKey.get(f.key) || []).filter(o => o !== f);
   td.innerHTML = '<div class="detail-grid"><div><div class="eyebrow">Also in your sheet</div><ul class="others"></ul></div><div><dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="">Edit film</button> <button class="btn" type="button" data-rewatch="" hidden>Rewatch next</button></div></div></div>';
@@ -1344,6 +1380,7 @@ function openDrill(spec, opener) {
     const f = it.f, li = document.createElement('li');
     li.innerHTML = '<button type="button"><span class="t"></span><span class="m"></span><span class="r"><b></b><br><span></span></span></button>';
     li.querySelector('.t').textContent = f.title + (f.year != null ? ` (${f.year})` : '');
+    if (isFav(f)) li.querySelector('.t').appendChild(favIndicator());
     li.querySelector('.m').textContent = [f.date ? showDate(f.date) : '', directors(f).join(', '), f.genre, f.platform].filter(Boolean).join(' · ');
     li.querySelector('.r b').textContent = it.r != null ? it.r + '/10' : '–';
     li.querySelector('.r span').textContent = f.status;
@@ -1634,7 +1671,7 @@ async function refresh() {
   $('refreshBtn').disabled = true;
   try {
     const [films, settings] = await Promise.all([
-      readRange(`${FILMS_TAB}!A1:R6000`),
+      readRange(`${FILMS_TAB}!A1:S6000`),
       readRange(`${SETTINGS_TAB}!A1:C50`).catch(() => [])
     ]);
     state.films = parseFilms(films);
@@ -1663,6 +1700,8 @@ function fillFilters() {
   fillSelect('libPlatform', 'platform', 'All platforms');
 }
 function renderAll() {
+  const act = document.activeElement;
+  const kept = act && act.dataset && act.dataset.fav ? { uid: act.dataset.fav, box: (act.closest('#last5List,#favList,#libBody,#filmDlg') || {}).id } : null;
   applyTheme();
   $('wordmark').textContent = state.settings.appName;
   document.title = state.settings.appName;
@@ -1672,6 +1711,8 @@ function renderAll() {
   renderLog();
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-dashboard').hidden) renderDashboard();
+  document.querySelectorAll('#filmDlg [data-fav]').forEach(paintFav);
+  if (kept && !act.isConnected && kept.box) { const el = $(kept.box).querySelector(`[data-fav="${kept.uid}"]`); if (el) el.focus({ preventScroll: true }); }   // a sticker keeps focus when the lists are redrawn
 }
 
 /* ---------- Stage 2: writing to the 🎥 tab ----------
@@ -1686,7 +1727,7 @@ const ALL = {
   status: { col: 'Status', t: 'sel' }, date: { col: 'Date', t: 'date' }, starring: { col: 'Starring', t: 'text' }, director: { col: 'Director', t: 'text' },
   cinematography: { col: 'Cinematography', t: 'text' }, purchase: { col: 'Purchase', t: 'sel' }, genre: { col: 'Genre', t: 'sel' }, platform: { col: 'Platform', t: 'sel' },
   release: { col: 'Release', t: 'text' }, notes: { col: 'Notes', t: 'text' }, plan: { col: 'Plan', t: 'sel' }, order: { col: 'Order', t: 'num' },
-  why: { col: 'Why', t: 'text' }, sorted: { col: 'Sorted', t: 'date' }
+  why: { col: 'Why', t: 'text' }, sorted: { col: 'Sorted', t: 'date' }, favourite: { col: 'Favourite', t: 'fdate' }
 };
 const colLetter = i => { let s = ''; i++; while (i) { const r = (i - 1) % 26; s = String.fromCharCode(65 + r) + s; i = Math.floor((i - 1) / 26); } return s; };
 // What goes into the cell
@@ -1694,7 +1735,7 @@ function cellValue(f, v) {
   if (v == null || String(v).trim() === '') return '';
   v = String(v).trim();
   if (f.t === 'num') { const n = num(v); return n == null ? '' : n; }
-  if (f.t === 'date') return toDate(v) || '';
+  if (f.t === 'date' || f.t === 'fdate') return toDate(v) || '';
   if (f.t === 'sel') return v;
   return "'" + v;
 }
@@ -1704,6 +1745,7 @@ function norm(f, v) {
   v = String(v).trim();
   if (f.t === 'num') return num(v);
   if (f.t === 'date') return toDate(v);
+  if (f.t === 'fdate') return toDate(v) || v;   // any non-empty value counts as a favourite
   return v;
 }
 const sameVal = (f, a, b) => { a = norm(f, a); b = norm(f, b); return a === b || (a == null && b === '') || (a === '' && b == null); };
@@ -1975,6 +2017,7 @@ function openFilmDialog(film) {
     const wrap = document.createElement('div');
     wrap.className = 'field ' + (f.w || '');
     const id = 'fd-' + f.k;
+    if (film && f.k === 'title') { const fw = document.createElement('div'); fw.className = 'field'; fw.style.cssText = 'grid-column:1/-1;align-items:flex-start'; fw.appendChild(favButton(film, true)); body.appendChild(fw); }
     const lab = document.createElement('label');
     lab.htmlFor = id; lab.textContent = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
     let val = film ? film[f.k] : (f.k === 'status' ? 'Watchlist' : '');
@@ -2009,6 +2052,7 @@ async function saveFilmDialog(e) {
   const unseen = !SEEN_STATUSES.includes(data.status);
   const btn = $('fdSave'); btn.disabled = true; btn.textContent = 'Saving…';
   try {
+    await planQ.chain;   // let any queued sticker writes finish first
     if (film) {
       const changes = {};
       for (const f of FORM) if (f.k && !sameVal(ALL[f.k], film[f.k], data[f.k])) changes[f.k] = data[f.k];
@@ -2056,9 +2100,9 @@ const seenBefore = f => (state.byKey.get(f.key) || []).filter(o => o.seen);
 
 const planQ = { chain: Promise.resolve(), pending: 0 };
 const planUI = { limit: 50, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
-function planStatusLine() { setStatus('live', planQ.pending ? `Saving plan… (${planQ.pending})` : 'Plan saved'); }
-function planQueue(fn, onFail) {
-  planQ.pending++; planStatusLine();
+function planStatusLine() { const w = planQ.what === 'fav' ? 'favourite' : 'plan'; setStatus('live', planQ.pending ? `Saving ${w}… (${planQ.pending})` : planQ.what === 'fav' ? 'Favourite saved' : 'Plan saved'); }
+function planQueue(fn, onFail, what) {
+  planQ.what = what || 'plan'; planQ.pending++; planStatusLine();
   planQ.chain = planQ.chain.then(async () => {
     const before = writesDone;
     try { await fn(); }
@@ -2253,6 +2297,174 @@ function deckPick(f, tier) {
   else renderDeck();
 }
 
+
+/* ---------- Favourites ----------
+   A favourite belongs to the FILM (title + year, state.byKey), not to one row. The date lives in column S ("Favourite") of the
+   film's most recent row; any non-empty value on any row of the film means favourite. Switching on writes today's date into that one
+   cell; switching off clears the cell on every row of the film that has a value. Both go through the same queue as the Plan
+   (planQueue) and updateFilm (row found by id right before the write, stale check, one changed cell per call, read back).
+   While a write is queued the screen shows the wanted state (favPend); on failure it goes back to what the sheet holds. */
+const FAV_MISSING = 'Add a Favourite column to the 🎥 tab to pick favourites';
+const FAV_CHIP = '__fav';
+const favPend = new Map();   // film key -> { want, tok }
+let favTok = 0;
+const filmRows = f => state.byKey.get(f.key) || [f];
+// latest date wins; ties and undated rows: the one lower down the sheet
+const latestRow = rows => [...rows].sort((a, b) => (b.date || '').localeCompare(a.date || '') || b._row - a._row)[0];
+const realFav = key => (state.byKey.get(key) || []).some(r => r.favourite);
+const favOnKey = key => favPend.has(key) ? favPend.get(key).want : realFav(key);
+const isFav = f => !!state.hasFav && favOnKey(f.key);
+const isoLike = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || ''));
+function favDate(key) {   // newest Favourite date on any row of the film ('' if none or not a date)
+  if (favPend.has(key)) { const p = favPend.get(key); if (!p.want) return ''; if (!realFav(key)) return today(); }
+  return (state.byKey.get(key) || []).map(r => r.favourite).filter(isoLike).sort().pop() || '';
+}
+const favKeys = () => state.hasFav ? [...state.byKey.keys()].filter(favOnKey) : [];
+const favTitle = f => `Favourite: ${f.title}`;
+function paintFav(b) {
+  const f = state.films.find(x => x._uid === Number(b.dataset.fav));
+  if (!f) return;
+  const on = isFav(f), lab = b.querySelector('.fav-lab');
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', favTitle(f));
+  b.disabled = !state.hasFav;
+  b.title = !state.hasFav ? FAV_MISSING : on ? 'Favourite (tap to remove)' : 'Tap to make a favourite';
+  if (lab) lab.textContent = 'Favourite';
+}
+function favButton(f, labelled) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'fav' + (labelled ? ' labelled' : ''); b.dataset.fav = f._uid;
+  b.innerHTML = '<svg class="stub" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><use href="#ticket"/></svg>' + (labelled ? '<span class="fav-lab"></span>' : '');
+  paintFav(b);
+  return b;
+}
+function favIndicator() {   // display-only stub (dashboard drill-down lists)
+  const NS = 'http://www.w3.org/2000/svg', s = document.createElementNS(NS, 'svg'), u = document.createElementNS(NS, 'use');
+  s.setAttribute('class', 'stub ind'); s.setAttribute('viewBox', '0 0 24 16'); s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'Favourite');
+  u.setAttribute('href', '#ticket'); s.appendChild(u);
+  return s;
+}
+function toggleFav(film) {
+  if (!state.hasFav) { notice(FAV_MISSING + '.', 'error'); return; }
+  if (!state.mcp || !state.loaded || !isLive()) { notice('Picking favourites needs the live connection to your sheet. ' + connectHint(), 'error'); return; }
+  const key = film.key, want = !favOnKey(key), tok = ++favTok;
+  favPend.set(key, { want, tok });
+  const settle = () => { const p = favPend.get(key); if (p && p.tok === tok) favPend.delete(key); };
+  renderAll();
+  return planQueue(async () => {
+    try {
+      const rows = (state.byKey.get(key) || []).slice();
+      const fresh = r => byId(r.id) || r;
+      if (want) {
+        if (rows.some(r => r.favourite)) return;               // already a favourite in the sheet
+        const target = latestRow(rows);
+        if (target) await updateFilm(fresh(target), { favourite: today() });
+      } else {
+        for (const r of rows) if (r.favourite) await updateFilm(fresh(r), { favourite: '' });
+      }
+    } finally { settle(); }
+  }, settle, 'fav');
+}
+document.addEventListener('click', e => {   // capture: a sticker inside a clickable row must not also open the row
+  const b = e.target.closest && e.target.closest('button[data-fav]');
+  if (!b) return;
+  e.stopPropagation();
+  if (b.disabled) return;
+  const f = state.films.find(x => x._uid === Number(b.dataset.fav));
+  if (f) toggleFav(f);
+}, true);
+
+/* Log: Recommended for you / Last 5 watched / Favourites */
+const pickUI = { uid: null, idx: 0, adding: null };
+function pickList() {   // unseen films not yet in Up next, best first, one per film
+  const P = buildProfile(), seenKeys = new Set(), out = [];
+  const cands = state.films.filter(f => !f.seen && (inBacklog(f) || f.plan === 'Soon'));
+  for (const sc of cands.map(f => scoreFilm(f, P)).sort((a, b) => b.s - a.s || a.f._row - b.f._row)) {
+    if (seenKeys.has(sc.f.key)) continue;
+    seenKeys.add(sc.f.key); out.push(sc);
+  }
+  return out;
+}
+const titleYear = f => f.title + (f.year != null ? ` (${f.year})` : f.yearText ? ` (${f.yearText})` : '');
+function renderPicks() {
+  const box = $('pickBody');
+  box.textContent = '';
+  if (!state.loaded) {
+    box.innerHTML = `<p class="empty">${isLive() ? 'Loading your films…' : esc(connectHint())}</p>`;
+  } else {
+    const list = pickList();
+    if (!list.length) box.innerHTML = '<p class="empty">Nothing to recommend yet. Add films to your watchlist and they will turn up here.</p>';
+    else {
+      let i = list.findIndex(x => x.f._uid === pickUI.uid);
+      if (i < 0) i = pickUI.idx % list.length;
+      pickUI.uid = list[i].f._uid; pickUI.idx = i;
+      const { f, why } = list[i], adding = planQ.pending > 0 && pickUI.adding === f._uid;
+      box.innerHTML = '<h3></h3><div class="m"></div><p class="pwhy"></p><div class="acts"><button class="btn" type="button" id="pickAnother">Another</button><button class="btn btn-primary" type="button" id="pickAdd">Add to Up next</button></div><div class="pnote muted small tnum" id="pickNote"></div>';
+      $('pickNote').textContent = `${fmt(list.length)} to pick from`;
+      box.querySelector('h3').textContent = titleYear(f);
+      box.querySelector('.m').textContent = [directors(f).join(', '), f.genre].filter(Boolean).join(' · ') || 'No director or genre noted yet';
+      box.querySelector('.pwhy').textContent = why.length ? why.join(' · ') : 'On your watchlist';
+      $('pickAnother').disabled = list.length < 2;
+      const add = $('pickAdd');
+      add.setAttribute('aria-label', 'Add to Up next: ' + f.title);
+      if (isUp(f)) { add.disabled = true; add.textContent = 'In Up next'; }
+      else if (adding) { add.disabled = true; add.textContent = 'Adding…'; }
+    }
+  }
+  // Last 5 watched
+  const last = [...diary()].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b._row - a._row)).slice(0, 5);
+  const ll = $('last5List'); ll.textContent = '';
+  if (!last.length) ll.innerHTML = `<li class="empty-state" style="display:block">${state.loaded ? 'No dated watches yet.' : ''}</li>`;
+  for (const f of last) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>';
+    li.querySelector('.t').textContent = f.title;
+    li.querySelector('.sub').textContent = [shortDate(f.date), f.platform].filter(Boolean).join(' · ');
+    const r = li.querySelector('.r');
+    const rt = document.createElement('span'); rt.className = 'rtg'; rt.textContent = f.rating != null ? f.rating + '/10' : ''; r.appendChild(rt);
+    const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'linkbtn'; eb.textContent = 'Edit'; eb.dataset.edit = f._uid; eb.setAttribute('aria-label', 'Edit ' + f.title);
+    r.appendChild(eb); r.appendChild(favButton(f));
+    ll.appendChild(li);
+  }
+  $('last5Note').textContent = state.loaded ? `${fmt(diary().length)} dated in total` : '';
+  // Favourites
+  const fl = $('favList'); fl.textContent = '';
+  $('favAll').hidden = !state.hasFav;
+  const keys = favKeys().map(k => ({ k, d: favDate(k), rows: state.byKey.get(k) }))
+    .sort((a, b) => b.d.localeCompare(a.d) || a.rows[0].title.localeCompare(b.rows[0].title));
+  $('favNote').textContent = state.loaded && state.hasFav ? `${fmt(keys.length)} film${keys.length === 1 ? '' : 's'}` : '';
+  if (!state.hasFav) fl.innerHTML = `<li class="empty-state" style="display:block">${state.loaded ? esc(FAV_MISSING) + '.' : ''}</li>`;
+  else if (!keys.length) fl.innerHTML = `<li class="empty-state" style="display:block">${state.loaded ? 'No favourites yet. Tap the ticket on a film to add it.' : ''}</li>`;
+  for (const { k, rows } of keys.slice(0, 5)) {
+    const f = latestRow(rows), sn = state.seen.find(x => x.key === k), rating = sn && sn.rating != null ? sn.rating : f.rating;
+    const li = document.createElement('li');
+    li.innerHTML = '<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>';
+    li.querySelector('.t').textContent = titleYear(f);
+    li.querySelector('.sub').textContent = [directors(f).join(', '), f.genre].filter(Boolean).join(' · ');
+    const r = li.querySelector('.r');
+    const rt = document.createElement('span'); rt.className = 'rtg'; rt.textContent = rating != null ? rating + '/10' : ''; r.appendChild(rt);
+    r.appendChild(favButton(f));
+    fl.appendChild(li);
+  }
+}
+$('pickBody').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'pickAnother') { const list = pickList(); if (list.length > 1) { pickUI.idx = (list.findIndex(x => x.f._uid === pickUI.uid) + 1) % list.length; pickUI.uid = list[pickUI.idx].f._uid; renderPicks(); } return; }
+  if (b.id === 'pickAdd') {
+    const f = state.films.find(x => x._uid === pickUI.uid); if (!f) return;
+    if (!isLive()) { notice('This needs the live connection. ' + connectHint(), 'error'); return; }
+    pickUI.adding = f._uid; b.disabled = true; b.textContent = 'Adding…';
+    setTier(f, 'Up next');
+  }
+});
+$('last5List').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openFilmDialog(state.films.find(f => f._uid === Number(b.dataset.edit))); });
+$('favAll').addEventListener('click', () => {
+  const L = state.lib;
+  L.mode = 'films'; L.status = FAV_CHIP; L.q = ''; L.genre = ''; L.platform = ''; L.owned = ''; L.limit = 100; L.open = null;
+  $('libSearch').value = ''; $('libGenre').value = ''; $('libPlatform').value = ''; $('libOwned').value = '';
+  showTab('library');
+});
+
 /* ---------- wiring ---------- */
 function showTab(name) {
   for (const t of ['log', 'library', 'dashboard']) {
@@ -2317,7 +2529,6 @@ $('upList').addEventListener('click', e => {
   const f = state.films.find(x => x._uid === Number(b.dataset.log)); if (!f) return;
   lfSelect(f); $('logForm').scrollIntoView({ block: 'center', behavior: 'smooth' }); $('lfRating').focus({ preventScroll: true });
 });
-$('recList').addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openFilmDialog(state.films.find(f => f._uid === Number(b.dataset.edit))); });
 // Add / edit dialog
 $('addFilmBtn').addEventListener('click', () => { if (!state.loaded) { notice('Adding a film needs the live connection. ' + connectHint(), 'error'); return; } openFilmDialog(null); });
 $('filmForm').addEventListener('submit', saveFilmDialog);

@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–3 and the Film Vault themes merged to `main`. Stage 4 (Dashboard and tidy layout) built 2026-10-24 (PR open).** Next: Stage 5 (Tools and Discover).
+Status: **Stages 0–3 and the Film Vault themes merged to `main`. Stage 4 (Dashboard and tidy layout) merged. Favourites and the Log picks built 2026-10-26 (PR open).** Next: Stage 5 (Tools and Discover).
 
 ## Reference
 
@@ -262,3 +262,23 @@ positions don't matter.
   checked against a separate script).
 - Built by a Sonnet helper from a written spec; reviewed by the lead, who fixed the
   rewatch rule and capped the rewatch list.
+
+## Favourites and Log picks (built 2026-10-26)
+
+- Sheet: backup "🎥 backup 2026-10-26 (before Favourite)", then column S `Favourite` added to 🎥
+  (format copied from R, filter widened to A2:S2792). Read back: S holds only the header, headers
+  A–S right, dropdown chips intact. No A–R cell was written.
+- `Favourite` holds a date; any value means favourite. A favourite belongs to the film (title +
+  year): on writes today on the film's latest row; off clears every row of that film that has a
+  value. Writes go through the Plan queue and updateFilm (row by id right before the write, one
+  cell, read back). Without the column the stubs are disabled and nothing is written.
+- Sticker: a ticket stub (outline when off, accent fill when on) in Library rows (first column),
+  the edit dialog, Last 5, Favourites and, display-only, the dashboard drill lists. Library has a
+  Favourites chip.
+- Log opens with three equal boxes: Recommended for you (Plan scoring over watchlist and Soon
+  films, Another, Add to Up next = the Plan action), Last 5 watched, Favourites (5 most recently
+  picked, See all). Recent diary removed; Coming soon spans the full width.
+- Checked: `node tests/favourites.test.mjs` (275) and stages 1–4 and themes re-run; real-data run
+  with and without the column.
+- Built by a Sonnet helper from a written spec; reviewed by the lead (status line now says
+  "Favourite saved" rather than "Plan saved"). Sheet column added by the lead.
