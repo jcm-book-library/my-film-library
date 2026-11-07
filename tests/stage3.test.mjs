@@ -181,7 +181,13 @@ const rowOf = (fake, title) => { const r = fake.rowOfTitle(title); if (!r) throw
 const noCalls = (E, label) => check(E.S + label + ' zero sheet calls at all', E.fake.calls.length === E.n0, E.fake.calls.slice(E.n0).map(c => c.tool + ' ' + c.range));
 const noWrites = (E, label) => check(E.S + label + ' zero update/append calls', E.fake.calls.slice(E.n0).every(c => c.tool === 'get_values'), E.fake.calls.slice(E.n0).filter(c => c.tool !== 'get_values').map(c => c.tool + ' ' + c.range));
 const settlePlan = async page => { await page.waitForFunction(() => planQ.pending === 0); await page.waitForTimeout(250); };
-const goPlan = async page => { await page.click('#tab-library'); await page.click('.lib-mode button[data-mode="plan"]'); await page.waitForTimeout(80); };
+// goPlanTop opens the Plan with the Backlog on its first page (top 10 by score); goPlan then presses Show more until every backlog row is listed
+const goPlanTop = async page => { await page.click('#tab-library'); await page.click('.lib-mode button[data-mode="plan"]'); await page.waitForTimeout(80); };
+const showAllBacklog = async page => { while (await page.isVisible('#planMore')) await page.click('#planMore'); };
+const goPlan = async page => { await goPlanTop(page); await showAllBacklog(page); };
+// the Backlog order: the existing scorer, score desc then sheet row, one row per film (read from the page's own scoreFilm, ordered here)
+const rankTitles = page => page.evaluate(() => { const P = buildProfile(), seen = new Set(), out = []; for (const sc of state.films.filter(inBacklog).map(f => scoreFilm(f, P)).sort((a, b) => b.s - a.s || a.f._row - b._row)) { if (seen.has(sc.f.key)) continue; seen.add(sc.f.key); out.push(sc.f.title); } return out; });
+const byRank = (rank, titles) => rank.filter(t => titles.includes(t));
 const goFilms = async page => { await page.click('.lib-mode button[data-mode="films"]'); await page.waitForTimeout(80); };
 const titles = (page, sel) => page.$$eval(sel + ' li .t', els => els.map(e => e.textContent.trim()));
 const noticeState = page => page.evaluate(() => { const n = document.getElementById('notice'); return { hidden: n.hidden, text: n.textContent, kind: n.dataset.kind }; });
@@ -216,7 +222,7 @@ function expectSeqPerRow(E, label) {
 await scenario('A1 viewing the Plan makes no calls; lists and notes', BOTH, async E => {
   const { page, fake, S } = E;
   const M = modelOf(fake);
-  await goPlan(page);
+  await goPlanTop(page);
   check(S + 'A plan view visible, table + chips + foot hidden', await page.evaluate(() => !document.getElementById('planView').hidden && document.querySelector('#view-library .table-wrap').hidden && document.getElementById('libChips').hidden && document.querySelector('#view-library .lib-foot').hidden));
   const up = M.up().map(r => titleOf(M, r));
   eq(S + 'A Up next list order (Orders 1..6, blank-Order film last)', await titles(page, '#planUp'), up);
@@ -227,12 +233,16 @@ await scenario('A1 viewing the Plan makes no calls; lists and notes', BOTH, asyn
   eq(S + 'A Soon list', await titles(page, '#planSoon'), ['Soon Alpha', 'Soon Beta']);
   eq(S + 'A Soon note', await page.textContent('#planSoonNote'), '2 films');
   const back = M.backlog().map(r => titleOf(M, r));
-  eq(S + 'A backlog = unseen Watchlist/Rewatch/Someday not in Up next/Soon, in sheet order', await titles(page, '#planBack'), back);
+  const rank = await rankTitles(page);
+  eq(S + 'A backlog = the same 30 films (unseen Watchlist/Rewatch/Someday not in Up next/Soon), top 10 by score first', [await titles(page, '#planBack'), [...rank].sort()], [byRank(rank, back).slice(0, 10), [...back].sort()]);
+  check(S + 'A the top 10 are not simply the first 10 in sheet order', JSON.stringify(await titles(page, '#planBack')) !== JSON.stringify(back.slice(0, 10)));
   eq(S + 'A backlog count is 30', back.length, 30);
-  eq(S + 'A backlog note', await page.textContent('#planBackNote'), '30 films');
+  eq(S + 'A backlog note', await page.textContent('#planBackNote'), '30 films waiting · Top 10 by score');
+  eq(S + 'A heading', await page.textContent('#planBackH'), 'Backlog');
   for (const t of ['Coming Alpha', 'Coming Beta', 'Dev One', 'Unavail One', 'Dnf One', 'Billy Style', 'Soon Alpha', 'Alder Gate', 'Solo Seen']) check(S + `A "${t}" not in backlog`, !back.includes(t));
   for (const t of ['Some Stale', 'Some Fresh', 'Some Blank', 'Rewatch One', 'Twice Seen']) check(S + `A "${t}" is in backlog`, back.includes(t));
-  check(S + 'A Someday rows are marked', (await page.$$eval('#planBack li.someday', l => l.length)) === 5);
+  await showAllBacklog(page);
+  check(S + 'A Someday rows are marked (all 30 shown)', (await page.$$eval('#planBack li.someday', l => l.length)) === 5);
   check(S + 'A Rewatch rows are marked', (await page.$$eval('#planBack li .m', l => l.filter(x => /Rewatch/.test(x.textContent)).length)) === 2);
   await page.mouse.wheel(0, 900); await page.waitForTimeout(100); await page.mouse.wheel(0, -900);
   await page.hover('#planUp li:nth-child(2)'); await page.hover('#planBack li:nth-child(3)');
@@ -264,13 +274,15 @@ await scenario('A2 more than 10 in Up next', BOTH, { fixture: () => buildPlanFix
 await scenario('B1 backlog search and filters', LAPTOP, async E => {
   const { page, fake, S } = E;
   const M = modelOf(fake);
-  await goPlan(page);
-  const exp = fn => M.backlog().filter(fn).map(r => titleOf(M, r));
+  await goPlanTop(page);
+  const exp = fn => byRank(rank, M.backlog().filter(fn).map(r => titleOf(M, r))).slice(0, 10);
+  const expN = fn => M.backlog().filter(fn).length;
+  const rank = await rankTitles(page);
   const hay = (r, q) => ['Title', 'Director', 'Starring', 'Genre', 'Year'].some(n => String(M.get(r, n) ?? '').toLowerCase().includes(q));
   await page.fill('#libSearch', 'vera'); await page.waitForTimeout(350);
   eq(S + 'B search "vera"', await titles(page, '#planBack'), exp(r => hay(r, 'vera')));
   check(S + 'B search "vera" is not empty', exp(r => hay(r, 'vera')).length > 0);
-  eq(S + 'B note follows search', await page.textContent('#planBackNote'), `${exp(r => hay(r, 'vera')).length} films`);
+  eq(S + 'B note follows search', await page.textContent('#planBackNote'), `${expN(r => hay(r, 'vera'))} films waiting · Top ${Math.min(10, expN(r => hay(r, 'vera')))} by score`);
   await page.fill('#libSearch', 'dara'); await page.waitForTimeout(350);
   eq(S + 'B search matches Starring ("dara")', await titles(page, '#planBack'), exp(r => hay(r, 'dara')));
   await page.fill('#libSearch', ''); await page.waitForTimeout(350);
@@ -295,12 +307,16 @@ await scenario('B2 Show 50 more', LAPTOP, { fixture: () => buildPlanFixture({ un
   const { page, fake, S } = E;
   const M = modelOf(fake), all = M.backlog().map(r => titleOf(M, r));
   eq(S + 'B2 fixture has 80 backlog rows', all.length, 80);
-  await goPlan(page);
-  eq(S + 'B2 first 50 shown, in sheet order', await titles(page, '#planBack'), all.slice(0, 50));
-  eq(S + 'B2 note shows the full count', await page.textContent('#planBackNote'), '80 films');
-  check(S + 'B2 Show 50 more visible', await page.isVisible('#planMore'));
-  await page.click('#planMore');
-  eq(S + 'B2 after one click all 80 shown', await titles(page, '#planBack'), all);
+  await goPlanTop(page);
+  const rank = await rankTitles(page);
+  eq(S + 'B2 first 10 shown, top by score', await titles(page, '#planBack'), rank.slice(0, 10));
+  eq(S + 'B2 note shows the full count', await page.textContent('#planBackNote'), '80 films waiting · Top 10 by score');
+  check(S + 'B2 Show 10 more visible', await page.isVisible('#planMore'));
+  for (let n = 20; n <= 80; n += 10) {
+    await page.click('#planMore');
+    eq(S + `B2 after another click ${n} shown, in rank order`, await titles(page, '#planBack'), rank.slice(0, n));
+  }
+  eq(S + 'B2 all 80 are the same films as the sheet holds', [...rank].sort(), [...all].sort());
   check(S + 'B2 button hidden when everything is shown', !(await page.isVisible('#planMore')));
   noCalls(E, 'B2');
 });

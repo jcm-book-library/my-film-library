@@ -321,7 +321,15 @@ for (const size of ['phone', 'laptop']) {
       ['log', async () => { await page.evaluate(() => notice('Example notice for the contrast scan.')); }],
       ['library', async () => { await page.click('#tab-library'); await page.click('[data-mode="films"]'); await page.waitForTimeout(100); }],
       ['plan', async () => { await page.click('[data-mode="plan"]'); await page.waitForTimeout(150); }],
-      ['dashboard', async () => { await page.click('#tab-dashboard'); await page.waitForTimeout(250); }]
+      ['dashboard', async () => { await page.click('#tab-dashboard'); await page.waitForTimeout(250); }],
+      ['tools', async () => {   // fill the panels so every kind of text is on screen: a spin result, ownership chips, a year in review, picks
+        await page.click('#tab-tools'); await page.waitForTimeout(150);
+        await page.evaluate(() => { Math.random = () => 0.3; });
+        await page.click('#dipPools [data-pool="watch"]'); if (await page.$eval('#dipSpin', b => !b.disabled)) await page.click('#dipSpin');
+        await page.fill('#ownQ', 'a');
+        await page.fill('#recQ', 'a'); const rb = await page.$('#recPick button'); if (rb) await rb.click();
+        await page.waitForTimeout(150);
+      }]
     ];
     for (const [name, go] of views) {
       await go();
@@ -329,6 +337,7 @@ for (const size of ['phone', 'laptop']) {
       if (sw > 0) problems.push(`${name}: horizontal scroll ${sw}px`);
       if (name === 'log') await page.screenshot({ path: path.join(SHOTS, `${id}-log-${W}.png`), fullPage: true });
       if (name === 'library') await page.screenshot({ path: path.join(SHOTS, `${id}-library-${W}.png`), fullPage: true });
+      if (name === 'tools' && SHOT_THEMES.has(id)) await page.screenshot({ path: path.join(SHOTS, `${id}-tools-${W}.png`), fullPage: true });
       if (name === 'dashboard' && SHOT_THEMES.has(id)) await page.screenshot({ path: path.join(SHOTS, `${id}-dashboard-${W}.png`), fullPage: true });
       const r = await contrastScan(page);
       for (const b of r.bad) problems.push(`${name}: ${b.sel} "${b.text}" ${b.ratio} fg${JSON.stringify(b.fg)} bg${JSON.stringify(b.bg)}`);
@@ -437,7 +446,7 @@ for (const size of ['phone', 'laptop']) {
       }, { b64: buf.toString('base64'), cols: BRAND_COLOURS[id], color: brand.color, fill: brand.fill });
       if (rr < 4.5) problems.push(`brand: ${rr.toFixed(2)}`);
     }
-    check(S + 'no horizontal scroll, contrast >= 4.5 on every text pair (log, library, plan, dashboard, Stage 4 panels and drill dialog, brand)', problems.length === 0, problems.slice(0, 12));
+    check(S + 'no horizontal scroll, contrast >= 4.5 on every text pair (log, library, plan, dashboard, tools, Stage 4 panels and drill dialog, brand)', problems.length === 0, problems.slice(0, 12));
     check(S + 'no page or console errors', errors.length === 0, errors);
     await ctx.close();
   }

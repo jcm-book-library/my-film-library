@@ -173,6 +173,7 @@ input[type="number"]:focus{border-color:var(--accent);outline:none}
 .plan-list .m{font-size:12px;color:var(--muted)}
 .plan-list .why{grid-column:2/-1;font-size:12px;color:var(--fg);opacity:.85;font-style:italic}
 .plan-list .why:empty{display:none}
+.plan-list .reason{grid-column:2/-1;font-size:12px;color:var(--muted)}
 .plan-list .desc{grid-column:2/-1;margin:2px 0 0;font-size:13px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .up-detail li{padding:14px 0;align-items:start}
 .up-detail .n{font-size:24px;line-height:1.1}
@@ -620,6 +621,61 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 .totop.show{opacity:1;visibility:visible;transform:none;transition:opacity .15s,transform .15s,visibility 0s}
 .totop svg{width:22px;height:22px;display:block;pointer-events:none}
 .totop:hover{filter:brightness(1.1)}
+
+/* ---- Tools tab: Discover and Tools ---- */
+#view-tools{padding-bottom:28px}
+.band{margin:0 0 8px}
+.band-h{display:flex;align-items:center;gap:14px;margin:0 0 12px;font-size:20px}
+.band-h::after{content:"";flex:1;height:1px;background:var(--line)}
+#view-tools .dash-2 .panel{display:flex;flex-direction:column}
+.tool-search,.tool-select{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-ctl);padding:7px 10px;height:40px;min-width:0}
+.tool-search{width:100%;margin-bottom:10px}
+.tool-search:focus,.tool-select:focus{border-color:var(--accent);outline:none}
+.tool-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.tool-row .tool-select{flex:1 1 auto}
+.tool-row .btn{height:40px;flex:none;padding-inline:18px}
+.tool-out{margin:0}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 12px;padding:8px 0;border-top:1px solid var(--line);min-width:0}
+.tl li:first-child{border-top:0;padding-top:0}
+.tl li > span:first-child,.tl li > button:first-child{min-width:0;overflow-wrap:anywhere}
+.tl .t{font-weight:600}
+.tl .sub{display:block;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.tl .r{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;flex:none;max-width:48%}
+.tl .acts{flex:none;display:flex;gap:6px;align-items:center}
+.tl .acts button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:3px 10px;cursor:pointer;white-space:nowrap}
+.tl .acts button:hover:not(:disabled){color:var(--fg);border-color:var(--accent)}
+.tl .acts button:disabled{opacity:.5;cursor:default}
+.tl .vchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;flex:none;max-width:55%}
+.tl button.rowlink{all:unset;box-sizing:border-box;display:block;min-width:0;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.tl button.rowlink:hover .t{text-decoration:underline}
+.tl button.rowlink:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.tool-sub{margin:0 0 6px}
+.tool-sub:not(:first-child){margin-top:16px}
+.tool-msg{margin:0;font-size:14px;color:var(--muted)}
+.tool-msg + .tool-msg{margin-top:8px}
+.tool-msg b{color:var(--fg);font-weight:600}
+.vchip{font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--raise);color:var(--fg);border:1px solid var(--line);white-space:nowrap}
+.vchip[data-strong]{background:color-mix(in srgb,var(--accent) 22%,var(--surface));border-color:var(--accent)}
+.tool-card h3{font-family:var(--display);font-weight:var(--d-weight);font-size:20px;margin:0;line-height:1.25;overflow-wrap:anywhere}
+.tool-card .m{font-size:13px;color:var(--muted);margin-top:4px}
+.tool-card .pwhy{margin:10px 0 0;font-size:13px;font-style:italic;color:var(--fg);opacity:.9}
+.tool-card .acts{display:flex;gap:8px;flex-wrap:wrap;padding-top:14px}
+.tool-card .rate{font-weight:700;font-variant-numeric:tabular-nums}
+.goal-big{font-family:var(--display);font-weight:var(--d-weight);font-size:22px;line-height:1.2}
+.goal-big[data-state="behind"]{color:var(--danger)}
+.goal-big[data-state="ahead"],.goal-big[data-state="done"]{color:color-mix(in srgb,var(--accent) 70%,var(--fg))}
+.goal-kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin:14px 0 0}
+.goal-kv div{min-width:0}
+.goal-kv dt{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.goal-kv dd{margin:0;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.yir-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.yir-card{background:var(--bg);border:1px solid var(--line);border-radius:calc(var(--r)*.8);padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.yir-card .v{font-family:var(--display);font-weight:var(--d-weight);font-size:18px;line-height:1.2;overflow-wrap:anywhere}
+.yir-card .s{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.yir-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.yir-text{width:100%;margin-top:10px;font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-ctl);padding:8px 10px;min-height:120px}
+@media (max-width:560px){.yir-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.tl .acts button,.tool-card .acts .btn{min-height:40px}.tl .r{max-width:42%}}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
   <symbol id="ticket" viewBox="0 0 24 16"><path d="M1.5 1.5h21v3.9a2.6 2.6 0 0 0 0 5.2v3.9h-21v-3.9a2.6 2.6 0 0 0 0-5.2Z" style="fill:var(--stub-fill,none);stroke:var(--stub-stroke,currentColor)" stroke-width="1.4" stroke-linejoin="round"/><path d="M16.5 3.4v9.2" style="stroke:var(--stub-perf,currentColor)" stroke-width="1.3" stroke-dasharray="1.2 1.6" fill="none"/></symbol>
@@ -656,6 +712,7 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
     <button class="tab" role="tab" id="tab-log" aria-selected="true" aria-controls="view-log" type="button">Log</button>
     <button class="tab" role="tab" id="tab-library" aria-selected="false" aria-controls="view-library" type="button">Library</button>
     <button class="tab" role="tab" id="tab-dashboard" aria-selected="false" aria-controls="view-dashboard" type="button">Dashboard</button>
+    <button class="tab" role="tab" id="tab-tools" aria-selected="false" aria-controls="view-tools" type="button">Tools</button>
   </nav>
 
   <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
@@ -750,10 +807,10 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       </section>
       <section class="panel" aria-labelledby="planSoonH"><div class="panel-head"><h2 id="planSoonH">Soon</h2><span class="muted small tnum" id="planSoonNote"></span></div><ol class="plan-list" id="planSoon"></ol></section>
       <section class="panel" aria-labelledby="planBackH">
-        <div class="panel-head"><h2 id="planBackH">Your watchlist, in sheet order</h2><span class="muted small tnum" id="planBackNote"></span></div>
-        <p class="muted small" style="margin:-4px 0 10px">Watchlist and Rewatch films that aren't in Up next or Soon. Search and the filters above apply. Anything you don't pick stays unsorted until the deck shows it.</p>
+        <div class="panel-head"><h2 id="planBackH">Backlog</h2><span class="muted small tnum" id="planBackNote"></span></div>
+        <p class="muted small" style="margin:-4px 0 10px">Your best-scoring Watchlist and Rewatch films that aren't in Up next or Soon, ranked by what you've rated with the same director, cast and genre. Search and the filters above apply. Anything you don't pick stays unsorted until the deck shows it.</p>
         <ol class="plan-list sheet-list" id="planBack"></ol>
-        <button class="btn" type="button" id="planMore" hidden>Show 50 more</button>
+        <button class="btn" type="button" id="planMore" hidden>Show 10 more</button>
       </section>
     </div>
     <div class="table-wrap">
@@ -763,6 +820,63 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       </table>
     </div>
     <div class="lib-foot"><span><span id="libCount"></span> <button class="btn" id="libSheetOrder" type="button" hidden>Back to sheet order</button></span><button class="btn" id="libMore" type="button" hidden>Show 100 more</button></div>
+  </div>
+
+  <div id="view-tools" role="tabpanel" aria-labelledby="tab-tools" hidden>
+    <section class="band" aria-labelledby="discH">
+      <h2 class="band-h" id="discH">Discover</h2>
+      <div class="dash-2">
+        <section class="panel" aria-labelledby="otdH">
+          <div class="panel-head"><h2 id="otdH">On this day</h2><span class="muted small" id="otdNote"></span></div>
+          <div id="otdBody"></div>
+        </section>
+        <section class="panel" aria-labelledby="hotdH">
+          <div class="panel-head"><h2 id="hotdH">Highlight of the day</h2><span class="muted small" id="hotdNote"></span></div>
+          <div id="hotdBody"></div>
+        </section>
+      </div>
+    </section>
+    <section class="band" aria-labelledby="toolsH">
+      <h2 class="band-h" id="toolsH">Tools</h2>
+      <div class="dash-2">
+        <section class="panel" aria-labelledby="dipH">
+          <div class="panel-head"><h2 id="dipH">Lucky dip</h2><span class="muted small" id="dipNote"></span></div>
+          <div class="chips" id="dipPools" role="group" aria-label="Pool"></div>
+          <div class="tool-row"><select id="dipGenre" class="tool-select" aria-label="Genre"><option value="">All genres</option></select><button class="btn btn-primary" type="button" id="dipSpin">Spin</button></div>
+          <div id="dipBody" class="tool-out" aria-live="polite"></div>
+        </section>
+        <section class="panel" aria-labelledby="ownH">
+          <div class="panel-head"><h2 id="ownH">Do I own this?</h2><span class="muted small" id="ownNote"></span></div>
+          <input type="search" id="ownQ" class="tool-search" placeholder="Search a title" aria-label="Search a title" autocomplete="off">
+          <ul class="tl tool-out" id="ownList"></ul>
+        </section>
+      </div>
+      <div class="dash-2">
+        <section class="panel" aria-labelledby="stallH">
+          <div class="panel-head"><h2 id="stallH">Stalled</h2><span class="muted small" id="stallNote"></span></div>
+          <div id="stallBody"></div>
+        </section>
+        <section class="panel" aria-labelledby="goalH">
+          <div class="panel-head"><h2 id="goalH">Goal planner</h2><span class="muted small" id="goalNote"></span></div>
+          <div id="goalBody"></div>
+        </section>
+      </div>
+      <div class="dash-2">
+        <section class="panel" aria-labelledby="yirH">
+          <div class="panel-head"><h2 id="yirH">Year in review</h2><span class="muted small" id="yirNote"></span></div>
+          <div class="chips" id="yirYears" role="group" aria-label="Year"></div>
+          <div id="yirBody"></div>
+        </section>
+        <section class="panel" aria-labelledby="mltH">
+          <div class="panel-head"><h2 id="mltH">More like this</h2><span class="muted small" id="mltNote"></span></div>
+          <input type="search" id="recQ" class="tool-search" placeholder="Pick a film you've seen" aria-label="Pick a film you have seen" autocomplete="off">
+          <ul class="tl" id="recPick"></ul>
+          <div id="recBody"></div>
+          <div class="eyebrow sub-head">Top picks for you</div>
+          <ul class="tl" id="topPicks"></ul>
+        </section>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -1384,6 +1498,8 @@ const lc = s => String(s || '').trim().toLowerCase();
 const STREAMING = ['stan', 'netflix', 'disney+', 'prime', 'apple tv', 'paramount'];
 // "Owned" = Purchase Owned, or Platform Physical or Plex (the owner's decision)
 const isOwned = f => lc(f.purchase) === 'owned' || lc(f.platform) === 'physical' || lc(f.platform) === 'plex';
+// A dated watch is a rewatch when the film was seen before it: an undated archive row (always earlier), an earlier date, or the same date higher up the sheet
+const earlierSeen = f => (state.byKey.get(f.key) || []).filter(o => o.seen && o !== f && (!o.date || o.date < f.date || (o.date === f.date && o._row < f._row)));
 const WHERE = ['Owned', 'Streaming', 'Cinema', 'Other', 'Not recorded'];
 function whereOf(f) {
   if (isOwned(f)) return 'Owned';
@@ -1516,7 +1632,6 @@ function renderDashboard() {
   const yr = isAll ? [] : d.filter(f => f.date.startsWith(P));
   // A dated watch is a rewatch when the film was seen before it: an undated archive row (always earlier), an earlier date,
   // or the same date higher up the sheet. A film's first dated watch is not a rewatch even if it is watched again later.
-  const earlierSeen = f => (state.byKey.get(f.key) || []).filter(o => o.seen && o !== f && (!o.date || o.date < f.date || (o.date === f.date && o._row < f._row)));
   const reOf = new Map(); for (const f of yr) reOf.set(f, earlierSeen(f).length > 0);
   const scope = isAll ? state.seen.map(s => ({ f: s.rep, r: s.rating })) : yr.map(f => ({ f, r: f.rating }));
   const unit = isAll ? 'films' : 'watches';
@@ -1751,6 +1866,7 @@ function renderAll() {
   renderLog();
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-dashboard').hidden) renderDashboard();
+  if (!$('view-tools').hidden) renderTools();
   document.querySelectorAll('#filmDlg [data-fav]').forEach(paintFav);
   if (kept && !act.isConnected && kept.box) { const el = $(kept.box).querySelector(`[data-fav="${kept.uid}"]`); if (el) el.focus({ preventScroll: true }); }   // a sticker keeps focus when the lists are redrawn
 }
@@ -2167,7 +2283,8 @@ const byId = id => state.films.find(f => f.id === id);
 const seenBefore = f => (state.byKey.get(f.key) || []).filter(o => o.seen);
 
 const planQ = { chain: Promise.resolve(), pending: 0 };
-const planUI = { limit: 50, optimistic: null, optToken: 0, optSeq: 0, drag: null, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
+const BACKLOG_PAGE = 10;
+const planUI = { limit: BACKLOG_PAGE, optimistic: null, optToken: 0, optSeq: 0, drag: null, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
 function planStatusLine() { const w = planQ.what === 'fav' ? 'favourite' : 'plan'; setStatus('live', planQ.pending ? `Saving ${w}… (${planQ.pending})` : planQ.what === 'fav' ? 'Favourite saved' : 'Plan saved'); }
 function planQueue(fn, onFail, what) {
   planQ.what = what || 'plan'; planQ.pending++; planStatusLine();
@@ -2345,12 +2462,13 @@ function scoreFilm(f, P) {
 }
 
 /* ---------- Plan view ---------- */
-function planRow(f, { num, kind, count }) {
+function planRow(f, { num, kind, count, reason }) {
   const li = document.createElement('li');
   li.dataset.uid = f._uid;
   if (kind === 'sheet' && f.plan === 'Someday') li.className = 'someday';
   if (kind === 'up') li.className = 'reorder';
-  li.innerHTML = '<span class="n tnum"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"></span><span class="why"></span>';
+  li.innerHTML = '<span class="n tnum"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"></span>' + (reason ? '<span class="reason"></span>' : '') + '<span class="why"></span>';
+  if (reason) li.querySelector('.reason').textContent = reason;
   li.querySelector('.n').textContent = num ?? '';
   li.querySelector('.t').textContent = f.title;
   li.querySelector('.m').textContent = [f.year, f.genre, directors(f)[0], f.platform, f.purchase === 'Owned' ? 'Owned' : '', kind === 'sheet' && f.plan === 'Someday' ? 'Someday' : '', f.status === 'Rewatch' ? 'Rewatch' : ''].filter(Boolean).join(' · ');
@@ -2406,15 +2524,26 @@ function renderPlanNow() {
   fill($('planUp'), ups, 'up', `Pick up to ${max} films from Soon or the list below.`);
   fill($('planSoon'), soon, 'soon', 'Nothing here yet.');
   const L = state.lib, q = L.q.toLowerCase().trim();
-  const rest = state.films.filter(inBacklog).filter(f =>
+  const rest = rankBacklog(state.films.filter(inBacklog).filter(f =>
     (!L.genre || f.genre === L.genre) && (!L.platform || f.platform === L.platform) && (!L.owned || (L.owned === 'None' ? !f.purchase : f.purchase === L.owned)) &&
-    (!q || [f.title, f.director, f.starring, f.genre, f.year].some(v => String(v ?? '').toLowerCase().includes(q))));
-  $('planBackNote').textContent = `${fmt(rest.length)} film${rest.length === 1 ? '' : 's'}`;
+    (!q || [f.title, f.director, f.starring, f.genre, f.year].some(v => String(v ?? '').toLowerCase().includes(q)))));
+  $('planBackNote').textContent = `${fmt(rest.length)} film${rest.length === 1 ? '' : 's'} waiting · Top ${Math.min(planUI.limit, rest.length) || BACKLOG_PAGE} by score`;
   const bl = $('planBack'); bl.textContent = '';
-  for (const f of rest.slice(0, planUI.limit)) bl.appendChild(planRow(f, { kind: 'sheet' }));
+  for (const { f, why } of rest.slice(0, planUI.limit)) bl.appendChild(planRow(f, { kind: 'sheet', reason: why.join(' · ') }));
   if (!rest.length) bl.innerHTML = '<li class="empty-state" style="display:block">Nothing waiting.</li>';
   $('planMore').hidden = rest.length <= planUI.limit;
+  $('planMore').textContent = `Show ${Math.min(BACKLOG_PAGE, rest.length - planUI.limit)} more`;
   renderDeck();
+}
+
+// Backlog: the best-scoring films first (score, then sheet row, the same order as pickList), one row per film
+function rankBacklog(list) {
+  const P = buildProfile(), keys = new Set(), out = [];
+  for (const sc of list.map(f => scoreFilm(f, P)).sort((a, b) => b.s - a.s || a.f._row - b.f._row)) {
+    if (keys.has(sc.f.key)) continue;
+    keys.add(sc.f.key); out.push(sc);
+  }
+  return out;
 }
 
 // Sort deck: unsorted films (and Someday films older than a year), most promising first
@@ -2619,22 +2748,442 @@ $('favAll').addEventListener('click', () => {
   showTab('library');
 });
 
+/* ---------- Tools tab: Discover and Tools ----------
+   Everything here only reads. The two buttons that write reuse the Plan's own actions unchanged: setTier(film, 'Up next' | '') and
+   rewatchNext(film) (same queue, same row-by-id rules). Dates are shown as 19 Oct 26 (showDate / shortDate). Most films have no date
+   in the sheet (only 2026 watches are dated), so each panel says plainly when it has nothing to show. */
+const plain = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const toolsUI = { pool: 'up', genre: '', dipKey: null, busy: null, ownQ: '', recQ: '', recKey: null, yirYear: null, yirMsg: '', yirText: false };
+const hashStr = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; };
+const onePerKey = list => { const k = new Set(); return list.filter(f => !k.has(f.key) && k.add(f.key)); };
+const noSeenRow = key => !(state.byKey.get(key) || []).some(r => r.seen);
+const playable = f => !f.seen && (isUp(f) || f.plan === 'Soon' || inBacklog(f));   // waiting to be watched: Up next, Soon or the backlog
+const timeAgo = n => n === 1 ? '1 day' : `${fmt(n)} days`;
+const loadingMsg = () => isLive() ? 'Loading your films…' : connectHint();
+const toolMsg = (el, text) => { el.innerHTML = ''; const p = document.createElement('p'); p.className = 'tool-msg'; p.textContent = text; el.appendChild(p); };
+function notLoaded(...els) { if (state.loaded) return false; for (const el of els) { if (el.tagName === 'UL') el.innerHTML = `<li><span class="muted">${esc(loadingMsg())}</span></li>`; else toolMsg(el, loadingMsg()); } return true; }
+function row(html, cls) { const li = document.createElement('li'); if (cls) li.className = cls; li.innerHTML = html; return li; }
+const ratingText = r => r != null ? `${r}/10` : '';
+function openRow(f, sub, right) {   // a list row that opens the film's edit panel
+  const li = row('<button type="button" class="rowlink"><span class="t"></span><span class="sub"></span></button><span class="r"></span>');
+  const b = li.querySelector('button');
+  b.dataset.open = f._uid; b.setAttribute('aria-label', 'Open ' + f.title);
+  li.querySelector('.t').textContent = titleYear(f);
+  li.querySelector('.sub').textContent = sub || '';
+  if (!sub) li.querySelector('.sub').remove();
+  li.querySelector('.r').textContent = right || '';
+  if (!right) li.querySelector('.r').remove();
+  return li;
+}
+
+/* On this day */
+function renderOtd() {
+  const box = $('otdBody'); box.textContent = '';
+  if (notLoaded(box)) { $('otdNote').textContent = ''; return; }
+  const t = today(), md = t.slice(5), y = t.slice(0, 4);
+  const hits = diary().filter(f => f.date.slice(5) === md && f.date.slice(0, 4) < y).sort((a, b) => b.date.localeCompare(a.date) || a._row - b._row);
+  $('otdNote').textContent = shortDate(t);
+  if (hits.length) {
+    const ul = document.createElement('ul'); ul.className = 'tl';
+    for (const f of hits.slice(0, 10)) {
+      const li = row('<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>');
+      li.querySelector('.t').textContent = [f.date.slice(0, 4), f.title, ratingText(f.rating)].filter(Boolean).join(' · ');
+      li.querySelector('.sub').textContent = [f.year, directors(f).join(', ')].filter(Boolean).join(' · ');
+      if (!li.querySelector('.sub').textContent) li.querySelector('.sub').remove();
+      li.querySelector('.r').remove();
+      ul.appendChild(li);
+    }
+    box.appendChild(ul);
+    if (hits.length > 10) { const p = document.createElement('p'); p.className = 'tool-msg'; p.textContent = `and ${hits.length - 10} more`; box.appendChild(p); }
+    return;
+  }
+  const p = document.createElement('p'); p.className = 'tool-msg'; p.textContent = `Nothing logged on ${shortDate(t)} in earlier years yet.`; box.appendChild(p);
+  const near = diary().filter(f => f.date.startsWith(y) && f.date < t).sort((a, b) => b.date.localeCompare(a.date) || b._row - a._row)[0];
+  if (near) {
+    const q = document.createElement('p'); q.className = 'tool-msg';
+    q.innerHTML = '<b>Closest this year:</b> <span></span>';
+    q.querySelector('span').textContent = [showDate(near.date), near.title, ratingText(near.rating)].filter(Boolean).join(' · ');
+    box.appendChild(q);
+  }
+}
+
+/* Highlight of the day: one seen film rated 8+, picked from a hash of today's date over the films sorted by key, so it holds all day */
+function highlightFilm() {
+  const list = state.seen.filter(s => s.rating != null && s.rating >= 8).sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+  return list.length ? { s: list[hashStr(today()) % list.length], n: list.length } : null;
+}
+function renderHotd() {
+  const box = $('hotdBody'); box.textContent = '';
+  if (notLoaded(box)) { $('hotdNote').textContent = ''; return; }
+  const h = highlightFilm();
+  $('hotdNote').textContent = h ? `1 of ${fmt(h.n)} rated 8 or higher` : '';
+  if (!h) { toolMsg(box, 'No film rated 8 or higher yet. Rate a film 8 or more and it can turn up here.'); return; }
+  const f = h.s.rep, planned = (state.byKey.get(f.key) || []).some(o => !o.seen), busy = planQ.pending > 0 && toolsUI.busy === 'rw:' + f.key;
+  box.className = 'tool-card';
+  box.innerHTML = '<h3></h3><div class="m"></div><p class="pwhy"></p><div class="acts"><button class="btn" type="button" data-tk="rewatch" data-rewatch-key=""></button></div>';
+  const h3 = box.querySelector('h3'); h3.textContent = titleYear(f);
+  if (isFav(f)) h3.appendChild(favIndicator());
+  const rate = document.createElement('span'); rate.className = 'rate'; rate.textContent = `Rated ${h.s.rating}/10`;
+  const more = [directors(f).join(', '), f.genre, f.date ? 'Watched ' + showDate(f.date) : ''].filter(Boolean);
+  box.querySelector('.m').append(rate, document.createTextNode(more.length ? ' · ' + more.join(' · ') : ''));
+  box.querySelector('.pwhy').textContent = f.starring ? 'Starring ' + people(f.starring).slice(0, 4).join(', ') : 'A film you rated highly.';
+  const b = box.querySelector('button');
+  b.dataset.rewatchKey = f.key;
+  b.setAttribute('aria-label', 'Rewatch next: ' + f.title);
+  if (planned) { b.disabled = true; b.textContent = 'Already planned'; }
+  else if (!f.id) { b.disabled = true; b.textContent = 'Rewatch next'; b.title = 'This row has no id yet, so it cannot be changed from here'; }
+  else if (busy) { b.disabled = true; b.textContent = 'Adding…'; }
+  else b.textContent = 'Rewatch next';
+}
+
+/* Lucky dip */
+const POOLS = [
+  { id: 'up', label: 'Up next', tip: 'Films in Up next', get: () => upNextList() },
+  { id: 'watch', label: 'Watchlist', tip: 'Unseen films with the Watchlist status', get: () => state.films.filter(f => !f.seen && f.status === 'Watchlist' && !isUp(f) && noSeenRow(f.key)) },
+  { id: 'owned', label: 'Owned and unseen', tip: 'Unseen films you own (Owned, disc or Plex)', get: () => state.films.filter(f => playable(f) && isOwned(f) && noSeenRow(f.key)) },
+  { id: 'plex', label: 'On Plex and unseen', tip: 'Unseen films on Plex', get: () => state.films.filter(f => playable(f) && lc(f.platform) === 'plex' && noSeenRow(f.key)) },
+  { id: 'rewatch', label: 'Rewatch candidates', tip: 'Seen and rated 8 or higher', get: () => state.seen.filter(s => s.rating != null && s.rating >= 8).map(s => s.rep) }
+];
+const poolFilms = (p, genre) => onePerKey(p.get()).filter(f => !genre || f.genre === genre);
+function renderDip() {
+  const chips = $('dipPools'), body = $('dipBody'), sel = $('dipGenre');
+  const gs = [...new Set(state.films.map(f => f.genre).filter(Boolean))].sort();
+  if (sel.dataset.sig !== gs.join('|')) { sel.innerHTML = '<option value="">All genres</option>' + gs.map(g => `<option>${esc(g)}</option>`).join(''); sel.dataset.sig = gs.join('|'); }
+  if (toolsUI.genre && !gs.includes(toolsUI.genre)) toolsUI.genre = '';
+  sel.value = toolsUI.genre;
+  chips.innerHTML = POOLS.map(p => `<button class="chip" type="button" data-pool="${p.id}" data-tk="pool:${p.id}" title="${esc(p.tip)}" aria-pressed="${p.id === toolsUI.pool}">${esc(p.label)}<span class="n">${state.loaded ? fmt(poolFilms(p, toolsUI.genre).length) : '–'}</span></button>`).join('');
+  body.textContent = '';
+  if (!state.loaded) { $('dipSpin').disabled = true; $('dipNote').textContent = ''; toolMsg(body, loadingMsg()); return; }
+  const pool = poolFilms(POOLS.find(p => p.id === toolsUI.pool) || POOLS[0], toolsUI.genre);
+  // the result stays on screen after "Add to Up next" even though the film has left this pool; it clears when the pool or genre changes
+  const f = toolsUI.dipKey && (pool.find(x => x.key === toolsUI.dipKey) || (toolsUI.pool !== 'rewatch' && (state.byKey.get(toolsUI.dipKey) || []).find(r => !r.seen && playable(r))));
+  if (!f) toolsUI.dipKey = null;
+  $('dipSpin').disabled = !pool.length;
+  $('dipNote').textContent = `${fmt(pool.length)} in the pool`;
+  if (!pool.length) { toolMsg(body, toolsUI.genre ? `Nothing in this pool for ${toolsUI.genre}. Try another pool or all genres.` : 'Nothing in this pool yet.'); return; }
+  if (!f) { toolMsg(body, `Press Spin to pick one of ${fmt(pool.length)} film${pool.length === 1 ? '' : 's'}.`); return; }
+  const adding = planQ.pending > 0 && toolsUI.busy === 'dip:' + f.key;
+  const card = document.createElement('div'); card.className = 'tool-card';
+  card.innerHTML = '<h3></h3><div class="m"></div><p class="pwhy"></p><div class="acts"><button class="btn" type="button" data-tk="again" id="dipAgain">Spin again</button></div>';
+  const h3 = card.querySelector('h3'); h3.textContent = titleYear(f);
+  if (isFav(f)) h3.appendChild(favIndicator());
+  card.querySelector('.m').textContent = [directors(f).join(', '), f.genre, f.platform].filter(Boolean).join(' · ') || 'No director, genre or platform noted yet';
+  const seenRating = (state.seen.find(s => s.key === f.key) || {}).rating;
+  card.querySelector('.pwhy').textContent = f.seen ? 'Seen' + (seenRating != null ? `, rated ${seenRating}/10` : '') : (scoreFilm(f, buildProfile()).why.join(' · ') || 'On your list');
+  if (!f.seen) {
+    const add = document.createElement('button'); add.type = 'button'; add.className = 'btn btn-primary'; add.id = 'dipAdd'; add.dataset.tk = 'add';
+    add.setAttribute('aria-label', 'Add to Up next: ' + f.title);
+    if (isUp(f)) { add.disabled = true; add.textContent = 'In Up next'; }
+    else if (adding) { add.disabled = true; add.textContent = 'Adding…'; }
+    else add.textContent = 'Add to Up next';
+    card.querySelector('.acts').appendChild(add);
+  }
+  body.appendChild(card);
+}
+
+/* Do I own this? */
+function ownVerdict(key) {
+  const rows = state.byKey.get(key) || [];
+  const has = fn => rows.some(fn);
+  const chips = [];
+  if (has(r => lc(r.purchase) === 'owned')) chips.push(['Owned', 0]);
+  if (has(r => lc(r.platform) === 'physical')) chips.push(['On disc', 1]);
+  if (has(r => lc(r.platform) === 'plex')) chips.push(['On Plex', 2]);
+  const streams = [...new Set(rows.map(r => r.platform).filter(p => p && !['physical', 'plex', 'cinema', 'airplane'].includes(lc(p))))];
+  for (const p of streams) chips.push([`Streaming on ${p}`, 3]);
+  if (!chips.some(c => c[1] <= 2) && has(r => lc(r.purchase) === 'to purchase')) chips.push(['To purchase', 4]);
+  if (!chips.length) chips.push(['In your sheet, no copy noted', 5]);
+  return { chips, rank: Math.min(...chips.map(c => c[1])) };
+}
+function renderOwn() {
+  const ul = $('ownList'); ul.textContent = '';
+  if (notLoaded(ul)) { $('ownNote').textContent = ''; return; }
+  const q = plain(toolsUI.ownQ);
+  $('ownNote').textContent = '';
+  if (!q) { ul.innerHTML = '<li><span class="muted">Type part of a title to see whether you have a copy.</span></li>'; return; }
+  const found = [...state.byKey.entries()].filter(([, rows]) => rows.some(r => plain(r.title).includes(q)))
+    .map(([key, rows]) => ({ key, f: latestRow(rows), v: ownVerdict(key) }))
+    .sort((a, b) => a.v.rank - b.v.rank || a.f.title.localeCompare(b.f.title) || (a.f.year ?? 0) - (b.f.year ?? 0));
+  if (!found.length) { ul.innerHTML = '<li><span class="muted">Not in your sheet.</span></li>'; return; }
+  $('ownNote').textContent = found.length > 8 ? `8 of ${fmt(found.length)} matches` : `${fmt(found.length)} match${found.length === 1 ? '' : 'es'}`;
+  for (const { f, v } of found.slice(0, 8)) {
+    const li = row('<span><span class="t"></span><span class="sub"></span></span><span class="vchips"></span>');
+    li.dataset.key = f.key;
+    li.querySelector('.t').textContent = titleYear(f);
+    li.querySelector('.sub').textContent = directors(f).join(', ');
+    if (!directors(f).length) li.querySelector('.sub').remove();
+    const box = li.querySelector('.vchips');
+    for (const [label, rank] of v.chips) { const c = document.createElement('span'); c.className = 'vchip'; if (rank <= 2) c.dataset.strong = ''; c.textContent = label; box.appendChild(c); }
+    ul.appendChild(li);
+  }
+}
+
+/* Stalled: films Watching, and Up next films that have sat there for stalledDays or more (judged by the Sorted date) */
+function renderStalled() {
+  const box = $('stallBody'); box.textContent = '';
+  if (notLoaded(box)) { $('stallNote').textContent = ''; return; }
+  const t = today(), days = state.settings.stalledDays || 14;
+  const watching = state.films.filter(f => !f.seen && f.status === 'Watching').sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999') || a._row - b._row);
+  const sat = upNextList().filter(f => f.sorted && daysBetween(f.sorted, t) >= days).sort((a, b) => a.sorted.localeCompare(b.sorted) || a._row - b._row);
+  $('stallNote').textContent = watching.length + sat.length ? `${fmt(watching.length + sat.length)} to look at` : '';
+  if (!watching.length && !sat.length) { toolMsg(box, 'Nothing stalled.'); return; }
+  const sub = text => { const p = document.createElement('div'); p.className = 'eyebrow tool-sub'; p.textContent = text; return p; };
+  const none = () => { const p = document.createElement('p'); p.className = 'tool-msg'; p.textContent = 'None.'; return p; };
+  box.appendChild(sub('Watching'));
+  if (!watching.length) box.appendChild(none());
+  else {
+    const ul = document.createElement('ul'); ul.className = 'tl'; ul.id = 'stallWatching';
+    for (const f of watching) {
+      const li = row('<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>');
+      li.querySelector('.t').textContent = titleYear(f);
+      const n = f.date ? daysBetween(f.date, t) : null;
+      li.querySelector('.sub').textContent = f.date ? `Since ${showDate(f.date)}` : '';
+      if (!f.date) li.querySelector('.sub').remove();
+      li.querySelector('.r').textContent = n != null && n >= 0 ? timeAgo(n) : '';
+      if (!li.querySelector('.r').textContent) li.querySelector('.r').remove();
+      ul.appendChild(li);
+    }
+    box.appendChild(ul);
+  }
+  box.appendChild(sub(`In Up next for ${days} days or more`));
+  if (!sat.length) box.appendChild(none());
+  else {
+    const ul = document.createElement('ul'); ul.className = 'tl'; ul.id = 'stallUp';
+    for (const f of sat) {
+      const li = row('<span><span class="t"></span><span class="sub"></span></span><span class="acts"><button type="button" data-drop="" data-tk="drop">Drop</button></span>');
+      li.dataset.uid = f._uid;
+      li.querySelector('.t').textContent = titleYear(f);
+      li.querySelector('.sub').textContent = `${timeAgo(daysBetween(f.sorted, t))} in Up next · since ${showDate(f.sorted)}`;
+      const b = li.querySelector('button'); b.dataset.drop = f._uid; b.setAttribute('aria-label', 'Take off the plan: ' + f.title); b.dataset.tk = 'drop:' + f._uid;
+      ul.appendChild(li);
+    }
+    box.appendChild(ul);
+  }
+}
+
+/* Goal planner */
+function goalFigures() {
+  const t = today(), y = t.slice(0, 4), goal = state.settings.yearlyGoal || 120;
+  const watched = diary().filter(f => f.date.startsWith(y) && f.date <= t).length;   // watches dated today or earlier
+  const dayOfYear = daysBetween(`${y}-01-01`, t) + 1, daysInYear = daysBetween(`${y}-01-01`, `${+y + 1}-01-01`);
+  const left = daysInYear - dayOfYear;                       // days after today
+  const toGo = Math.max(0, goal - watched);
+  const weeksLeft = left / 7;
+  const need = toGo / (Math.max(left, 1) / 7);                // never divide by less than a day
+  const paceDays = Math.max(dayOfYear, 14);                   // in the first two weeks the pace is measured over two weeks, not over a few days
+  const pace = watched / (paceDays / 7);
+  const projected = Math.round(watched + pace * weeksLeft);
+  const expected = goal * dayOfYear / daysInYear;
+  return { y, goal, watched, dayOfYear, daysInYear, left, toGo, weeksLeft, need, pace, projected, diff: Math.round(watched - expected), early: dayOfYear < 14 };
+}
+function renderGoal() {
+  const box = $('goalBody'); box.textContent = '';
+  if (notLoaded(box)) { $('goalNote').textContent = ''; return; }
+  const g = goalFigures();
+  $('goalNote').textContent = `${g.y}`;
+  const done = g.watched >= g.goal;
+  const head = done ? 'Goal reached' : g.diff > 0 ? `Ahead by ${fmt(g.diff)}` : g.diff < 0 ? `Behind by ${fmt(-g.diff)}` : 'On pace';
+  const state_ = done ? 'done' : g.diff > 0 ? 'ahead' : g.diff < 0 ? 'behind' : 'even';
+  const sub = done ? `You are ${fmt(g.watched - g.goal)} past your goal of ${fmt(g.goal)}.` :
+    g.diff === 0 ? `You are keeping to the ${fmt(g.goal)} film plan.` : `Against an even spread of ${fmt(g.goal)} films over ${g.y}.`;
+  const kv = [['goal', 'Goal', fmt(g.goal)], ['watched', 'Watched so far', fmt(g.watched)], ['togo', 'Still to go', fmt(g.toGo)], ['weeks', 'Weeks left', one(g.weeksLeft)],
+    ['need', 'Needed per week', done ? '–' : one(g.need)], ['pace', 'Your pace per week', one(g.pace)], ['proj', 'Projected by 31 Dec', fmt(g.projected)]];
+  box.innerHTML = '<div class="goal-big" id="goalHead"></div><p class="tool-msg" id="goalSub" style="margin-top:4px"></p><div class="goalbar" aria-hidden="true"><i></i></div><dl class="goal-kv"></dl><p class="tool-msg" id="goalEarly" style="margin-top:12px" hidden></p>';
+  const hd = $('goalHead'); hd.textContent = head; hd.dataset.state = state_;
+  $('goalSub').textContent = sub;
+  box.querySelector('.goalbar i').style.width = Math.min(100, g.watched / g.goal * 100) + '%';
+  const dl = box.querySelector('dl');
+  for (const [k, l, v] of kv) { const d = document.createElement('div'); d.innerHTML = '<dt></dt><dd></dd>'; d.querySelector('dt').textContent = l; const dd = d.querySelector('dd'); dd.textContent = v; dd.dataset.k = k; dl.appendChild(d); }
+  const early = $('goalEarly'); early.hidden = !g.early;
+  early.textContent = 'Early in the year, so your pace is measured over the first two weeks rather than a few days.';
+}
+
+/* Year in review */
+function yearStats(P) {
+  const yr = diary().filter(f => f.date.startsWith(P));
+  const items = yr.map(f => ({ f, r: f.rating }));
+  const rated = yr.filter(f => f.rating != null);
+  const per = Array(12).fill(0); for (const f of yr) per[+f.date.slice(5, 7) - 1]++;
+  const bm = per.indexOf(Math.max(...per));
+  const gm = [...groupBy(items, i => i.f.genre.trim()).entries()].map(([g, a]) => ({ g, n: a.length })).sort((a, b) => b.n - a.n || a.g.localeCompare(b.g))[0];
+  const pp = new Map();
+  for (const it of items) for (const n of PEOPLE.directors.get(it.f)) { if (!pp.has(n)) pp.set(n, []); pp.get(n).push(it); }
+  const dir = [...pp.entries()].map(([n, a]) => ({ n, c: a.length, r: avgOf(a) })).sort((x, y) => y.c - x.c || (y.r ?? 0) - (x.r ?? 0) || x.n.localeCompare(y.n))[0];
+  const byDate = [...yr].sort((a, b) => a.date.localeCompare(b.date) || a._row - b._row);
+  const best = rated.slice().sort((a, b) => b.rating - a.rating || b.date.localeCompare(a.date) || a._row - b._row).slice(0, 5);
+  return { P, n: yr.length, avg: rated.length ? avg(rated.map(f => f.rating)) : null, nRated: rated.length, bestMonth: yr.length ? { i: bm, n: per[bm] } : null, genre: gm, dir,
+    rewatches: yr.filter(f => earlierSeen(f).length > 0).length, best, first: byDate[0], last: byDate[byDate.length - 1] };
+}
+function yirSummary(S) {
+  const ty = f => f ? `${titleYear(f)}, ${showDate(f.date)}` : '–';
+  return [`Film Vault: ${S.P} in review`,
+    `Films watched: ${S.n}${S.rewatches ? ` (${S.rewatches} rewatch${S.rewatches === 1 ? '' : 'es'})` : ''}`,
+    `Average rating: ${one(S.avg)}`,
+    `Best month: ${S.bestMonth ? `${FULL_MONTHS[S.bestMonth.i]} (${filmsN(S.bestMonth.n)})` : '–'}`,
+    `Top genre: ${S.genre ? `${S.genre.g} (${S.genre.n})` : '–'}`,
+    `Top director: ${S.dir ? `${S.dir.n} (${S.dir.c})` : '–'}`,
+    `Highest rated: ${S.best.length ? S.best.map(f => `${f.title} (${f.rating})`).join(', ') : '–'}`,
+    `First film: ${ty(S.first)}`,
+    `Last film: ${ty(S.last)}`].join('\n');
+}
+function renderYir() {
+  const chips = $('yirYears'), box = $('yirBody'); chips.textContent = ''; box.textContent = '';
+  if (notLoaded(box)) { $('yirNote').textContent = ''; return; }
+  const t = today(), years = [...new Set(diary().map(f => f.date.slice(0, 4)))].sort().reverse();
+  if (!years.length) { toolMsg(box, 'No dated watches yet. Only films logged with a date can be reviewed.'); $('yirNote').textContent = ''; return; }
+  if (!years.includes(toolsUI.yirYear)) toolsUI.yirYear = years.includes(t.slice(0, 4)) ? t.slice(0, 4) : years[0];
+  const P = toolsUI.yirYear, S = yearStats(P);
+  chips.innerHTML = years.map(y => `<button class="chip" type="button" data-year="${y}" data-tk="year:${y}" aria-pressed="${y === P}">${y}</button>`).join('');
+  $('yirNote').textContent = filmsN(S.n);
+  const cards = [['Films watched', fmt(S.n), `dated watches in ${P}`], ['Average rating', one(S.avg), `${fmt(S.nRated)} rated`],
+    ['Best month', S.bestMonth ? FULL_MONTHS[S.bestMonth.i] : '–', S.bestMonth ? filmsN(S.bestMonth.n) : ''],
+    ['Top genre', S.genre ? S.genre.g : '–', S.genre ? `${fmt(S.genre.n)} watch${S.genre.n === 1 ? '' : 'es'}` : 'no genre recorded'],
+    ['Top director', S.dir ? S.dir.n : '–', S.dir ? `${fmt(S.dir.c)} watch${S.dir.c === 1 ? '' : 'es'}` : 'no director recorded'],
+    ['Rewatches', fmt(S.rewatches), 'seen before'],
+    ['First film', S.first ? S.first.title : '–', S.first ? showDate(S.first.date) : ''],
+    ['Last film', S.last ? S.last.title : '–', S.last ? showDate(S.last.date) : '']];
+  box.innerHTML = '<div class="yir-cards"></div><div class="eyebrow tool-sub">Highest rated</div><ul class="tl" id="yirBest"></ul><div class="yir-foot"><button class="btn" type="button" id="yirCopy" data-tk="copy">Copy summary</button><span class="muted small" id="yirMsg" role="status"></span></div><textarea class="yir-text" id="yirText" readonly aria-label="Summary text" hidden></textarea>';
+  const grid = box.querySelector('.yir-cards');
+  for (const [l, v, s] of cards) { const c = document.createElement('div'); c.className = 'yir-card'; c.innerHTML = '<span class="eyebrow"></span><span class="v"></span><span class="s"></span>'; c.querySelector('.eyebrow').textContent = l; c.querySelector('.v').textContent = v; c.querySelector('.s').textContent = s; grid.appendChild(c); }
+  const ul = $('yirBest');
+  if (!S.best.length) ul.innerHTML = '<li><span class="muted">No rated films this year.</span></li>';
+  for (const f of S.best) {
+    const li = row('<span><span class="t"></span><span class="sub"></span></span><span class="r"></span>');
+    li.querySelector('.t').textContent = titleYear(f);
+    li.querySelector('.sub').textContent = showDate(f.date);
+    li.querySelector('.r').textContent = ratingText(f.rating);
+    ul.appendChild(li);
+  }
+  $('yirMsg').textContent = toolsUI.yirMsg;
+  const ta = $('yirText'); ta.hidden = !toolsUI.yirText; ta.value = yirSummary(S);
+}
+async function copyYir() {
+  const ta = $('yirText'), text = ta.value;
+  try {
+    await navigator.clipboard.writeText(text);
+    toolsUI.yirMsg = 'Copied'; toolsUI.yirText = false;
+  } catch (e) {
+    toolsUI.yirMsg = 'Copying was blocked here. Select the text below and copy it.'; toolsUI.yirText = true;
+  }
+  renderYir();
+  if (toolsUI.yirText) { const t = $('yirText'); t.focus({ preventScroll: true }); t.select(); }
+}
+
+/* More like this + Top picks for you */
+const unionNames = (rows, fn) => [...new Set(rows.flatMap(fn).map(n => plain(n)).filter(Boolean))];
+function recFor(key) {
+  const rows = state.byKey.get(key) || [], base = state.seen.find(s => s.key === key);
+  if (!base) return [];
+  const dirs = new Set(unionNames(rows, directors)), cast = new Set(unionNames(rows, r => people(r.starring))), genres = new Set(unionNames(rows, r => r.genre ? [r.genre] : []));
+  const P = buildProfile(), out = [];
+  for (const f of onePerKey(state.films.filter(x => playable(x) && x.key !== key && noSeenRow(x.key)))) {
+    const sd = directors(f).filter(n => dirs.has(plain(n))), sc = people(f.starring).filter(n => cast.has(plain(n))), sg = f.genre && genres.has(plain(f.genre)) ? [f.genre] : [];
+    const n = sd.length + sc.length + sg.length;
+    if (n) out.push({ f, n, sd, sc, sg, s: scoreFilm(f, P).s });
+  }
+  return out.sort((a, b) => b.n - a.n || b.s - a.s || a.f._row - b.f._row);
+}
+function renderRec() {
+  const pick = $('recPick'), body = $('recBody'), top = $('topPicks');
+  pick.textContent = ''; body.textContent = ''; top.textContent = '';
+  if (notLoaded(body, top)) { $('mltNote').textContent = ''; return; }
+  const q = plain(toolsUI.recQ);
+  if (q) {
+    const hits = state.seen.filter(s => plain(s.rep.title).includes(q)).sort((a, b) => a.rep.title.localeCompare(b.rep.title) || (a.rep.year ?? 0) - (b.rep.year ?? 0)).slice(0, 6);
+    if (!hits.length) pick.innerHTML = '<li><span class="muted">No seen film matches that.</span></li>';
+    for (const s of hits) {
+      const li = row('<button type="button" class="rowlink"><span class="t"></span><span class="sub"></span></button>');
+      const b = li.querySelector('button'); b.dataset.recKey = s.key; b.setAttribute('aria-label', 'Find films like ' + s.rep.title);
+      li.querySelector('.t').textContent = titleYear(s.rep);
+      li.querySelector('.sub').textContent = [directors(s.rep).join(', '), s.rating != null ? `rated ${s.rating}/10` : ''].filter(Boolean).join(' · ');
+      pick.appendChild(li);
+    }
+  }
+  const base = toolsUI.recKey && state.seen.find(s => s.key === toolsUI.recKey);
+  if (!base) toolsUI.recKey = null;
+  $('mltNote').textContent = '';
+  if (!base) { if (!q) toolMsg(body, 'Pick a film you have seen to find unseen films with the same director, cast or genre.'); }
+  else if (!q) {
+    const list = recFor(base.key);
+    const head = document.createElement('p'); head.className = 'tool-msg'; head.innerHTML = 'Because you watched <b></b>'; head.querySelector('b').textContent = titleYear(base.rep); head.id = 'recHead';
+    body.appendChild(head);
+    $('mltNote').textContent = list.length ? (list.length > 8 ? `8 of ${fmt(list.length)}` : filmsN(list.length)) : '';
+    if (!list.length) { const p = document.createElement('p'); p.className = 'tool-msg'; p.textContent = 'Nothing waiting shares its director, cast or genre.'; body.appendChild(p); }
+    else {
+      const ul = document.createElement('ul'); ul.className = 'tl'; ul.id = 'mltList'; ul.style.marginTop = '8px';
+      for (const r of list.slice(0, 8)) ul.appendChild(openRow(r.f, [r.sd.length ? 'Same director: ' + r.sd.join(', ') : '', r.sc.length ? 'Shared cast: ' + r.sc.join(', ') : '', r.sg.length ? 'Same genre: ' + r.sg[0] : ''].filter(Boolean).join(' · ')));
+      body.appendChild(ul);
+    }
+  }
+  const picks = pickList().slice(0, 8);
+  if (!picks.length) top.innerHTML = '<li><span class="muted">Nothing to recommend yet. Add films to your watchlist and they will turn up here.</span></li>';
+  for (const { f, why } of picks) top.appendChild(openRow(f, why.length ? why.join(' · ') : 'On your watchlist'));
+}
+
+function renderTools() {
+  const a = document.activeElement, tk = a && a.dataset && a.dataset.tk && $('view-tools').contains(a) ? a.dataset.tk : null;
+  renderOtd(); renderHotd(); renderDip(); renderOwn(); renderStalled(); renderGoal(); renderYir(); renderRec();
+  if (tk && !a.isConnected) { const el = [...$('view-tools').querySelectorAll('[data-tk]')].find(e => e.dataset.tk === tk && !e.disabled); if (el) el.focus({ preventScroll: true }); }
+}
+function toolsLive() { if (isLive()) return true; notice('This needs the live connection. ' + connectHint(), 'error'); return false; }
+function dipSpin() {
+  const pool = poolFilms(POOLS.find(p => p.id === toolsUI.pool) || POOLS[0], toolsUI.genre);
+  if (!pool.length) return;
+  const i = Math.min(pool.length - 1, Math.floor(Math.random() * pool.length));
+  toolsUI.dipKey = pool[i].key;
+  renderDip();
+  const again = $('dipAgain'); if (again && document.activeElement === document.body) again.focus({ preventScroll: true });
+}
+$('view-tools').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  const film = uid => state.films.find(f => f._uid === Number(uid));
+  if (b.dataset.pool) { toolsUI.pool = b.dataset.pool; toolsUI.dipKey = null; renderDip(); const n = document.querySelector(`#dipPools [data-pool="${toolsUI.pool}"]`); if (n) n.focus({ preventScroll: true }); }
+  else if (b.id === 'dipSpin' || b.id === 'dipAgain') dipSpin();
+  else if (b.id === 'dipAdd') {
+    const f = (toolsUI.dipKey && (state.byKey.get(toolsUI.dipKey) || []).find(r => !r.seen)); if (!f || !toolsLive()) return;
+    toolsUI.busy = 'dip:' + f.key; b.disabled = true; b.textContent = 'Adding…';
+    setTier(f, 'Up next');
+  }
+  else if (b.dataset.rewatchKey) {
+    const s = state.seen.find(x => x.key === b.dataset.rewatchKey); if (!s || !toolsLive()) return;
+    toolsUI.busy = 'rw:' + s.key; b.disabled = true; b.textContent = 'Adding…';
+    rewatchNext(s.rep);
+  }
+  else if (b.dataset.drop) { const f = film(b.dataset.drop); if (f && toolsLive()) setTier(f, ''); }
+  else if (b.dataset.year) { toolsUI.yirYear = b.dataset.year; toolsUI.yirMsg = ''; toolsUI.yirText = false; renderYir(); const n = document.querySelector(`#yirYears [data-year="${b.dataset.year}"]`); if (n) n.focus({ preventScroll: true }); }
+  else if (b.id === 'yirCopy') copyYir();
+  else if (b.dataset.recKey) { toolsUI.recKey = b.dataset.recKey; toolsUI.recQ = ''; $('recQ').value = ''; renderRec(); }
+  else if (b.dataset.open) { const f = film(b.dataset.open); if (f) openFilmDialog(f); }
+});
+$('ownQ').addEventListener('input', e => { toolsUI.ownQ = e.target.value; renderOwn(); });
+$('recQ').addEventListener('input', e => { toolsUI.recQ = e.target.value; renderRec(); });
+$('dipGenre').addEventListener('change', e => { toolsUI.genre = e.target.value; toolsUI.dipKey = null; renderDip(); });
+
 /* ---------- wiring ---------- */
+const TABS = ['log', 'library', 'dashboard', 'tools'];
 function showTab(name) {
-  for (const t of ['log', 'library', 'dashboard']) {
+  for (const t of TABS) {
     $('tab-' + t).setAttribute('aria-selected', String(t === name));
     $('view-' + t).hidden = t !== name;
   }
   if (name === 'log') renderLog();
   if (name === 'library') { fillFilters(); renderLibrary(); }
   if (name === 'dashboard') renderDashboard();
+  if (name === 'tools') renderTools();
   try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
 }
-for (const t of ['log', 'library', 'dashboard']) $('tab-' + t).addEventListener('click', () => showTab(t));
+for (const t of TABS) $('tab-' + t).addEventListener('click', () => showTab(t));
+$('tab-log').parentNode.addEventListener('keydown', e => {   // arrow keys, Home and End move between the tabs
+  const i = TABS.findIndex(t => $('tab-' + t) === e.target);
+  if (i < 0 || e.altKey || e.ctrlKey || e.metaKey) return;
+  const j = e.key === 'ArrowRight' ? (i + 1) % TABS.length : e.key === 'ArrowLeft' ? (i + TABS.length - 1) % TABS.length : e.key === 'Home' ? 0 : e.key === 'End' ? TABS.length - 1 : -1;
+  if (j < 0) return;
+  e.preventDefault(); showTab(TABS[j]); $('tab-' + TABS[j]).focus();
+});
 let searchT;
-$('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; renderLibrary(); }, 150); });
+$('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; planUI.limit = BACKLOG_PAGE; renderLibrary(); }, 150); });
 for (const [id, key] of [['libGenre', 'genre'], ['libPlatform', 'platform'], ['libOwned', 'owned']])
-  $(id).addEventListener('change', e => { state.lib[key] = e.target.value; state.lib.limit = 100; renderLibrary(); });
+  $(id).addEventListener('change', e => { state.lib[key] = e.target.value; state.lib.limit = 100; planUI.limit = BACKLOG_PAGE; renderLibrary(); });
 $('libChips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state.lib.status = c.dataset.st; state.lib.limit = 100; renderLibrary(); });
 $('libHead').addEventListener('click', e => {
   const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k, L = state.lib;
@@ -2732,7 +3281,7 @@ dockMQ.addEventListener('change', () => {   // the window was resized across 900
 })();
 document.querySelector('.lib-mode').addEventListener('click', e => { const m = e.target.closest('button'); if (!m) return; state.lib.mode = m.dataset.mode; renderLibrary(); });
 $('planLink').addEventListener('click', () => { state.lib.mode = 'plan'; showTab('library'); });
-$('planMore').addEventListener('click', () => { planUI.limit += 50; renderPlan(); });
+$('planMore').addEventListener('click', () => { planUI.limit += BACKLOG_PAGE; renderPlan(); });
 document.addEventListener('keydown', e => {
   if ($('view-library').hidden || state.lib.mode !== 'plan' || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('dialog[open]')) return;
   const i = ['1', '2', '3', '4'].indexOf(e.key);
@@ -2824,7 +3373,7 @@ $('gForm').addEventListener('submit', e => {
 
 renderAll();
 setLogDay(null);
-try { const t = localStorage.getItem(TAB_KEY); if (['library', 'dashboard'].includes(t)) showTab(t); } catch (e) {}
+try { const t = localStorage.getItem(TAB_KEY); if (['library', 'dashboard', 'tools'].includes(t)) showTab(t); } catch (e) {}
 setStatus('loading', 'Connecting to your sheet…');
 (async () => {
   if (!(window.claude && window.claude.use)) { googleBoot(); return; }
