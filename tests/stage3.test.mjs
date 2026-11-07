@@ -187,6 +187,9 @@ const titles = (page, sel) => page.$$eval(sel + ' li .t', els => els.map(e => e.
 const noticeState = page => page.evaluate(() => { const n = document.getElementById('notice'); return { hidden: n.hidden, text: n.textContent, kind: n.dataset.kind }; });
 const noticeHistory = page => page.evaluate(() => window.__notices.filter(x => !x.h && x.t).map(x => x.t));
 const btn = (page, aria) => page.locator(`#planView button[aria-label="${aria}"]`).first();
+// Up next rows have a drag handle (a focusable button); the keyboard path moves a row one place: ArrowUp / ArrowDown on the handle
+const grip = (page, title) => page.locator(`#planUp button.grip[aria-label="Reorder: ${title}"]`).first();
+const gripKey = async (page, title, key) => { await grip(page, title).focus(); await page.keyboard.press(key); };
 const btnCount = (page, aria) => page.locator(`#planView button[aria-label="${aria}"]`).count();
 const enc = v => JSON.stringify(v === undefined || v === null ? '' : v);
 
@@ -360,7 +363,8 @@ async function manage(E, label, aria, fn) {
   const before = fake.snapshot(), M = mkModel(before.films);
   fn(M, fake);
   E.n0 = fake.calls.length;
-  await btn(page, aria).click();
+  const mv = /^Move (up|down): (.*)$/.exec(aria);
+  if (mv) await gripKey(page, mv[2], mv[1] === 'up' ? 'ArrowUp' : 'ArrowDown'); else await btn(page, aria).click();
   await settlePlan(page);
   verifyAgainst(E, label, before, M);
   check(E.S + label + ' no error notice', (await noticeState(page)).hidden, await noticeState(page));
@@ -376,8 +380,10 @@ await scenario('D1 move up a normal film (owner-edited film gets Order and Plan 
 await scenario('D2 move down and the edge buttons', BOTH, async E => {
   const { page, fake, S } = E;
   await goPlan(page);
-  check(S + 'D2 first row Move up disabled', await btn(page, 'Move up: Alder Gate').isDisabled());
-  check(S + 'D2 last row Move down disabled', await btn(page, 'Move down: Billy Style').isDisabled());
+  E.n0 = fake.calls.length;
+  await gripKey(page, 'Alder Gate', 'ArrowUp'); await gripKey(page, 'Billy Style', 'ArrowDown'); await settlePlan(page);
+  noCalls(E, 'D2 first row up / last row down do nothing:');
+  eq(S + 'D2 order is unchanged by the edge keys', await titles(page, '#planUp'), ['Alder Gate', 'Birch Pier', 'Cedar Row', 'Dove Hall', 'Elm Court', 'Fir Lane', 'Billy Style']);
   await manage(E, 'D2 down Fir Lane', 'Move down: Fir Lane', (M, f) => M.move(rowOf(f, 'Fir Lane'), 1));
   eq(S + 'D2 order', await titles(page, '#planUp'), ['Alder Gate', 'Birch Pier', 'Cedar Row', 'Dove Hall', 'Elm Court', 'Billy Style', 'Fir Lane']);
   eq(S + 'D2 Billy 6 + Plan, Fir 7', [fake.cell(rowOf(fake, 'Billy Style'), 'Order'), fake.cell(rowOf(fake, 'Billy Style'), 'Plan'), fake.cell(rowOf(fake, 'Fir Lane'), 'Order')], [6, 'Up next', 7]);
@@ -750,7 +756,8 @@ await scenario('H6 quick mixed taps: Up next, Soon, drop, move', LAPTOP, async E
   E.n0 = fake.calls.length;
   await page.evaluate(() => {
     const b = a => document.querySelector(`#planView button[aria-label="${a}"]`);
-    b('Add to Up next: Pending I').click(); b('Take off the plan: Birch Pier').click(); b('Add to Up next: Pending L').click(); b('Move up: Elm Court').click();
+    b('Add to Up next: Pending I').click(); b('Take off the plan: Birch Pier').click(); b('Add to Up next: Pending L').click();
+    document.querySelector('#planUp button.grip[aria-label="Reorder: Elm Court"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, cancelable: true }));
   });
   await settlePlan(page);
   verifyAgainst(E, 'H6 four quick taps (intermediate renumbers may rewrite a cell)', before, M, { anyCount: true });
@@ -762,7 +769,7 @@ await scenario('H7 multi-row change where the 2nd row is stale (move up)', LAPTO
   await goPlan(page);
   const before = fake.snapshot();
   E.n0 = fake.calls.length;
-  await btn(page, 'Move up: Cedar Row').click(); await settlePlan(page); await page.waitForTimeout(300);
+  await gripKey(page, 'Cedar Row', 'ArrowUp'); await settlePlan(page); await page.waitForTimeout(300);
   const diffs = diffCells(before, fake.snapshot()), n = await noticeState(page), hist = await noticeHistory(page);
   // acceptable outcomes: nothing written, OR the user is told it is only partly saved
   check(S + 'H7 either nothing was written or the user is told it was only partly saved / the sheet is re-read', diffs.length === 0 || /partly|re-read|Check/.test(n.text), { written: diffs.map(show), notice: n, hist });

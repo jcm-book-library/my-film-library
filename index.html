@@ -146,9 +146,11 @@ input[type="number"]:focus{border-color:var(--accent);outline:none}
 .tab small{font-weight:500;font-size:11px;margin-left:4px}
 
 /* library */
-.lib-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.lib-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:center;margin-bottom:12px}
 .lib-bar input[type="search"],.lib-bar select,.field input,.field select,.field textarea{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-ctl);padding:7px 10px}
-.lib-bar input[type="search"]{flex:1 1 220px;min-width:0}
+.lib-bar input[type="search"]{grid-column:1/-1}
+.lib-bar input[type="search"],.lib-bar select,.lib-bar .btn{width:100%;min-width:0;height:40px;font-size:14px}
+@media (max-width:560px){.lib-bar{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .lib-bar input:focus,.lib-bar select:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none}
 .lib-mode{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:12px;gap:2px}
 .lib-mode button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--muted);border-radius:999px;padding:5px 14px;cursor:pointer}
@@ -157,7 +159,11 @@ input[type="number"]:focus{border-color:var(--accent);outline:none}
 @media (max-width:860px){.plan-top{grid-template-columns:minmax(0,1fr)}}
 #planView .panel{margin-bottom:20px}
 .plan-top .panel{margin:0}
+#libChips{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
 #libChips[hidden]{display:none}
+#libChips .chip{display:flex;align-items:center;justify-content:center;gap:4px;height:36px;min-width:0;padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#libChips .chip .n{margin-left:0}
+@media (max-width:560px){#libChips .chip{height:40px}}
 @media (max-width:560px){.plan-list li{grid-template-columns:auto minmax(0,1fr)}.plan-list .acts{grid-column:2;justify-content:flex-start}}
 .plan-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .plan-list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
@@ -181,6 +187,18 @@ input[type="number"]:focus{border-color:var(--accent);outline:none}
 .plan-list .acts button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
 .plan-list .acts button:disabled{opacity:.35;cursor:default}
 .plan-list .whyedit{grid-column:2/-1;display:flex;gap:6px}
+.plan-list li.reorder{grid-template-columns:auto auto minmax(0,1fr) auto}
+.plan-list li.reorder > .why,.plan-list li.reorder > .whyedit{grid-column:3/-1}
+.plan-list .grip{display:inline-flex;align-items:center;justify-content:center;align-self:center;width:32px;height:32px;padding:0;margin-left:-6px;border:1px solid transparent;border-radius:var(--r-ctl);background:transparent;color:var(--muted);cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+.plan-list .grip:hover{color:var(--fg);border-color:var(--line)}
+.plan-list .grip svg{width:18px;height:18px;display:block;pointer-events:none}
+#planUp{position:relative}
+#planUp li.dragging{position:relative;z-index:5;background:color-mix(in srgb,var(--accent) 16%,var(--bg));border-radius:var(--r-ctl);box-shadow:0 10px 28px var(--shade);outline:2px solid var(--accent);outline-offset:-2px;padding-inline:8px;cursor:grabbing;opacity:.98}
+#planUp li.dragging .grip{cursor:grabbing;color:var(--fg)}
+.drop-line{position:absolute;left:0;right:0;height:4px;margin-top:-2px;border-radius:2px;background:var(--accent);pointer-events:none;z-index:6}
+body.dragging-up{-webkit-user-select:none;user-select:none;cursor:grabbing}
+@media (max-width:560px){.plan-list li.reorder{grid-template-columns:auto auto minmax(0,1fr)}.plan-list li.reorder .acts{grid-column:3}.plan-list .grip{width:40px;height:40px;margin-left:-10px}}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .plan-list .whyedit input{flex:1;min-width:0;font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-ctl);padding:5px 9px}
 .sheet-list li.someday .t{color:var(--muted);font-weight:500}
 .deck-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:start}
@@ -583,6 +601,25 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 @media (min-width:861px) and (max-width:1100px){.picks{grid-template-columns:repeat(2,minmax(0,1fr))}.picks > .panel:last-child:nth-child(odd){grid-column:1/-1}}
 @media (max-width:860px){.picks{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.fav,.fav.labelled{min-width:40px;min-height:40px}.pick .acts .btn{min-height:40px}}
+
+/* ---- Interaction polish: edit panel (docked left on wide screens, bottom sheet on phones) and back-to-top ---- */
+:root{--dock-w:clamp(340px,30vw,420px)}
+@media (max-width:899.98px){
+  #filmDlg{width:100%;max-width:none;margin:auto 0 0;max-height:calc(100dvh - 24px);border-radius:calc(var(--r) + 4px) calc(var(--r) + 4px) 0 0;border-bottom-width:0}
+  #filmDlg .dlg-foot{padding-bottom:max(14px,env(safe-area-inset-bottom,0px))}
+}
+@media (min-width:900px){
+  #filmDlg.dock{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:auto;top:16px;bottom:16px;margin:0;width:var(--dock-w);height:auto;max-width:none;max-height:none;z-index:40;box-shadow:0 14px 44px var(--shade)}
+  #filmDlg.dock[open]{display:flex;flex-direction:column;overflow:hidden}
+  #filmDlg.dock form{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+  #filmDlg.dock .dlg-body{flex:1 1 auto;min-height:0;overflow:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #filmDlg.dock .dlg-foot{flex-wrap:wrap}
+  body.dock-open .wrap{max-width:1180px;margin-left:max(calc((100vw - 1180px) / 2),calc(var(--dock-w) + max(16px,env(safe-area-inset-left,0px)) + 8px));margin-right:auto}
+}
+.totop{position:fixed;z-index:30;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));width:44px;height:44px;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);border:0;box-shadow:0 6px 18px var(--shade);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .15s,transform .15s,visibility 0s .15s}
+.totop.show{opacity:1;visibility:visible;transform:none;transition:opacity .15s,transform .15s,visibility 0s}
+.totop svg{width:22px;height:22px;display:block;pointer-events:none}
+.totop:hover{filter:brightness(1.1)}
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
   <symbol id="ticket" viewBox="0 0 24 16"><path d="M1.5 1.5h21v3.9a2.6 2.6 0 0 0 0 5.2v3.9h-21v-3.9a2.6 2.6 0 0 0 0-5.2Z" style="fill:var(--stub-fill,none);stroke:var(--stub-stroke,currentColor)" stroke-width="1.4" stroke-linejoin="round"/><path d="M16.5 3.4v9.2" style="stroke:var(--stub-perf,currentColor)" stroke-width="1.3" stroke-dasharray="1.2 1.6" fill="none"/></symbol>
@@ -775,6 +812,9 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
     </section>
   </div>
 </div></div>
+
+<div id="planLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<button type="button" class="totop" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg></button>
 
 <dialog id="drillDlg" aria-labelledby="drillTitle">
   <div class="dlg-head"><div><h2 id="drillTitle">Films</h2><div class="muted small" id="drillSub"></div></div><button class="btn" type="button" id="drillClose">Close</button></div>
@@ -2005,7 +2045,28 @@ const OPTS = k => ({
   platform: ['', ...platformOptions()]
 }[k]);
 let editing = null;
+/* The edit panel: docked on the left from 900px wide (opened without modality so the list stays usable), a bottom sheet (modal) on phones */
+const dockMQ = window.matchMedia('(min-width:900px)');
+const filmSnap = () => [...$('filmForm').elements].filter(e => e.name).map(e => e.name + '=' + e.value).join('\n');
+const filmDirty = () => !!(editing && editing.snap != null && filmSnap() !== editing.snap);
+let dockOpener = null, skipClose = 0;
+const isDocked = () => $('filmDlg').open && !$('filmDlg').matches(':modal');
+function filmDlgShow() {
+  const dlg = $('filmDlg');
+  dlg.classList.toggle('dock', dockMQ.matches);
+  document.body.classList.toggle('dock-open', dockMQ.matches);
+  if (dockMQ.matches) dlg.show(); else dlg.showModal();
+}
 function openFilmDialog(film) {
+  const dlg = $('filmDlg'), want = film ? 'u' + film._uid : 'new';
+  if (isDocked()) {   // another film picked while the panel is open: swap the contents, but not over unsaved changes
+    const cur = editing.film ? 'u' + editing.film._uid : 'new';
+    if (filmDirty()) {
+      if (cur === want) { $('fdClose').focus({ preventScroll: true }); return; }
+      if (editing.warned !== want) { editing.warned = want; $('fdMsg').textContent = 'There are unsaved changes here. Choose that film again to discard them, or Save first.'; return; }
+    }
+  }
+  const was = dlg.open;
   editing = film ? { film } : { film: null };
   $('fdTitle').textContent = film ? 'Edit film' : 'Add a film';
   $('fdSave').textContent = film ? 'Save' : 'Add';
@@ -2035,7 +2096,14 @@ function openFilmDialog(film) {
     wrap.append(lab, el);
     body.appendChild(wrap);
   }
-  $('filmDlg').showModal();
+  editing.snap = filmSnap();
+  if (!was) {
+    const a = document.activeElement;
+    dockOpener = a && a !== document.body && !dlg.contains(a) ? { el: a, uid: film ? film._uid : null } : null;
+    filmDlgShow();
+  }
+  body.scrollTop = 0; dlg.scrollTop = 0;
+  const first = dlg.querySelector('#fdClose'); if (first) first.focus({ preventScroll: true });
 }
 async function saveFilmDialog(e) {
   e.preventDefault();
@@ -2099,7 +2167,7 @@ const byId = id => state.films.find(f => f.id === id);
 const seenBefore = f => (state.byKey.get(f.key) || []).filter(o => o.seen);
 
 const planQ = { chain: Promise.resolve(), pending: 0 };
-const planUI = { limit: 50, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
+const planUI = { limit: 50, optimistic: null, optToken: 0, optSeq: 0, drag: null, whyOpen: null, deckSkipped: new Set(), deckDone: 0, roundAck: 0 };
 function planStatusLine() { const w = planQ.what === 'fav' ? 'favourite' : 'plan'; setStatus('live', planQ.pending ? `Saving ${w}… (${planQ.pending})` : planQ.what === 'fav' ? 'Favourite saved' : 'Plan saved'); }
 function planQueue(fn, onFail, what) {
   planQ.what = what || 'plan'; planQ.pending++; planStatusLine();
@@ -2143,14 +2211,88 @@ function setTier(film, tier, fromDeck) {
     if (wasUp || tier === 'Up next') await writeUpNextOrder(upNextList());
   }, () => { planUI.deckSkipped.delete(id); if (fromDeck) planUI.deckDone = Math.max(0, planUI.deckDone - 1); });
 }
-function moveUp(film, dir) {
-  const id = film.id;
+// Up next order: the screen shows the wanted order at once (planUI.optimistic) while the writes go through the same queue
+const qk = f => f.id || 'row' + f._row;
+// The films named in keys take their wanted order inside the places they already hold; films added meanwhile keep their own place
+function orderBy(list, keys) {
+  const have = new Set(list.map(qk)), want = keys.filter(k => have.has(k)), set = new Set(want), out = list.slice();
+  const byKey = new Map(list.map(f => [qk(f), f]));
+  let n = 0;
+  list.forEach((f, i) => { if (set.has(qk(f))) out[i] = byKey.get(want[n++]); });
+  return out;
+}
+const displayUps = () => planUI.optimistic ? orderBy(upNextList(), planUI.optimistic) : upNextList();
+function announce(msg) { const el = $('planLive'); if (!el) return; planUI.liveFlip = !planUI.liveFlip; el.textContent = msg + (planUI.liveFlip ? '' : '\u00a0'); }
+// keys: the wanted order of Up next (film keys). Only Order cells that differ are written (and Plan = Up next where it isn't yet).
+function reorderUp(keys, film, pos, total) {
+  if (JSON.stringify(displayUps().map(qk)) === JSON.stringify(keys)) return Promise.resolve();   // dropped where it was: nothing to do
+  const token = ++planUI.optSeq;
+  planUI.optimistic = keys; planUI.optToken = token;
+  announce(`${film.title} moved to position ${pos} of ${total}`);
+  renderPlan();
+  const clear = () => { if (planUI.optToken === token) planUI.optimistic = null; };
   return planQueue(async () => {
-    const list = upNextList(), i = list.findIndex(x => x.id === id), j = i + dir;
-    if (i < 0 || j < 0 || j >= list.length) return;
-    [list[i], list[j]] = [list[j], list[i]];
-    await writeUpNextOrder(list);
-  });
+    await writeUpNextOrder(orderBy(upNextList(), keys));
+    clear();
+  }, clear);
+}
+function moveUp(film, dir) {   // one place up or down (keyboard)
+  const list = displayUps(), i = list.findIndex(x => qk(x) === qk(film)), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return Promise.resolve();
+  const keys = list.map(qk); [keys[i], keys[j]] = [keys[j], keys[i]];
+  return reorderUp(keys, film, j + 1, list.length);
+}
+// Drag with pointer events (mouse and touch); only the grip has touch-action:none so the page still scrolls
+function startDrag(e, li, film) {
+  if (planUI.drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  const ol = $('planUp'), items = [...ol.querySelectorAll(':scope > li.reorder')], from = items.indexOf(li);
+  if (from < 0) return;
+  e.preventDefault();
+  const grip = e.currentTarget, sy = window.scrollY;
+  try { grip.setPointerCapture(e.pointerId); } catch (_) { /* synthetic pointers */ }
+  const rects = items.map(x => { const r = x.getBoundingClientRect(); return { top: r.top + sy, bottom: r.bottom + sy, mid: r.top + sy + r.height / 2 }; });
+  const d = planUI.drag = { li, ol, items, from, to: from, rects, startY: e.clientY + sy, y: e.clientY, moved: false, raf: 0, line: null, stale: false };
+  const update = () => {
+    const py = d.y + window.scrollY, dy = py - d.startY;
+    li.style.transform = `translateY(${dy}px)`;
+    let to = 0; rects.forEach((r, i) => { if (i !== from && r.mid < py) to++; });
+    d.to = to;
+    if (to === from) { if (d.line) d.line.hidden = true; return; }
+    const others = rects.filter((_, i) => i !== from), y = to === 0 ? others[0].top : others[to - 1].bottom;
+    if (!d.line) { d.line = document.createElement('div'); d.line.className = 'drop-line'; ol.appendChild(d.line); }
+    d.line.hidden = false; d.line.style.top = (y - (ol.getBoundingClientRect().top + window.scrollY)) + 'px';
+  };
+  const loop = () => {
+    if (planUI.drag !== d) return;
+    const h = window.innerHeight, edge = Math.min(90, h / 5); let v = 0;
+    if (d.y < edge) v = -Math.ceil((edge - d.y) / 5); else if (d.y > h - edge) v = Math.ceil((d.y - (h - edge)) / 5);
+    if (v) window.scrollBy({ top: v, behavior: 'instant' });
+    update(); d.raf = requestAnimationFrame(loop);
+  };
+  const end = commit => {
+    cancelAnimationFrame(d.raf);
+    grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); grip.removeEventListener('pointercancel', cancel); document.removeEventListener('keydown', key, true);
+    try { grip.releasePointerCapture(e.pointerId); } catch (_) { /* already released */ }
+    li.classList.remove('dragging'); li.style.transform = ''; if (d.line) d.line.remove(); document.body.classList.remove('dragging-up');
+    planUI.drag = null;
+    if (commit && d.moved && d.to !== d.from) {
+      const keys = items.map(x => { const f = state.films.find(y => y._uid === Number(x.dataset.uid)); return f ? qk(f) : null; });
+      const [k] = keys.splice(from, 1); keys.splice(d.to, 0, k);
+      reorderUp(keys, film, d.to + 1, items.length);
+    } else if (d.stale) renderPlan();
+  };
+  const move = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    d.y = ev.clientY;
+    if (!d.moved && Math.abs(ev.clientY + window.scrollY - d.startY) > 3) {
+      d.moved = true; li.classList.add('dragging'); document.body.classList.add('dragging-up'); d.raf = requestAnimationFrame(loop);
+    }
+    if (d.moved) update();
+  };
+  const up = ev => { if (ev.pointerId === e.pointerId) end(true); };
+  const cancel = ev => { if (ev.pointerId === e.pointerId) end(false); };
+  const key = ev => { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); end(false); } };
+  grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up); grip.addEventListener('pointercancel', cancel); document.addEventListener('keydown', key, true);
 }
 function saveWhy(film, text) {
   const id = film.id;
@@ -2203,10 +2345,11 @@ function scoreFilm(f, P) {
 }
 
 /* ---------- Plan view ---------- */
-function planRow(f, { num, kind }) {
+function planRow(f, { num, kind, count }) {
   const li = document.createElement('li');
   li.dataset.uid = f._uid;
   if (kind === 'sheet' && f.plan === 'Someday') li.className = 'someday';
+  if (kind === 'up') li.className = 'reorder';
   li.innerHTML = '<span class="n tnum"></span><span><span class="t"></span> <span class="m"></span></span><span class="acts"></span><span class="why"></span>';
   li.querySelector('.n').textContent = num ?? '';
   li.querySelector('.t').textContent = f.title;
@@ -2215,8 +2358,13 @@ function planRow(f, { num, kind }) {
   const acts = li.querySelector('.acts');
   const btn = (label, fn, aria, disabled) => { const x = document.createElement('button'); x.type = 'button'; x.textContent = label; x.setAttribute('aria-label', aria + ' ' + f.title); if (disabled) x.disabled = true; x.addEventListener('click', fn); acts.appendChild(x); return x; };
   if (kind === 'up') {
-    const n = upNextList().length;
-    btn('↑', () => moveUp(f, -1), 'Move up:', num === 1); btn('↓', () => moveUp(f, 1), 'Move down:', num === n);
+    const grip = document.createElement('button');
+    grip.type = 'button'; grip.className = 'grip'; grip.setAttribute('aria-label', 'Reorder: ' + f.title); grip.setAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
+    grip.title = 'Drag to reorder, or use the up and down arrow keys';
+    grip.innerHTML = '<svg viewBox="0 0 18 18" fill="currentColor" aria-hidden="true"><circle cx="6.5" cy="4" r="1.6"/><circle cx="11.5" cy="4" r="1.6"/><circle cx="6.5" cy="9" r="1.6"/><circle cx="11.5" cy="9" r="1.6"/><circle cx="6.5" cy="14" r="1.6"/><circle cx="11.5" cy="14" r="1.6"/></svg>';
+    grip.addEventListener('pointerdown', ev => startDrag(ev, li, f));
+    grip.addEventListener('keydown', ev => { if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') { ev.preventDefault(); moveUp(f, ev.key === 'ArrowUp' ? -1 : 1); } });
+    li.insertBefore(grip, li.firstChild);
     btn('Why', () => { planUI.whyOpen = planUI.whyOpen === f._uid ? null : f._uid; renderPlan(); }, 'Edit why for');
     btn('Soon', () => setTier(f, 'Soon'), 'Move to Soon:'); btn('Drop', () => setTier(f, ''), 'Take off the plan:');
   } else if (kind === 'soon') {
@@ -2240,14 +2388,20 @@ function planRow(f, { num, kind }) {
   return li;
 }
 function renderPlan() {
+  if (planUI.drag) { planUI.drag.stale = true; return; }   // a drag is in progress: draw again when it ends
+  const ga = document.activeElement, keepGrip = ga && ga.classList && ga.classList.contains('grip') && ga.closest('li') ? ga.closest('li').dataset.uid : null;
+  renderPlanNow();
+  if (keepGrip) { const g = document.querySelector(`#planUp li[data-uid="${keepGrip}"] .grip`); if (g) g.focus({ preventScroll: true }); }
+}
+function renderPlanNow() {
   if (!state.loaded) { $('planUp').innerHTML = `<li class="empty-state" style="display:block">${isLive() ? 'Loading your films…' : esc(connectHint())}</li>`; return; }
-  const ups = upNextList(), soon = soonList(), max = state.settings.upNextMax || 10;
+  const ups = displayUps(), soon = soonList(), max = state.settings.upNextMax || 10;
   $('planUpNote').textContent = ups.length > max ? `${ups.length} films · the Log shows the first ${max}` : `${ups.length} of ${max}`;
   $('planSoonNote').textContent = `${soon.length} film${soon.length === 1 ? '' : 's'}`;
   const fill = (el, list, kind, empty) => {
     el.textContent = '';
     if (!list.length) { el.innerHTML = `<li class="empty-state" style="display:block">${empty}</li>`; return; }
-    list.forEach((f, i) => el.appendChild(planRow(f, { num: kind === 'up' ? i + 1 : '', kind })));
+    list.forEach((f, i) => el.appendChild(planRow(f, { num: kind === 'up' ? i + 1 : '', kind, count: list.length })));
   };
   fill($('planUp'), ups, 'up', `Pick up to ${max} films from Soon or the list below.`);
   fill($('planSoon'), soon, 'soon', 'Nothing here yet.');
@@ -2533,6 +2687,49 @@ $('upList').addEventListener('click', e => {
 $('addFilmBtn').addEventListener('click', () => { if (!state.loaded) { notice('Adding a film needs the live connection. ' + connectHint(), 'error'); return; } openFilmDialog(null); });
 $('filmForm').addEventListener('submit', saveFilmDialog);
 $('fdClose').addEventListener('click', () => $('filmDlg').close());
+$('filmDlg').addEventListener('close', () => {
+  if (skipClose) { skipClose--; return; }
+  document.body.classList.remove('dock-open');
+  const o = dockOpener; dockOpener = null;
+  const a = document.activeElement;
+  if (a && a !== document.body && !$('filmDlg').contains(a)) return;   // focus already went somewhere sensible (a modal restores it itself)
+  let t = o && o.el.isConnected ? o.el : null;
+  if (!t && o && o.uid != null) t = document.querySelector(`[data-edit="${o.uid}"]`);
+  if (!t) t = document.querySelector('.tab[aria-selected="true"]');
+  if (t) t.focus({ preventScroll: true });
+});
+document.addEventListener('keydown', e => {   // a panel opened without modality does not close on Escape by itself
+  if (e.key !== 'Escape' || e.defaultPrevented || !isDocked() || document.querySelector('dialog:modal') || !$('themeMenu').hidden) return;
+  const t = e.target;
+  if (!$('filmDlg').contains(t) && t.closest && t.closest('input,textarea,select,.whyedit')) return;
+  e.preventDefault(); $('filmDlg').close();
+});
+dockMQ.addEventListener('change', () => {   // the window was resized across 900px while the panel is open
+  const dlg = $('filmDlg'); if (!dlg.open) return;
+  skipClose++; dlg.close(); filmDlgShow();
+});
+/* Back to top: a round button after about 600px of scrolling; it steps aside while it would sit over a control */
+(() => {
+  const b = $('toTop'); let raf = 0;
+  const overControl = () => {
+    const r = b.getBoundingClientRect();
+    for (const el of document.querySelectorAll('button,input,select,textarea,a[href]')) {
+      if (el === b) continue;
+      const q = el.getBoundingClientRect();
+      if (q.width && q.height && q.left < r.right && q.right > r.left && q.top < r.bottom && q.bottom > r.top && q.bottom > 0 && q.top < window.innerHeight && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden') return true;
+    }
+    return false;
+  };
+  const update = () => { raf = 0; b.classList.toggle('show', window.scrollY > 600 && !document.querySelector('dialog:modal') && !overControl()); };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(update); };
+  window.addEventListener('scroll', queue, { passive: true }); window.addEventListener('resize', queue); document.addEventListener('click', () => setTimeout(queue, 60));
+  b.addEventListener('click', () => {
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' });
+    const t = document.querySelector('.tab[aria-selected="true"]'); if (t) t.focus({ preventScroll: true });
+  });
+  window.updateToTop = update;
+})();
 document.querySelector('.lib-mode').addEventListener('click', e => { const m = e.target.closest('button'); if (!m) return; state.lib.mode = m.dataset.mode; renderLibrary(); });
 $('planLink').addEventListener('click', () => { state.lib.mode = 'plan'; showTab('library'); });
 $('planMore').addEventListener('click', () => { planUI.limit += 50; renderPlan(); });

@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–3 and the Film Vault themes merged to `main`. Stage 4 (Dashboard and tidy layout) merged. Favourites and the Log picks built 2026-10-26 (PR open).** Next: Stage 5 (Tools and Discover).
+Status: **Stages 0–4, the Film Vault themes and Favourites merged to `main`. Interaction polish (drag to reorder, back to top, left edit panel, tidy Library filters) built 2026-11-07 (PR open).** Sheet columns T `Based on`, U `Source title`, V `Poster` added 2026-11-07, not used by the app yet. Next: Plan Backlog (top 10 by score), Tools and Discover, adaptations, posters and reel view.
 
 ## Reference
 
@@ -282,3 +282,29 @@ positions don't matter.
   with and without the column.
 - Built by a Sonnet helper from a written spec; reviewed by the lead (status line now says
   "Favourite saved" rather than "Plan saved"). Sheet column added by the lead.
+
+## Interaction polish (built 2026-11-07)
+
+- Up next (Library > Plan): the up/down arrow buttons are replaced by a grip handle on each row (40px tap target
+  on a phone). Pointer events, so mouse and touch both work (`touch-action:none` on the handle only, the page still
+  scrolls); the dragged row is lifted, a drop line shows where it will land, and the page autoscrolls near the top
+  and bottom edges. With the handle focused, ArrowUp / ArrowDown move the row one place and a polite live region says
+  "<title> moved to position N of M". The Log's Up next stays a read-only glance.
+- Writes reuse the Plan queue: the wanted order is shown at once (kept in `planUI.optimistic` until the queue drains),
+  then `planQueue` runs `writeUpNextOrder`, which writes only the Order cells that differ (and Plan = Up next where it
+  isn't yet). A drop in the same place makes no call. A failed write clears the optimistic order, the list goes back to
+  what the sheet holds, and the message is the usual "Not saved: ..." notice. Rapid drags queue in order; the
+  wanted order is applied inside the places the named films already hold, so films added meanwhile keep their place.
+- Edit panel (`#filmDlg`): from 900px wide it is opened with `show()` and docked on the left (fixed, `--dock-w`
+  340-420px), the page gets a left margin while it is open, Escape and Close close it, focus goes in on open and back
+  to the opener on close. Picking another film swaps the contents; unsaved changes block the swap once with a message
+  in the panel (ask again to discard). Below 900px it is a full-width bottom sheet (`showModal()`). Resizing across
+  900px re-opens it in the other mode with the typed text kept. Ids and the save / stale-check code are unchanged.
+- Back to top: 44px round accent button, fixed bottom-right (16px plus safe area), shown after 600px of scrolling,
+  smooth scroll (instant with reduced motion). It steps aside while it would sit over a button or field (Log a film
+  controls, Plan buttons) and while a modal is open. Accent fill with the accent-ink chevron, so it follows every theme.
+- Library filters: search full width, then genre / platform / owned / Add film as four equal cells (2 x 2 on a phone),
+  all 40px high, 12px gaps. Status chips are an auto-fill grid of equal cells (same height, rows share columns).
+- Checked: `node tests/interact.test.mjs`, stage 1-4, themes and favourites re-run; the Stage 3 tests that clicked
+  the arrows now use the keyboard path on the handle; themes also measures the handles, the button and the panel.
+

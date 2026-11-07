@@ -20,3 +20,8 @@ Run: `node tests/stage1.test.mjs`
 - Nothing contacts Google; any request outside the local stubs is aborted and fails the scenario.
 
 Run both suites: `node tests/stage1.test.mjs && node tests/stage2.test.mjs`
+
+# Interaction tests
+
+`node tests/interact.test.mjs` covers drag-to-reorder for Up next (mouse, keyboard, touch via CDP, autoscroll, failed write, rapid drags), the back-to-top button, the left-docked edit panel (and the phone sheet) and the Library filter grid. It uses the same fake sheet and the Stage 3 fixture. Screenshots go to `$SHOTS_DIR/interact`.
+
