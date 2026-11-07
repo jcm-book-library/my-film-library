@@ -128,7 +128,7 @@ for (const [m, id] of [[1, 'jurassic'], [4, 'matrix'], [10, 'totoro'], [12, 'ang
   const c2 = await open('laptop', { month: 10, storage: { 'mvl-theme': 'matrix' } });
   await c2.page.click('#tab-dashboard'); await c2.page.waitForTimeout(300);
   const cols = await c2.page.evaluate(() => { const ch = Chart.getChart('monthChart'); return ch ? ch.data.datasets[0].backgroundColor : null; });
-  check('b. dashboard chart: accent bars, current month in accent-2', !!cols && cols.filter(c => c === '#4cf26a').length === 11 && cols[new Date().getMonth()] === '#ff4a52', cols);
+  check('b. dashboard chart: accent bars, current month (October on the fake clock) in accent-2', !!cols && cols.filter(c => c === '#4cf26a').length === 11 && cols[9] === '#ff4a52', cols);
   await c2.ctx.close();
   // storage blocked: still works
   const c3 = await open('laptop', { month: 4, noStorage: true });
@@ -277,7 +277,7 @@ async function contrastScan(page, root) {
     }
     return out;
   }, root || null);
-  await page.evaluate(() => { const st = document.createElement('style'); st.id = '__hide'; st.textContent = '*,*::placeholder{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;-webkit-text-stroke:0!important;caret-color:transparent!important}'; document.head.appendChild(st); });
+  await page.evaluate(() => { const st = document.createElement('style'); st.id = '__hide'; st.textContent = '*,*::placeholder{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;-webkit-text-stroke:0!important;caret-color:transparent!important}#toTop{visibility:hidden!important}'; document.head.appendChild(st); });   // the floating button is a graphic over the page, checked on its own
   const buf = await page.screenshot({ fullPage: true });
   await page.evaluate(() => document.getElementById('__hide').remove());
   const res = await page.evaluate(async ({ b64, items }) => {
@@ -353,6 +353,47 @@ for (const size of ['phone', 'laptop']) {
         if (st.off == null || st.on == null) problems.push('log: no off/on sticker to measure');
         else { if (st.off < 3) problems.push(`sticker off ${st.off.toFixed(2)}`); if (st.on < 3) problems.push(`sticker on ${st.on.toFixed(2)}`); if (st.perf < 3) problems.push(`sticker perforation ${st.perf.toFixed(2)}`); }
       }
+    }
+    { // Interaction polish: Up next drag handles, the back-to-top button and the edit panel (docked on a laptop, a sheet on a phone)
+      await page.click('#tab-library'); await page.click('[data-mode="plan"]'); await page.waitForTimeout(150);
+      const ip = await page.evaluate(() => {
+        const cv = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        const px = c => { cv.clearRect(0, 0, 1, 1); cv.fillStyle = '#000'; cv.fillStyle = c; cv.fillRect(0, 0, 1, 1); const d = cv.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; };
+        const lin = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; };
+        const Lm = ([r, g, b]) => .2126 * lin(r) + .7152 * lin(g) + .0722 * lin(b);
+        const ratio = (x, y) => { const a = Lm(x), b = Lm(y); return (Math.max(a, b) + .05) / (Math.min(a, b) + .05); };
+        const root = n => px(getComputedStyle(document.documentElement).getPropertyValue(n).trim());
+        const grip = document.querySelector('#planUp button.grip');
+        if (!grip) return null;
+        const surf = px(getComputedStyle(grip.closest('.panel')).backgroundColor), tt = document.getElementById('toTop'), cs = getComputedStyle(tt);
+        return { grip: ratio(px(getComputedStyle(grip).color), surf), line: ratio(root('--accent'), surf), icon: ratio(px(cs.color), px(cs.backgroundColor)), fillBg: ratio(px(cs.backgroundColor), root('--bg')), fillSurf: ratio(px(cs.backgroundColor), surf), w: tt.getBoundingClientRect().width };
+      });
+      if (!ip) problems.push('plan: no Up next drag handles to measure');
+      else {
+        if (ip.grip < 3) problems.push(`drag handle vs panel ${ip.grip.toFixed(2)}`);
+        if (ip.line < 3) problems.push(`drop line vs panel ${ip.line.toFixed(2)}`);
+        if (ip.icon < 3) problems.push(`back-to-top icon vs its fill ${ip.icon.toFixed(2)}`);
+        if (ip.fillBg < 3 || ip.fillSurf < 3) problems.push(`back-to-top fill vs page ${ip.fillBg.toFixed(2)} / panel ${ip.fillSurf.toFixed(2)}`);
+        if (Math.round(ip.w) !== 44) problems.push('back-to-top is not 44px wide');
+      }
+      // the button is really shown after scrolling on the Library list (rows hold no controls under its corner)
+      await page.click('[data-mode="films"]'); await page.waitForTimeout(100);
+      let shown = false;
+      for (let y = 700; y < 2600 && !shown; y += 60) { await page.evaluate(v => window.scrollTo(0, v), y); await page.waitForTimeout(50); shown = await page.evaluate(() => document.getElementById('toTop').classList.contains('show')); }
+      if (!shown) problems.push('back-to-top never shown on the Library list');
+      else if (SHOT_THEMES.has(id)) { await page.waitForTimeout(250); await page.screenshot({ path: path.join(SHOTS, `${id}-totop-${W}.png`) }); }
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.evaluate(() => openFilmDialog(state.films.find(f => !f.seen) || state.films[0])); await page.waitForTimeout(200);
+      const modal = await page.evaluate(() => document.getElementById('filmDlg').matches(':modal'));
+      if (modal !== (size === 'phone')) problems.push(`edit panel is ${modal ? 'a modal sheet' : 'docked'} at ${W}px`);
+      const rp = await contrastScan(page, '#filmDlg');
+      for (const b of rp.bad) problems.push(`edit panel: ${b.sel} "${b.text}" ${b.ratio} fg${JSON.stringify(b.fg)} bg${JSON.stringify(b.bg)}`);
+      scanSummary[`${size}/${id}/edit-panel`] = rp.n;
+      if (SHOT_THEMES.has(id)) await page.screenshot({ path: path.join(SHOTS, `${id}-panel-${W}.png`) });
+      const sw2 = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      if (sw2 > 0) problems.push(`edit panel open: horizontal scroll ${sw2}px`);
+      await page.evaluate(() => document.getElementById('filmDlg').close());
+      await page.click('#tab-log'); await page.waitForTimeout(80);
     }
     { // Stage 4 dashboard on the richer fixture: year, All time, every people mode, calendar and the drill-down dialog
       const R = await open(size, { month: 10, storage: { 'mvl-theme': id }, rich: true });
