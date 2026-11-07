@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–3 and the Film Vault themes merged to `main`. Stage 4 (Dashboard and tidy layout) merged. Favourites and the Log picks built 2026-10-26 (PR open).** Next: Stage 5 (Tools and Discover).
+Status: **Stages 0–4, the Film Vault themes and Favourites merged to `main`. Interaction polish (drag to reorder, back to top, left edit panel, tidy Library filters) built 2026-11-07 (PR open).** Sheet columns T `Based on`, U `Source title`, V `Poster` added 2026-11-07, not used by the app yet. Next: Plan Backlog (top 10 by score), Tools and Discover, adaptations, posters and reel view.
 
 ## Reference
 
