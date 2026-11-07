@@ -1,6 +1,6 @@
 # Plan
 
-Status: **Stages 0–4, the Film Vault themes and Favourites merged to `main`. Interaction polish (drag to reorder, back to top, left edit panel, tidy Library filters) built 2026-11-07 (PR open).** Sheet columns T `Based on`, U `Source title`, V `Poster` added 2026-11-07, not used by the app yet. Next: Plan Backlog (top 10 by score), Tools and Discover, adaptations, posters and reel view.
+Status: **Stages 0–4, the Film Vault themes, Favourites and the interaction polish merged to `main`. Plan Backlog (top 10 by score) and the Tools tab built 2026-11-07 (PR open).** Sheet columns T `Based on`, U `Source title`, V `Poster` added 2026-11-07, not used by the app yet. Next: adaptations (Based on / Source title), then posters and the reel view.
 
 ## Reference
 
@@ -308,3 +308,17 @@ positions don't matter.
 - Checked: `node tests/interact.test.mjs`, stage 1-4, themes and favourites re-run; the Stage 3 tests that clicked
   the arrows now use the keyboard path on the handle; themes also measures the handles, the button and the panel.
 
+## Plan Backlog and Tools (built 2026-11-07)
+
+- **Backlog** (Library > Plan): replaces "Your watchlist, in sheet order". Unseen Watchlist / Rewatch / Someday films not in Up next or Soon, one row per film, ranked by the existing scoring (`buildProfile` / `scoreFilm`; score high to low, then sheet row, as in `pickList`). Search and the filters apply first. Shows 10; "Show 10 more" adds 10 (a filter change goes back to 10). The second line of each row is the scoring reason (the `why` array joined with " · ", muted); a film's own Why note still shows as before. Rows keep Up next / Soon / Someday.
+- **Tools tab** (after Dashboard, remembered in `mvl-tab`; the tab bar now also answers the arrow keys, Home and End). Read-only; no sheet columns added. Dates are shown as 19 Oct 26.
+  - *On this day*: dated watches whose month and day equal today's, in earlier years ("2025 · Title · 8/10"). If none, says so and shows the closest dated watch earlier this year.
+  - *Highlight of the day*: one seen film rated 8 or higher (one per film, sorted by key), picked by an FNV-1a hash of yyyy-mm-dd, so it is fixed all day. "Rewatch next" is the Library's `rewatchNext`; disabled if the film already has an unseen row.
+  - *Lucky dip*: pools Up next, Watchlist, Owned and unseen, On Plex and unseen, Rewatch candidates (seen, rated 8+), plus a genre filter. "Spin" uses `Math.random`. Unseen results show the scoring reason and "Add to Up next" (`setTier`, as the Plan does).
+  - *Do I own this?*: title search (case and accent insensitive, up to 8) with chips Owned, On disc, On Plex, Streaming on X (Cinema and Airplane are not counted as a copy), To purchase, or "In your sheet, no copy noted". All rows of a film are combined; strongest verdict first.
+  - *Stalled*: (a) films with Status Watching (since the Date if there is one); (b) Up next films whose `Sorted` date is at least `stalledDays` (🎥 Settings, default 14) days before today, oldest first, "N days in Up next". Up next films with no Sorted date are never judged. Up next rows have a Drop button (`setTier(film, '')`, as in the Plan).
+  - *Goal planner*: goal, watched so far (dated watches this year up to today), still to go, weeks left, needed per week, your pace, projected total by 31 Dec, and an "Ahead by N / Behind by N / On pace / Goal reached" line (against an even spread of the goal over the year, rounded). In the first 14 days the pace is measured over two weeks, and the days left are never less than one.
+  - *Year in review*: year chips (newest first), cards for films, average, best month, top genre, top director, rewatches (the Dashboard's rule), first and last film, the five highest rated (ties newest first), and "Copy summary" (clipboard, with a text box to copy by hand if blocked).
+  - *More like this*: pick a seen film; up to 8 waiting films (Up next, Soon, Backlog) sharing a director, cast member or the genre, ranked by number shared then score, with what is shared. "Top picks for you" lists the first 8 of `pickList()`. Rows open the edit panel.
+- Tests: `node tests/tools.test.mjs`; stage 3 tests changed from sheet order to rank order.
+- Built by a Sonnet helper from a written spec; reviewed by the lead (all suites re-run, screenshots checked, real-data run: 49 films waiting, goal planner matches a separate calculation, no writes from read-only panels).

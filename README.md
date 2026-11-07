@@ -15,13 +15,16 @@ The ticket stub marks a favourite film. Tapping it writes today's date into the 
 ## Interaction polish
 In **Library > Plan**, Up next rows have a grip handle: drag it (mouse or touch) to reorder, or focus it and press the up or down arrow key (the move is announced). Only the Order cells that changed are written, through the same queue as every other Plan change, and a failed write puts the list back. The **edit panel** docks on the left of the page from 900px wide, so the list stays visible; picking another film swaps it (with a warning if there are unsaved changes), and on a phone it is a full-width bottom sheet. A round **back to top** button appears after about 600px of scrolling. Library filters sit in an even grid: search, then genre, platform, owned and Add film, then the status chips.
 
+## Tools tab and Plan Backlog
+A fifth tab, **Tools**, holds **Discover** (On this day, Highlight of the day) and **Tools** (Lucky dip, Do I own this?, Stalled, Goal planner, Year in review, More like this with Top picks). It only reads; the two buttons that write (Add to Up next, Drop, Rewatch next) reuse the Plan and Library actions unchanged. In **Library > Plan** the old watchlist panel is now the **Backlog**: the 10 best-scoring films, with Show 10 more, and the scoring reason under each title.
+
 ## Files
 | File | What it is |
 |---|---|
 | `app.html` | The app source. Edit this. The same file is published as the claude.ai artifact. |
 | `index.html` | Built from `app.html` for GitHub Pages. Rebuild it with `python3 tools/build-pages.py`. |
 | `manifest.webmanifest`, `icons/` | Home-screen install and icons. |
-| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3`, `stage4`, `themes`, `favourites` and `interact`). They use made-up films, never real data. |
+| `tests/` | Headless Playwright checks (`node tests/stage1.test.mjs`, plus `stage2`, `stage3`, `stage4`, `themes`, `favourites`, `interact` and `tools`). They use made-up films, never real data. |
 | `PLAN.md` | Sheet findings, data model, decisions and stages. |
 | `CLAUDE.md` | Working notes for Claude sessions in this repo. |
 
